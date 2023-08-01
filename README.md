@@ -3,6 +3,8 @@
 ## About
 Software for calculations related to power generation, management and storage
 
+
+## The prototype notebook
 Comments on TiltedSolar_fullday.ipynb, version from 2023-07-27:
 
 Proceeding through the notebook cells in order for now.
