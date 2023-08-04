@@ -58,8 +58,24 @@ Function returns arrays of hours from sunrise, and T,E,W areas at each time in h
      xiii) EOL_degradation: End of Life degredation factor, including radiation etc. 5% is approximately correct from SolAero specs.
 Function returns arrays of power for TPV, EPV, WPV, in 15 minute increments.
 
-9) Daytime and Nighttime power load parameters
+9) Daytime and Nighttime power load parameters.
+    i) PPT: Peak Power Tracker, manages solar panels
+    ii) PDU: Power Distribution Unit, distributes power from solar panels and battery to other components
+    iii) PFPS: Picket Fence Power Supply, power supply with precise switching to limit RFI to "picket fence" in freq space
+    iv) CDH: Renamed DCB, Digital Control Board, controls onboard operations
+    v) SPT: Spectrometer
+    vi) Preamp: Science antenna preamplifiers
+    vii) RF RX/TX: Communications receiver and transmitter modules
+    viii) Charging/Discharging Efficiency: estimate of power lost to inefficiencies in battery and Ohmic heating. Modeling should be expanded.
+    ix) Uncertainty Margin: Uncertainty factor for total power load, since all components have not been assembled and tested their loads are not precisely known.
     
 10) Calculating battery State of Charge (SOC) and plotting
-
+    Using the power loads from 9), and the power output profile from 8), calculates the State of Charge (SOC) of the battery, and plotts results.
+    i) PPT_threshold: PPT only active when input power estimated to be greater than net draw from PPT and other nighttime instrumentation.
+    ii) radio_threshold: RF RX/TX systems only active when net power greater than total daytime power draw.
+    iii)nameplateCapacity: Nominal capacity of battery
+    iv) maxCharge: Specified maximum battery charge, from vendor
+    v) maxDoD: Maximum Depth of Discharge (minimum safe charge), specified by vendor. N.B. NASA requirement may be significantly higher than vendor spec! NASA recommends 40% min safe SOC, possibly grants waivers for lower operation.
+   
 11) Better lunar temp and thermal efficiency plot
+    Should be incorporated with previous lunar temp plot cell.
