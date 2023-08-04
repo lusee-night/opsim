@@ -2,13 +2,12 @@
 
 import bms
 
-from bms.battery import Battery as Bat
-from bms.controller import Controller as Ctr
+from bms.parts import *
 
-battery = Bat(11.6)
+battery = Battery(11.6)
 print('Battery voltage:', battery.voltage)
 
-controller = Ctr(battery)
+controller = Controller(battery)
 print('Battery voltage from controller:', controller.battery.voltage)
 
 battery.set_voltage(10.1)

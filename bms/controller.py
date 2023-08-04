@@ -1,7 +1,2 @@
-class Controller:
-    def __init__(self, battery):
-        self.consumers = []
-        self.battery = battery
+# Temp moved to Parts
 
-#    def set_voltage(self, voltage):
-#        self.voltage = voltage
