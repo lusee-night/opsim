@@ -1,12 +1,15 @@
 #! /usr/bin/env python
 
-
-import lusee
-from lusee import Observation as O
-
 import bms
 
 from bms.parts import *
+from nav.coordinates import *
+
+
+(alt, az) = track("2025-02-04 00:00:00 to 2025-02-05 23:45:00")
+# print(alt)
+
+alt_sun_top = np.asarray(alt)+sun_rad
 
 battery = Battery(11.6)
 print('Battery voltage:', battery.voltage)
@@ -25,7 +28,7 @@ ctr.add_panel(TPanel('T'))
 
 for p in ctr.panels:
     print(f'''{p.name}''')
-    print(p.normal_rot)
+    print(p.normal_rot, p.area)
 
 
 

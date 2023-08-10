@@ -1,5 +1,5 @@
 
-import numpy as np
+import  numpy as np
 from    scipy.spatial.transform import Rotation as R
 
 class Battery:
@@ -42,9 +42,10 @@ class Panel:
     r3 = R.from_euler('z', lander_yaw,      degrees=True) # + is nose right,    - is nose left
     r_tot = r1*r2*r3
 
-    def __init__(self, name=''):
-        self.name = name
-        self.normal = (None, None, None)
+    def __init__(self, name='', area=1.0):
+        self.name       = name
+        self.area       = area
+        self.normal     = (None, None, None)
         self.normal_rot = (None, None, None)
 
 class EPanel(Panel):
