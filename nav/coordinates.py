@@ -8,10 +8,9 @@ to_rad  = np.pi/180
 def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
     o = O(interval)
     length = len(o.times)
-    print(o.times)
     (alt, az) = o.get_track_solar('sun')
 
-    return (alt, az) #alt, az
+    return (alt, az, o.times) #alt, az
 
 def altaz2xyz(alt,az):   
     sun = np.zeros((len(alt),3))

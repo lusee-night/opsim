@@ -6,7 +6,16 @@ from bms.parts import *
 from nav.coordinates import *
 
 
-(alt, az) = track("2025-02-04 00:00:00 to 2025-02-05 23:45:00")
+(alt, az, times) = track("2025-02-04 00:00:00 to 2025-02-05 23:45:00")
+
+print(times.size)
+
+mjds = np.empty(times.size)
+for i in range(times.size):
+    mjds[i] = times[i].mjd
+
+print(mjds)
+
 # print(alt)
 
 alt_sun_top = np.asarray(alt)+sun_rad
