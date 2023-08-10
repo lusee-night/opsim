@@ -48,6 +48,9 @@ class Panel:
         self.normal     = (None, None, None)
         self.normal_rot = (None, None, None)
 
+    def dot(self, sun):
+        return self.area*np.dot(sun, self.normal_rot)
+
 class EPanel(Panel):
     def __init__(self, name=''):
         Panel.__init__(self, name)
