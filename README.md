@@ -110,3 +110,12 @@ Function returns arrays of power for TPV, EPV, WPV, in 15 minute increments.
    
 11) Better lunar temp and thermal efficiency plot.
     Should be incorporated with previous lunar temp plot cell.
+
+## Misc
+
+On many Debian instances, the "backport" installation of the `lzma` Python package is needed for
+some dependencies to work. This may be installed into a virtual environment, then references:
+
+```bash
+export PYTHONPATH=/home/maxim/projects/lusee/luseepy:/home/maxim/.virtualenvs/lusee/lib/python3.10/site-packages/backports
+```

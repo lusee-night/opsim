@@ -2,8 +2,10 @@ import lusee
 import numpy as np
 from lusee import Observation as O
 
-sun_rad = 0.265
+horizon = 0.0
+
 to_rad  = np.pi/180
+sun_rad = 0.265*to_rad
 
 def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
     o = O(interval)
