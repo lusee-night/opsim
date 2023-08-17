@@ -6,11 +6,11 @@ from bms.parts import *
 from nav.coordinates import *
 
 
+# "track" is imported from "coordinates", and wraps "Observation"
 (alt, az, times) = track("2025-02-10 00:00:00 to 2025-02-27 23:45:00")
 
 mjd = np.empty(times.size)
-for i in range(times.size):
-    mjd[i] = times[i].mjd
+for i in range(times.size): mjd[i] = times[i].mjd
 
 iMidnight = np.argmin(alt)
 iSunrise = np.argmin(np.abs(alt[iMidnight:])) + iMidnight
