@@ -22,11 +22,15 @@ if cachefile!='':
     mjd = mjd_alt_az[:,0]
     alt = mjd_alt_az[:,1]
     az  = mjd_alt_az[:,2]
+    if verb: print(f'''*** Read {az.size} data points from file {cachefile}''')
 else:
     # "track" is imported from "coordinates", and wraps "Observation"
     (times, alt, az) = track(timerange)
     mjd = np.empty(times.size)
     for i in range(times.size): mjd[i] = times[i].mjd
+    if verb: print(f'''*** Caluclated {az.size} sun position points for the range {timerange}''')
+
+
 
 
 #iMidnight = np.argmin(alt)
@@ -55,16 +59,20 @@ battery.set_voltage(10.1)
 print('Battery voltage from controller:', ctr.battery.voltage)
 
 
-e = EPanel('E')
+e = EPanel(sun, 'E')
 ctr.add_panel(e)
 
-w = WPanel('W')
+exit(0)
+
+w = WPanel(sun, 'W')
 ctr.add_panel(w)
 
-t = TPanel('T')
+t = TPanel(sun, 'T')
 ctr.add_panel(t)
 
 e_dot = e.dot(sun)
+
+print("Here: ", e_dot, e.dot_sun)
 w_dot = w.dot(sun)
 t_dot = t.dot(sun)
 
@@ -83,6 +91,8 @@ alt_seg = np.abs(alt)
 alt_seg[alt_seg>sun_rad]=sun_rad
 sun_seg_area = (sun_rad**2)*np.arccos(1-((sun_rad-alt_seg)/sun_rad))-alt_seg*np.sqrt((sun_rad**2)-(alt_seg)**2)
 sun_seg_frac = sun_seg_area/(np.pi*sun_rad**2)
+
+print(f'''{sun_seg_area.size}, {sun_seg_frac.size}''')
 
 # Conditions are selected in order, as in an if-elif statement
 condition_list = [alt>horizon+sun_rad, alt>horizon, alt>horizon-sun_rad, alt<=horizon-sun_rad]

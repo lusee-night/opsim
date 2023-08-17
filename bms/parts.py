@@ -42,29 +42,34 @@ class Panel:
     r3 = R.from_euler('z', lander_yaw,      degrees=True) # + is nose right,    - is nose left
     r_tot = r1*r2*r3
 
-    def __init__(self, name='', area=1.0):
+    def __init__(self, sun, name = '', area=1.0):
         self.name       = name
         self.area       = area
         self.normal     = (None, None, None)
-        self.normal_rot = (None, None, None)
+        self.normal_rot = (None, None, None) # can't use in the base!
+
 
     def dot(self, sun):
+        print(sun.size, self.area, self.normal_rot)
         return self.area*np.dot(sun, self.normal_rot)
 
 class EPanel(Panel):
-    def __init__(self, name=''):
-        Panel.__init__(self, name)
+    def __init__(self, sun, name):
+        Panel.__init__(self, sun,  name)
         self.normal = (1., 0., 0.)
         self.normal_rot = self.r_tot.apply(self.normal)
+        self.dot_sun    = self.dot(sun)
 
 class WPanel(Panel):
-    def __init__(self, name=''):
-        Panel.__init__(self, name)
+    def __init__(self, sun, name):
+        Panel.__init__(self, sun, name)
         self.normal = (-1., 0., 0.)
         self.normal_rot = self.r_tot.apply(self.normal)
+        self.dot_sun    = self.dot(sun)        
 
 class TPanel(Panel):
-    def __init__(self, name=''):
-        Panel.__init__(self, name)
+    def __init__(self, sun, name):
+        Panel.__init__(self, sun, name)
         self.normal = (0., 0., 1.)
         self.normal_rot = self.r_tot.apply(self.normal)
+        self.dot_sun    = self.dot(sun)
