@@ -1,24 +1,41 @@
 #! /usr/bin/env python
-
+import argparse
 import bms
 
 from bms.parts import *
 from nav.coordinates import *
 
+#######################################
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--verbose",  action='store_true', help="Verbose mode")
+parser.add_argument("-f", "--cachefile",type=str,            help="The cache file", default='')
+parser.add_argument("-r", "--timerange",type=str,            help="The time range", default='')
 
-# "track" is imported from "coordinates", and wraps "Observation"
-(alt, az, times) = track("2025-02-10 00:00:00 to 2025-02-27 23:45:00")
+args    = parser.parse_args()
 
-mjd = np.empty(times.size)
-for i in range(times.size): mjd[i] = times[i].mjd
+timerange   = args.timerange
+cachefile   = args.cachefile
+verb        = args.verbose
 
-iMidnight = np.argmin(alt)
-iSunrise = np.argmin(np.abs(alt[iMidnight:])) + iMidnight
-hrsFromSunrise = (mjd - mjd[iSunrise])*24
-print(hrsFromSunrise)
-exit(0)
+if cachefile!='':
+    with open(cachefile, 'rb') as f: mjd_alt_az = np.load(f)
+    mjd = mjd_alt_az[:,0]
+    alt = mjd_alt_az[:,1]
+    az  = mjd_alt_az[:,2]
+else:
+    # "track" is imported from "coordinates", and wraps "Observation"
+    (times, alt, az) = track(timerange)
+    mjd = np.empty(times.size)
+    for i in range(times.size): mjd[i] = times[i].mjd
 
-print(times.size, sun_rad)
+
+#iMidnight = np.argmin(alt)
+#iSunrise = np.argmin(np.abs(alt[iMidnight:])) + iMidnight
+#hrsFromSunrise = (mjd - mjd[iSunrise])*24
+#print(hrsFromSunrise)
+#exit(0)
+
+# print(times.size, sun_rad)
 
 
 
@@ -71,9 +88,9 @@ sun_seg_frac = sun_seg_area/(np.pi*sun_rad**2)
 condition_list = [alt>horizon+sun_rad, alt>horizon, alt>horizon-sun_rad, alt<=horizon-sun_rad]
 
 # Full sun, subtract sun segment, add only sun segment, full disk below horizon
-EPV_choice_list = [e_dot, (1-sun_seg_frac)*EPV_dot, sun_seg_frac*e_dot, 0]
-WPV_choice_list = [w_dotdot, (1-sun_seg_frac)*WPV_dot, sun_seg_frac*w_dot, 0]
-TPV_choice_list = [t_dot, (1-sun_seg_frac)*TPV_dot, sun_seg_frac*t_dot_sun_top, 0]
+EPV_choice_list = [e_dot, (1-sun_seg_frac)*e_dot, sun_seg_frac*e_dot, 0]
+WPV_choice_list = [w_dot, (1-sun_seg_frac)*w_dot, sun_seg_frac*w_dot, 0]
+TPV_choice_list = [t_dot, (1-sun_seg_frac)*t_dot, sun_seg_frac*t_dot_sun_top, 0]
 
 
 for p in ctr.panels:

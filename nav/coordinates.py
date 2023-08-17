@@ -12,7 +12,7 @@ def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
     length = len(o.times)
     (alt, az) = o.get_track_solar('sun')
 
-    return (alt, az, o.times) #alt, az
+    return (o.times, alt, az) #alt, az
 
 def altaz2xyz(alt,az):   
     sun = np.zeros((len(alt),3))
