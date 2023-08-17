@@ -92,6 +92,11 @@ EPV_choice_list = [e_dot, (1-sun_seg_frac)*e_dot, sun_seg_frac*e_dot, 0]
 WPV_choice_list = [w_dot, (1-sun_seg_frac)*w_dot, sun_seg_frac*w_dot, 0]
 TPV_choice_list = [t_dot, (1-sun_seg_frac)*t_dot, sun_seg_frac*t_dot_sun_top, 0]
 
+#Apply sunrise condition
+EPV_power = np.select(condition_list, EPV_choice_list)
+WPV_power = np.select(condition_list, WPV_choice_list)
+TPV_power = np.select(condition_list, TPV_choice_list)
+
 
 for p in ctr.panels:
     print(f'''{p.name}''')
