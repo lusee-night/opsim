@@ -22,13 +22,13 @@ if cachefile!='':
     mjd = mjd_alt_az[:,0]
     alt = mjd_alt_az[:,1]
     az  = mjd_alt_az[:,2]
-    if verb: print(f'''*** Read {az.size} data points from file {cachefile}''')
+    if verb: print(f'''*** Read {az.size} data points from file {cachefile} ***''')
 else:
     # "track" is imported from "coordinates", and wraps "Observation"
     (times, alt, az) = track(timerange)
     mjd = np.empty(times.size)
     for i in range(times.size): mjd[i] = times[i].mjd
-    if verb: print(f'''*** Caluclated {az.size} sun position points for the range {timerange}''')
+    if verb: print(f'''*** Caluclated {az.size} sun position points for the range {timerange} ***''')
 
 
 
@@ -49,20 +49,15 @@ alt_sun_top = np.asarray(alt)+sun_rad
 sun     = altaz2xyz(alt, az)
 sun_top = altaz2xyz(alt_sun_top, az)
 
-battery = Battery(11.6)
-print('Battery voltage:', battery.voltage)
-
-ctr = Controller(battery)
-print('Battery voltage from controller:', ctr.battery.voltage)
-
-battery.set_voltage(10.1)
-print('Battery voltage from controller:', ctr.battery.voltage)
+battery = Battery(11.6) # print('Battery voltage:', battery.voltage)
+ctr     = Controller(battery) # print('Battery voltage from controller:', ctr.battery.voltage)
+battery.set_voltage(10.1) # print('Battery voltage from controller:', ctr.battery.voltage)
 
 
 e = EPanel(sun, 'E')
 ctr.add_panel(e)
 
-exit(0)
+# Debugging: when dot product is negative, panel is not illuminated: e_dot = e.dot(sun), e_dot[e_dot<0] = 0.0
 
 w = WPanel(sun, 'W')
 ctr.add_panel(w)
@@ -70,16 +65,10 @@ ctr.add_panel(w)
 t = TPanel(sun, 'T')
 ctr.add_panel(t)
 
-e_dot = e.dot(sun)
+ctr.panels_info()
 
-print("Here: ", e_dot, e.dot_sun)
-w_dot = w.dot(sun)
-t_dot = t.dot(sun)
 
-# When dot product is negative, panel is not illuminated
-e_dot[e_dot<0] = 0.0
-w_dot[w_dot<0] = 0.0
-t_dot[t_dot<0] = 0.0
+exit(0)
 
 t_dot_sun_top = t.dot(sun_top)
 t_dot_sun_top[t_dot_sun_top<0] = 0.0 # For finite disk at sunrise/sunset. Slight aprx: top of sun not center of segment

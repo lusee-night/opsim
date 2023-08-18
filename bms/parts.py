@@ -19,6 +19,18 @@ class Controller:
     def add_panel(self, panel):
         self.panels.append(panel)
 
+    def get_panel(self, name):
+        for p in self.panels:
+            if p.name==name: return p
+        return None
+
+
+    def panels_info(self):
+        info = f'''Number of panels: {len(self.panels)}\n'''
+        for p in self.panels:
+            info += f'''Panel info: {p.info()}\n'''
+        print(info)
+
     
 
 class Device:
@@ -29,7 +41,7 @@ class Device:
     def set_voltage(self, voltage):
         self.voltage = voltage
 
-###
+##################### PANELS ###########################
 
 class Panel:
     ### Assume that the pivot angle is zero for now, easy to add later:
@@ -42,34 +54,29 @@ class Panel:
     r3 = R.from_euler('z', lander_yaw,      degrees=True) # + is nose right,    - is nose left
     r_tot = r1*r2*r3
 
-    def __init__(self, sun, name = '', area=1.0):
+    def __init__(self, sun, name = '', normal=(None, None, None), area=1.0):
         self.name       = name
         self.area       = area
-        self.normal     = (None, None, None)
-        self.normal_rot = (None, None, None) # can't use in the base!
-
+        self.normal     = normal
+        self.normal_rot = self.r_tot.apply(self.normal)
+        self.dot_sun    = self.dot(sun)
 
     def dot(self, sun):
-        print(sun.size, self.area, self.normal_rot)
-        return self.area*np.dot(sun, self.normal_rot)
+        buffer = self.area*np.dot(sun, self.normal_rot)
+        buffer[buffer<0] = 0.0
+        return buffer
+    
+    def info(self):
+        return f'''Panel {self.name}'''
 
 class EPanel(Panel):
     def __init__(self, sun, name):
-        Panel.__init__(self, sun,  name)
-        self.normal = (1., 0., 0.)
-        self.normal_rot = self.r_tot.apply(self.normal)
-        self.dot_sun    = self.dot(sun)
+        Panel.__init__(self, sun,  name, (1., 0., 0.))
 
 class WPanel(Panel):
     def __init__(self, sun, name):
-        Panel.__init__(self, sun, name)
-        self.normal = (-1., 0., 0.)
-        self.normal_rot = self.r_tot.apply(self.normal)
-        self.dot_sun    = self.dot(sun)        
+        Panel.__init__(self, sun, name, (-1., 0., 0.))
 
 class TPanel(Panel):
     def __init__(self, sun, name):
-        Panel.__init__(self, sun, name)
-        self.normal = (0., 0., 1.)
-        self.normal_rot = self.r_tot.apply(self.normal)
-        self.dot_sun    = self.dot(sun)
+        Panel.__init__(self, sun, name, (0., 0., 1.))
