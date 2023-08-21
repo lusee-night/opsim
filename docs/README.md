@@ -1,7 +1,6 @@
 # The prototype notebook
 
-Comments on TiltedSolar_fullday.ipynb, version from 2023-07-27:
-Proceeding through the notebook cells in order for now.
+Comments on TiltedSolar_fullday.ipynb, version from 2023-07-27: Proceeding through the notebook cells in order for now.
 
 1) Self explanitory, just imports everything we should need for the notebook.
 
