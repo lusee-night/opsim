@@ -29,6 +29,7 @@ Function returns arrays of hours from sunrise, and T,E,W areas at each time in h
 7) Plots thermal efficiency data and fit.
 
 8) Calculates and plots solar panel power output throughout one lunar cycle.
+        
         def foo(x)
 
 
