@@ -31,7 +31,7 @@ Function returns arrays of hours from sunrise, and T,E,W areas at each time in h
 8) Calculates and plots solar panel power output throughout one lunar cycle.
         
         def foo(x)
-
+    1)
 
 ```
 def PVActualPower(t_surface, EPV_area = .313/2, WPV_area = .313/2,TPV_area = .313,
