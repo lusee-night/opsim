@@ -35,7 +35,6 @@ def PVActualPower(t_surface, EPV_area = .313/2, WPV_area = .313/2,TPV_area = .31
      lander_pitch=0, lander_roll=0, lander_yaw=0, \
      dust_obscuration=0, shadowing=0, EOL_degradation=0)
 ```
-
 Function to calculate power in Watts. Variables are:
     1) `t_surface``: array of surface temps in 15 min increments for lunar cycle
     2) `EPV_area``: Area of E PV panel in m^2
