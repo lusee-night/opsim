@@ -1,11 +1,10 @@
 # The prototype notebook for power calculation
 
-Comments on TiltedSolar_fullday.ipynb, version from 2023-07-27: Proceeding through the notebook cells in order for now.
+Comments on the original __TiltedSolar_fullday.ipynb__ (in the `notebooks` repo), version from 2023-07-27.
+Proceeding through the notebook cells in order for now.
 
 1) Self explanitory, just imports everything we should need for the notebook.
-
 2) `def altaz2xyz(alt,az)`: Function that converts from altitude and azimuth coordinates to Cartesian coordinates, for ease of angle calculations and plotting.
- 
 3) `def PVProjArea(pv_tilt_angle=0, E_area=1, W_area=1, T_area=1, horizon=0.0, lander_pitch=0, lander_roll=0, lander_yaw=0)`: function that calculates the projected area of all three photovoltaic (PV) panels, on the top, east, and west faces of LuSEE. Inputs are:
     1) pv_tilt_angle: Specifies the normal angle of the E and W face panels, with respect to horizontal. Positive angles are up. Basically deprecated now, the E&W panels will have pv_tilt_angle=0.
     2) E_area: Area of the east panel. I used to input areas in m^2, Paul now uses 1 here, and multiplies by the physical area later.
@@ -30,10 +29,12 @@ Function returns arrays of hours from sunrise, and T,E,W areas at each time in h
 7) Plots thermal efficiency data and fit.
 
 8) Calculates and plots solar panel power output throughout one lunar cycle.
-   def PVActualPower(t_surface, EPV_area = .313/2, WPV_area = .313/2,TPV_area = .313, \
+```
+def PVActualPower(t_surface, EPV_area = .313/2, WPV_area = .313/2,TPV_area = .313, \
      solarConstant = 1361, horizon=0, pv_tilt_angle=0, \
      lander_pitch=0, lander_roll=0, lander_yaw=0, \
-     dust_obscuration=0, shadowing=0, EOL_degradation=0): Function to calculate power in Watts. Variables are:
+     dust_obscuration=0, shadowing=0, EOL_degradation=0)```
+     Function to calculate power in Watts. Variables are:
    
      i) t_surface: array of surface temps in 15 min increments for lunar cycle
    
