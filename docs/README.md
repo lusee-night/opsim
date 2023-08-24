@@ -1,4 +1,4 @@
-# The prototype notebook
+# The prototype notebook for power calculation
 
 Comments on TiltedSolar_fullday.ipynb, version from 2023-07-27: Proceeding through the notebook cells in order for now.
 
