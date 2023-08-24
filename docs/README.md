@@ -9,8 +9,8 @@ Proceeding through the notebook cells in order for now.
     1) `pv_tilt_angle``: Specifies the normal angle of the E and W face panels, with respect to horizontal. Positive angles are up. Basically deprecated now, the E&W panels will have pv_tilt_angle=0.
     2) `E_area`: Area of the east panel. I used to input areas in m^2, Paul now uses 1 here, and multiplies by the physical area later.
     3) `W_area`: Area of the west panel.
-    4) `T_area``: Area of the top panel.
-    5) `horizon``: cutoff elevation angle for the horizon. Usually zero, but could set higher to account for local geographical features.
+    4) `T_area`: Area of the top panel.
+    5) `horizon`: cutoff elevation angle for the horizon. Usually zero, but could set higher to account for local geographical features.
     6) `lander_pitch`: Rotational angle for lander, angles in degrees. Lander is defined to have "nose" pointing N. Pitch is rotation around E-W axis, + is nose down, - is nose up
     7) `lander_roll`: Rotation around N-S axis, + is top rotating left, - is top rotating right
     8) `lander_yaw`: Rotation around vertical axis, + is nose right, - is nose left
@@ -39,16 +39,16 @@ described below the code block:
     1) `t_surface`: array of surface temps in 15 min increments for lunar cycle
     2) `EPV_area`: Area of E PV panel in m^2
     3) `WPV_area`: Area of W PV panel in m^2
-    4) TPV_area: Area of top PV panel in m^2
-    5) solarConstant: Radiated power of sun, in W/m^2
+    4) `TPV_area`: Area of top PV panel in m^2
+    5) `solarConstant``: Radiated power of sun, in W/m^2
     6) through 10 as defined for PVProjArea() above
     7) -
     8) -
     9) -
     10) -
-    11) dust_obscuration: Fractional decrement in panel power from dust. We usually use 5% as a conservative estimate.
-    12) shadowing: Fractional decrement in panel power from shadows of antennas, deployers, etc. on top face. I had a whole complex section to calculate this as a function of time for a simplified physical geometry of the antennas and deployers, but with the current layout shadows are minimized. This could be implemented approximately with an array: 10% for 25 hours after sunrise and before sunset, then falling sharply to 0% for the rest of the day.
-     13) EOL_degradation: End of Life degredation factor, including radiation etc. 5% is approximately correct from SolAero specs.
+    11) `dust_obscuration`: Fractional decrement in panel power from dust. We usually use 5% as a conservative estimate.
+    12) `shadowing`: Fractional decrement in panel power from shadows of antennas, deployers, etc. on top face. I had a whole complex section to calculate this as a function of time for a simplified physical geometry of the antennas and deployers, but with the current layout shadows are minimized. This could be implemented approximately with an array: 10% for 25 hours after sunrise and before sunset, then falling sharply to 0% for the rest of the day.
+    13) `EOL_degradation`: End of Life degredation factor, including radiation etc. 5% is approximately correct from SolAero specs.
 
 Function returns arrays of power for TPV, EPV, WPV, in 15 minute increments.
 
@@ -56,26 +56,26 @@ Function returns arrays of power for TPV, EPV, WPV, in 15 minute increments.
     
     1) PPT: Peak Power Tracker, manages solar panels
     2) PDU: Power Distribution Unit, distributes power from solar panels and battery to other components
-    iii) PFPS: Picket Fence Power Supply, power supply with precise switching to limit RFI to "picket fence" in freq space
-    iv) CDH: Renamed DCB, Digital Control Board, controls onboard operations
-    v) SPT: Spectrometer
-    vi) Preamp: Science antenna preamplifiers
-    vii) RF RX/TX: Communications receiver and transmitter modules
-    viii) Charging/Discharging Efficiency: estimate of power lost to inefficiencies in battery and Ohmic heating. Modeling should be expanded.
-    ix) Uncertainty Margin: Uncertainty factor for total power load, since all components have not been assembled and tested their loads are not precisely known.
+    3) PFPS: Picket Fence Power Supply, power supply with precise switching to limit RFI to "picket fence" in freq space
+    4) CDH: Renamed DCB, Digital Control Board, controls onboard operations
+    5) SPT: Spectrometer
+    6) Preamp: Science antenna preamplifiers
+    7) RF RX/TX: Communications receiver and transmitter modules
+    8) Charging/Discharging Efficiency: estimate of power lost to inefficiencies in battery and Ohmic heating. Modeling should be expanded.
+    9) Uncertainty Margin: Uncertainty factor for total power load, since all components have not been assembled and tested their loads are not precisely known.
     
 10) Calculating battery State of Charge (SOC) and plotting.
     Using the power loads from 9), and the power output profile from 8), calculates the State of Charge (SOC) of the battery, and plotts results.
     
     1) PPT_threshold: PPT only active when input power estimated to be greater than net draw from PPT and other nighttime instrumentation.
     
-    ii) radio_threshold: RF RX/TX systems only active when net power greater than total daytime power draw.
+    2) radio_threshold: RF RX/TX systems only active when net power greater than total daytime power draw.
     
-    iii)nameplateCapacity: Nominal capacity of battery
+    3)nameplateCapacity: Nominal capacity of battery
     
-    iv) maxCharge: Specified maximum battery charge, from vendor
+    4) maxCharge: Specified maximum battery charge, from vendor
     
-    v) maxDoD: Maximum Depth of Discharge (minimum safe charge), specified by vendor. N.B. NASA requirement may be significantly higher than vendor spec! NASA recommends 40% min safe SOC, possibly grants waivers for lower operation.
+    5) maxDoD: Maximum Depth of Discharge (minimum safe charge), specified by vendor. N.B. NASA requirement may be significantly higher than vendor spec! NASA recommends 40% min safe SOC, possibly grants waivers for lower operation.
    
 11) Better lunar temp and thermal efficiency plot.
     Should be incorporated with previous lunar temp plot cell.
