@@ -5,7 +5,10 @@ Software for calculations related to power generation, management and storage
 
 ## Notes
 
-The `docs` folder cotnains various helpful bits of documentation.
+The `docs` folder cotnains various helpful bits of documentation. In the `reference` forlder
+there is a "sandbox" version of the original power calculation notebook (heavily modified and
+not to be used for anything practical) and some requisite inputs. Kept for continuity with the
+power calculation notebook.
 
 ## MJD
 The MJD gives the number of days since midnight on November 17, 1858. This date corresponds to 2400000.5 days after
