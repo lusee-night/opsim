@@ -28,19 +28,16 @@ Function returns arrays of hours from sunrise, and T,E,W areas at each time in h
 
 7) Plots thermal efficiency data and fit.
 
-8) Calculates and plots solar panel power output throughout one lunar cycle.
+8) Calculates and plots solar panel power output throughout one lunar cycle. Function to calculate power in Watts. Variables are
+described below the code block:
         
         def foo(x):
            x=1
-    1)
+        def PVActualPower(t_surface, EPV_area = .313/2, WPV_area = .313/2,TPV_area = .313,
+           solarConstant = 1361, horizon=0, pv_tilt_angle=0,
+           lander_pitch=0, lander_roll=0, lander_yaw=0,
+           dust_obscuration=0, shadowing=0, EOL_degradation=0)
 
-```
-def PVActualPower(t_surface, EPV_area = .313/2, WPV_area = .313/2,TPV_area = .313,
-     solarConstant = 1361, horizon=0, pv_tilt_angle=0,
-     lander_pitch=0, lander_roll=0, lander_yaw=0,
-     dust_obscuration=0, shadowing=0, EOL_degradation=0)
-```
-Function to calculate power in Watts. Variables are:
     1) `t_surface`: array of surface temps in 15 min increments for lunar cycle
     2) `EPV_area`: Area of E PV panel in m^2
     3) `WPV_area`: Area of W PV panel in m^2
