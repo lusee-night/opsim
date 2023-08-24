@@ -6,23 +6,15 @@ Comments on TiltedSolar_fullday.ipynb, version from 2023-07-27: Proceeding throu
 
 2) `def altaz2xyz(alt,az)`: Function that converts from altitude and azimuth coordinates to Cartesian coordinates, for ease of angle calculations and plotting.
  
-3) def PVProjArea(pv_tilt_angle=0, E_area=1, W_area=1, T_area=1, horizon=0.0, lander_pitch=0, lander_roll=0, lander_yaw=0): function that calculates the projected area of all three photovoltaic (PV) panels, on the top, east, and west faces of LuSEE. Inputs are:
-   
+3) `def PVProjArea(pv_tilt_angle=0, E_area=1, W_area=1, T_area=1, horizon=0.0, lander_pitch=0, lander_roll=0, lander_yaw=0)`: function that calculates the projected area of all three photovoltaic (PV) panels, on the top, east, and west faces of LuSEE. Inputs are:
     1) pv_tilt_angle: Specifies the normal angle of the E and W face panels, with respect to horizontal. Positive angles are up. Basically deprecated now, the E&W panels will have pv_tilt_angle=0.
-  
-    ii) E_area: Area of the east panel. I used to input areas in m^2, Paul now uses 1 here, and multiplies by the physical area later.
-  
-    iii) W_area: Area of the west panel.
-  
-    iv) T_area: Area of the top panel.
-  
-    v) horizon: cutoff elevation angle for the horizon. Usually zero, but could set higher to account for local geographical features.
-  
-    vi) lander_pitch: Rotational angle for lander, angles in degrees. Lander is defined to have "nose" pointing N. Pitch is rotation around E-W axis, + is nose down, - is nose up
-  
-    vii) lander_roll: Rotation around N-S axis, + is top rotating left, - is top rotating right
-  
-    viii) lander_yaw: Rotation around vertical axis, + is nose right, - is nose left
+    2) E_area: Area of the east panel. I used to input areas in m^2, Paul now uses 1 here, and multiplies by the physical area later.
+    3) W_area: Area of the west panel.
+    4) T_area: Area of the top panel.
+    5) horizon: cutoff elevation angle for the horizon. Usually zero, but could set higher to account for local geographical features.
+    6) lander_pitch: Rotational angle for lander, angles in degrees. Lander is defined to have "nose" pointing N. Pitch is rotation around E-W axis, + is nose down, - is nose up
+    7) lander_roll: Rotation around N-S axis, + is top rotating left, - is top rotating right
+    8) lander_yaw: Rotation around vertical axis, + is nose right, - is nose left
 
 Function defines normal vectors for each face, rotates by the lander angles, calculates dot product with solar angle (for array of angles across whole lunar cycle, in 15 min increments).
 
