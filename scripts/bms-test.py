@@ -31,7 +31,7 @@ else:
     if verb: print(f'''*** Caluclated {az.size} sun position points for the range {timerange} ***''')
 
 
-
+# print(HrsFromSunrise)
 
 #iMidnight = np.argmin(alt)
 #iSunrise = np.argmin(np.abs(alt[iMidnight:])) + iMidnight
