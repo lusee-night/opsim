@@ -3,12 +3,9 @@
 Comments on the original __TiltedSolar_fullday.ipynb__ (in the `notebooks` repo), version from 2023-07-27.
 Proceeding through the notebook cells in order for now.
 
-1) Self explanitory, just imports everything we should need for the notebook.
+1. Self explanitory, just imports everything we should need for the notebook.
 
-    * test
-    * test 2
-
-2) `def altaz2xyz(alt,az)`: Function that converts from altitude and azimuth coordinates to Cartesian coordinates, for ease of angle calculations and plotting.
+2. `def altaz2xyz(alt,az)`: Function that converts from altitude and azimuth coordinates to Cartesian coordinates, for ease of angle calculations and plotting.
 
 3) `def PVProjArea(pv_tilt_angle=0, E_area=1, W_area=1, T_area=1, horizon=0.0, lander_pitch=0, lander_roll=0, lander_yaw=0)`: function that calculates the projected area of all three photovoltaic (PV) panels, on the top, east, and west faces of LuSEE. Inputs are:
 

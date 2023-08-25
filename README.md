@@ -5,10 +5,11 @@ Software for calculations related to power generation, management and storage
 
 ## Notes
 
-The `docs` folder cotnains various helpful bits of documentation. In the `reference` forlder
-there is a "sandbox" version of the original power calculation notebook (heavily modified and
+1. The `docs` folder cotnains various helpful bits of documentation.
+2. In the `reference` folder there is a "sandbox" version of the original power calculation notebook (heavily modified and
 not to be used for anything practical) and some requisite inputs. Kept for continuity with the
-power calculation notebook. The folder `nav` contains utility accessor methods to interface
+power calculation notebook.
+3. The folder `nav` contains utility accessor methods to interface
 coordinate calculations.
 
 ## MJD
