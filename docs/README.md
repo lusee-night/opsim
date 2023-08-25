@@ -9,31 +9,31 @@ Proceeding through the notebook cells in order for now.
 
 2. `def altaz2xyz(alt,az)`: Function that converts from altitude and azimuth coordinates to Cartesian coordinates, for ease of angle calculations and plotting.
 
-3) `def PVProjArea(pv_tilt_angle=0, E_area=1, W_area=1, T_area=1, horizon=0.0, lander_pitch=0, lander_roll=0, lander_yaw=0)`: function that calculates the projected area of all three photovoltaic (PV) panels, on the top, east, and west faces of LuSEE. Inputs are:
+3. `def PVProjArea(pv_tilt_angle=0, E_area=1, W_area=1, T_area=1, horizon=0.0, lander_pitch=0, lander_roll=0, lander_yaw=0)`: function that calculates the projected area of all three photovoltaic (PV) panels, on the top, east, and west faces of LuSEE. Inputs are:
 
-    1) `pv_tilt_angle`: Specifies the normal angle of the E and W face panels, with respect to horizontal. Positive angles are up. Basically deprecated now, the E&W panels will have pv_tilt_angle=0.
-    2) `E_area`: Area of the east panel. I used to input areas in m^2, Paul now uses 1 here, and multiplies by the physical area later.
-    3) `W_area`: Area of the west panel.
-    4) `T_area`: Area of the top panel.
-    5) `horizon`: cutoff elevation angle for the horizon. Usually zero, but could set higher to account for local geographical features.
-    6) `lander_pitch`: Rotational angle for lander, angles in degrees. Lander is defined to have "nose" pointing N. Pitch is rotation around E-W axis, + is nose down, - is nose up
-    7) `lander_roll`: Rotation around N-S axis, + is top rotating left, - is top rotating right
-    8) `lander_yaw`: Rotation around vertical axis, + is nose right, - is nose left
+    1. `pv_tilt_angle`: Specifies the normal angle of the E and W face panels, with respect to horizontal. Positive angles are up. Basically deprecated now, the E&W panels will have pv_tilt_angle=0.
+    2. `E_area`: Area of the east panel. I used to input areas in m^2, Paul now uses 1 here, and multiplies by the physical area later.
+    3. `W_area`: Area of the west panel.
+    4. `T_area`: Area of the top panel.
+    5. `horizon`: cutoff elevation angle for the horizon. Usually zero, but could set higher to account for local geographical features.
+    6. `lander_pitch`: Rotational angle for lander, angles in degrees. Lander is defined to have "nose" pointing N. Pitch is rotation around E-W axis, + is nose down, - is nose up
+    7. `lander_roll`: Rotation around N-S axis, + is top rotating left, - is top rotating right
+    8. `lander_yaw`: Rotation around vertical axis, + is nose right, - is nose left
 
 Function defines normal vectors for each face, rotates by the lander angles, calculates dot product with solar angle (for array of angles across whole lunar cycle, in 15 min increments).
 
 Function then uses condition list to check is sun is completely up, >1/2 up, <1/2 up, or completely down, calculates area of chord above horizon in partially risen cases, and multiplies by fraction of sun area up to account for finite disk of sun.
 Function returns arrays of hours from sunrise, and T,E,W areas at each time in hrsFromSunrise.
 
-4) Calculates time indices for key times: iSundown1 (before midnight), iMidnight, iSunrise, iNoon, and iSundown2 (end of lunar day). Makes plots of solar trajectory.
+4. Calculates time indices for key times: iSundown1 (before midnight), iMidnight, iSunrise, iNoon, and iSundown2 (end of lunar day). Makes plots of solar trajectory.
 
-5) Loads and plots Lunar surface temperature data from the Diviner Lunar Radiometer Experiment.
+5. Loads and plots Lunar surface temperature data from the Diviner Lunar Radiometer Experiment.
 
-6) def pvEfficiency(T): fits for the PV thermal efficiency as a function of temperature, using Beginning of Life (BOL) specs from SolAero vendor.
+6. def pvEfficiency(T): fits for the PV thermal efficiency as a function of temperature, using Beginning of Life (BOL) specs from SolAero vendor.
 
-7) Plots thermal efficiency data and fit.
+7. Plots thermal efficiency data and fit.
 
-8) Calculates and plots solar panel power output throughout one lunar cycle. Function to calculate power in Watts. Variables are
+8. Calculates and plots solar panel power output throughout one lunar cycle. Function to calculate power in Watts. Variables are
 described below the code block:
 
         def PVActualPower(t_surface, EPV_area = .313/2, WPV_area = .313/2,TPV_area = .313,
@@ -41,9 +41,9 @@ described below the code block:
            lander_pitch=0, lander_roll=0, lander_yaw=0,
            dust_obscuration=0, shadowing=0, EOL_degradation=0)
 
-    1) `t_surface`: array of surface temps in 15 min increments for lunar cycle
-    2) `EPV_area`: Area of E PV panel in m^2
-    3) `WPV_area`: Area of W PV panel in m^2
+    1. `t_surface`: array of surface temps in 15 min increments for lunar cycle
+    2. `EPV_area`: Area of E PV panel in m^2
+    3. `WPV_area`: Area of W PV panel in m^2
     4) `TPV_area`: Area of top PV panel in m^2
     5) `solarConstant``: Radiated power of sun, in W/m^2
     6) through 10 as defined for PVProjArea() above
