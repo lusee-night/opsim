@@ -7,3 +7,5 @@ The version of the "TiltedSolar" notebook started as a snapshot
 taken on Aug 1st, 2023. It has since been extensively modified for testing
 purposes.
 
+The "tilted solar full day" original notebook is using degrees. The
+"official" luseepy classes use radians.
