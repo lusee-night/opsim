@@ -4,7 +4,9 @@ Comments on the original __TiltedSolar_fullday.ipynb__ (in the `notebooks` repo)
 Proceeding through the notebook cells in order for now.
 
 1) Self explanitory, just imports everything we should need for the notebook.
+
     * test
+    * test 2
 
 2) `def altaz2xyz(alt,az)`: Function that converts from altitude and azimuth coordinates to Cartesian coordinates, for ease of angle calculations and plotting.
 
