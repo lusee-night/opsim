@@ -31,8 +31,6 @@ class Controller:
             info += f'''Panel info: {p.info()}\n'''
         print(info)
 
-    
-
 class Device:
     def __init__(self, name='', voltage=0.0):
         self.name = name
@@ -61,11 +59,17 @@ class Panel:
         self.normal_rot = self.r_tot.apply(self.normal)
         self.dot_sun    = self.dot(sun)
 
+        self.choice_list = [self.dot_sun, self.dot_sun, 0, 0]
+
+
     def dot(self, sun):
         buffer = self.area*np.dot(sun, self.normal_rot)
         buffer[buffer<0] = 0.0
         return buffer
     
+    def power(self, condition_list):
+        return np.select(condition_list, self.choice_list)
+
     def info(self):
         return f'''Panel {self.name}'''
 
