@@ -3,8 +3,15 @@ from    scipy.spatial.transform import Rotation as R
 ##################### PANELS ###########################
 
 class Panel:
-    ### Assume that the pivot angle is zero for now, easy to add later:
-    name =''
+    name ='Base Panel Class.' # will be overwritten in the derived classes
+    ### Class method for the PV efficiency calculation
+    def pvEfficiency(T):
+        pvTemp = np.array([-173.15, 20, 126.85])
+        pvPwr = np.array([152, 130, 110]) / 426.47  # Stated AM0 normal incidence power output of top panel
+        p = np.poly1d(np.polyfit(pvTemp, pvPwr, 2))
+        return p(T)
+    
+    ### Assume that the panel pivot angle is zero for now, easy to add later:
     lander_pitch, lander_roll, lander_yaw = 0., 0., 0.
 
     ### Define lander rotations
@@ -13,6 +20,7 @@ class Panel:
     r3 = R.from_euler('z', lander_yaw,      degrees=True) # + is nose right,    - is nose left
     r_tot = r1*r2*r3
 
+    ###
     def __init__(self, sun, name = '', normal=(None, None, None), area=1.0):
         self.name       = name
         self.area       = area
@@ -21,19 +29,18 @@ class Panel:
         self.dot_sun    = self.dot(sun)
 
         self.choice_list = [self.dot_sun, self.dot_sun, 0, 0]
-
-
+    ###
     def dot(self, sun):
         buffer = self.area*np.dot(sun, self.normal_rot)
         buffer[buffer<0] = 0.0
         return buffer
-    
+    ###
     def set_condition(self, condition_list):
         self.condition_list = condition_list
-    
+    ###
     def power(self):
         return np.select(self.condition_list, self.choice_list)
-
+    ###
     def info(self):
         return f'''Panel {self.name}'''
 

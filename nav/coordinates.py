@@ -2,11 +2,26 @@ import lusee
 import numpy as np
 from lusee import Observation as O
 
-horizon = 0.0
 
+### Keep these simple defaults for now:
+horizon = 0.0
 to_rad  = np.pi/180
 sun_rad = 0.265*to_rad
 
+############################################################################
+class Sun:
+    def __init__(self, mjd=None, alt=None, az=None):
+        self.mjd    = mjd
+        self.alt    = alt
+        self.az     = az
+    ###
+    def calculate(self, interval):
+        o = O(interval)
+        (alt, az) = o.get_track_solar('sun')
+        mjd = [timepoint.mjd for timepoint in o.times]
+        self.mjd    = mjd
+        self.alt    = alt
+        self.az     = az
 ###
 def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
     o = O(interval)
@@ -29,6 +44,11 @@ def hrsFromSunrise(alt, mjd):
     iMidnight = np.argmin(alt)
     iSunrise = np.argmin(np.abs(alt[iMidnight:])) + iMidnight
     return (mjd - mjd[iSunrise])*24
+
+###
+def sun_condition(alt):
+    return [alt>horizon+sun_rad, alt>horizon, alt>horizon-sun_rad, alt<=horizon-sun_rad]
+
 
 
 ##############################################
