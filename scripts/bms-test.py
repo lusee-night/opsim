@@ -24,6 +24,9 @@ if cachefile!='':
     az  = mjd_alt_az[:,2]
     if verb: print(f'''*** Read {az.size} data points from file {cachefile} ***''')
 else:
+    if timerange == '':
+        print('*** Missing timerange, exiting... ***')
+        exit(-1)
     # "track" is imported from "coordinates", and wraps "Observation"
     (times, alt, az) = track(timerange)
     mjd = np.empty(times.size)

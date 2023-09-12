@@ -22,7 +22,9 @@ class Sun:
         self.mjd    = mjd
         self.alt    = alt
         self.az     = az
-###
+
+
+### -- non-class functions:
 def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
     o = O(interval)
     length = len(o.times)
