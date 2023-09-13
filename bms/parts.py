@@ -2,6 +2,8 @@
 from bms.panels import EPanel, TPanel, WPanel
 import numpy as np
 
+from enum import Enum
+
 class Battery:
     def __init__(self, voltage=0.0, charge=0.0):
         self.voltage    = voltage
@@ -51,10 +53,13 @@ class Controller:
         for p in self.panels:
             p.set_condition(condition_list)
 
-class Device:
-    def __init__(self, name='', voltage=0.0):
-        self.name = name
-        self.voltage = voltage
+class Device():
+    def __init__(self, name='', state=None):
+        self.name   = name
+        self.state  = state
+
+    def set_state(self, state):
+        self.state = state
 
     def set_voltage(self, voltage):
         self.voltage = voltage

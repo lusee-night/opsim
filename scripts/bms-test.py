@@ -52,10 +52,12 @@ alt_sun_top = np.asarray(alt)+sun_rad
 sun     = altaz2xyz(alt, az)
 sun_top = altaz2xyz(alt_sun_top, az)
 
-battery = Battery(11.6) # print('Battery voltage:', battery.voltage)
+battery = Battery(1.0, 1.0) # print('Battery voltage:', battery.voltage)
 ctr     = Controller(battery) # print('Battery voltage from controller:', ctr.battery.voltage)
 battery.set_voltage(10.1) # print('Battery voltage from controller:', ctr.battery.voltage)
 
+
+d = Device('test', Enum('Color', ['RED', 'GREEN', 'BLUE']))
 
 e = EPanel(sun, 'E')
 ctr.add_panel(e)
