@@ -5,13 +5,16 @@ import numpy as np
 from enum import Enum
 
 class Battery:
-    def __init__(self, voltage=0.0, charge=0.0):
+    def __init__(self, voltage=0.0, charge=0.0, temperature=0.0):
         self.voltage    = voltage
         self.charge     = charge
+        self.temperature= temperature
 
     def set_voltage(self, voltage):
         self.voltage = voltage
 
+    def set_temperature(self, temperature):
+        self.temperature = temperature
 
 class Controller:
     def __init__(self, battery):
