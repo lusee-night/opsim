@@ -14,6 +14,9 @@ class Sun:
         self.mjd    = mjd
         self.alt    = alt
         self.az     = az
+        self.N      = 0
+        if az is not None: self.N = az.size
+
     ###
     def calculate(self, interval):
         o = O(interval)
@@ -22,7 +25,21 @@ class Sun:
         self.mjd    = mjd
         self.alt    = alt
         self.az     = az
+        if self.az is not None: self.N = len(self.az)
 
+    ###
+    def read(self, filename):
+        try:
+            with open(filename, 'rb') as f: mjd_alt_az = np.load(f)
+            print(f'''Loaded data from file "{filename}", number of points for the three components: {mjd_alt_az.size}''')
+
+            self.mjd = mjd_alt_az[:,0]
+            self.alt = mjd_alt_az[:,1]
+            self.az  = mjd_alt_az[:,2]
+            if self.az is not None: self.N = len(self.az)
+        except:
+            print(f'''ERROR using file {filename} as the data source''')
+            self.N = 0
 
 ### -- non-class functions:
 def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
