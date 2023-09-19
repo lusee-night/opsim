@@ -10,12 +10,24 @@ sun_rad = 0.265*to_rad
 
 ############################################################################
 class Sun:
+    radius = 0.265*to_rad
     def __init__(self, mjd=None, alt=None, az=None):
         self.mjd    = mjd
         self.alt    = alt
         self.az     = az
         self.N      = 0
-        if az is not None: self.N = az.size
+        self.finalize()
+
+    def finalize(self):
+        if self.az is not None:
+            self.N = self.az.size
+            self.alt_top = np.asarray(self.alt) + self.radius
+            sun = np.zeros((len(self.alt),3))
+            sun[:,0] = np.cos(self.alt) * np.sin(self.az)
+            sun[:,1] = np.cos(self.alt) * np.cos(self.az)
+            sun[:,2] = np.sin(self.alt)
+            self.xyz = sun
+            self.condition =  [self.alt>horizon+self.radius, self.alt>horizon, self.alt>horizon-self.radius, self.alt<=horizon-self.radius]
 
     ###
     def calculate(self, interval):
@@ -25,7 +37,7 @@ class Sun:
         self.mjd    = mjd
         self.alt    = alt
         self.az     = az
-        if self.az is not None: self.N = len(self.az)
+        self.finalize()
 
     ###
     def read(self, filename):
@@ -36,11 +48,19 @@ class Sun:
             self.mjd = mjd_alt_az[:,0]
             self.alt = mjd_alt_az[:,1]
             self.az  = mjd_alt_az[:,2]
-            if self.az is not None: self.N = len(self.az)
+            self.finalize()
         except:
             print(f'''ERROR using file {filename} as the data source''')
             self.N = 0
 
+
+    ###
+    def hrsFromSunrise(self):
+        iMidnight = np.argmin(self.alt)
+        iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight
+        return (self.mjd - self.mjd[iSunrise])*24
+
+########################################################################################################################
 ### -- non-class functions:
 def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
     o = O(interval)
