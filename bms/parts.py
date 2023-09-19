@@ -1,9 +1,10 @@
-
-from bms.panels import EPanel, TPanel, WPanel
 import numpy as np
-
+import simpy
 from enum import Enum
 
+from bms.panels import EPanel, TPanel, WPanel
+
+#################################################################################
 class Battery:
     def __init__(self, voltage=0.0, charge=0.0, temperature=0.0):
         self.voltage    = voltage
@@ -16,12 +17,16 @@ class Battery:
     def set_temperature(self, temperature):
         self.temperature = temperature
 
+#################################################################################
 class Controller:
-    def __init__(self, battery):
+    def __init__(self, battery, env=None):
         self.panels     = []
         self.devices    = []
         self.battery    = battery
-    ###
+        self.env        = env
+
+
+    ### PANELS SECTION ###
     def add_panel(self, panel):
         self.panels.append(panel)
     ###
@@ -51,11 +56,11 @@ class Controller:
 
         return power
 
-
     def set_condition(self, condition_list):
         for p in self.panels:
             p.set_condition(condition_list)
 
+#################################################################################
 class Device():
     def __init__(self, name='', state=None):
         self.name   = name

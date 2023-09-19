@@ -1,5 +1,6 @@
-import lusee
 import numpy as np
+
+import lusee
 from lusee import Observation as O
 
 
