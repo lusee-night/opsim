@@ -7,13 +7,7 @@ from   scipy.spatial.transform import Rotation as R
 
 class Panel:
     name ='Base Panel Class.' # will be overwritten in the derived classes
-    ### Class method for the PV efficiency calculation
-    def pvEfficiency(T):
-        pvTemp = np.array([-173.15, 20, 126.85])
-        pvPwr = np.array([152, 130, 110]) / 426.47  # Stated AM0 normal incidence power output of top panel
-        p = np.poly1d(np.polyfit(pvTemp, pvPwr, 2))
-        return p(T)
-    
+
     ### Assume that the panel pivot angle is zero for now, easy to add later:
     lander_pitch, lander_roll, lander_yaw = 0., 0., 0.
 
@@ -46,7 +40,15 @@ class Panel:
     ###
     def info(self):
         return f'''Panel {self.name}'''
+        ### Static method for the PV efficiency calculation
+    @staticmethod
+    def pvEfficiency(T):
+        pvTemp = np.array([-173.15, 20, 126.85])
+        pvPwr = np.array([152, 130, 110]) / 426.47  # Stated AM0 normal incidence power output of top panel
+        p = np.poly1d(np.polyfit(pvTemp, pvPwr, 2))
+        return p(T)
 
+# ------------------------------------------------------------
 class EPanel(Panel):
     def __init__(self, sun, name):
         Panel.__init__(self, sun,  name, (1., 0., 0.))
