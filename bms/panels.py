@@ -1,11 +1,12 @@
 import numpy as np
-import simpy
+import simpy # placeholder for now, FIXME
 
 from   scipy.spatial.transform import Rotation as R
 
 ##################### PANELS ###########################
 
-class Panel:
+class Panel: # base, "abstract"
+
     name ='Base Panel Class.' # will be overwritten in the derived classes
 
     ### Assume that the panel pivot angle is zero for now, easy to add later:
@@ -18,9 +19,12 @@ class Panel:
     r_tot = r1*r2*r3
 
     ###
-    def __init__(self, sun, name = '', normal=(None, None, None), area=1.0):
+    def __init__(self, sun, name = '', normal=(None, None, None), env=None, area=1.0):
         self.name       = name
         self.area       = area
+        self.env        = env
+        
+        # The "normal" is specific to each of the three (or more) subclassed panels
         self.normal     = normal
         self.normal_rot = self.r_tot.apply(self.normal)
         self.dot_sun    = self.dot(sun)
@@ -40,7 +44,8 @@ class Panel:
     ###
     def info(self):
         return f'''Panel {self.name}'''
-        ### Static method for the PV efficiency calculation
+    
+    ### Static method for the PV efficiency calculation (just convenient)
     @staticmethod
     def pvEfficiency(T):
         pvTemp = np.array([-173.15, 20, 126.85])

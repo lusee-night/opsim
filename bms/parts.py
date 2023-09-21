@@ -60,6 +60,12 @@ class Controller:
         for p in self.panels:
             p.set_condition(condition_list)
 
+    ### Simpy machinery
+    def run(self):
+        while True:
+            print(f'''Clock {self.env.now}''')
+            yield self.env.timeout(1)
+
 #################################################################################
 class Device():
     def __init__(self, name='', state=None):

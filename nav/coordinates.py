@@ -32,6 +32,12 @@ class Sun:
 
     ###
     def calculate(self, interval):
+        # Note the crafty logic in the Observation class constructor -
+        # it's hand-made polymorphism.
+        # When a string is supplied, it defaults to 15 min time steps.
+        # And in this case, the interval is a string.
+        # Need to improve the logic, later.
+        
         o = O(interval)
         (alt, az) = o.get_track_solar('sun')
         mjd = [timepoint.mjd for timepoint in o.times]
