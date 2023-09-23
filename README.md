@@ -30,9 +30,3 @@ as shown in the following example:
 ```bash
 export PYTHONPATH=/home/maxim/projects/lusee/luseepy:/home/maxim/.virtualenvs/lusee/lib/python3.10/site-packages/backports
 ```
-
-## Dev Notes
-
-### To-Do
-
-Sep 2023: put in place the stepping action with SimPy

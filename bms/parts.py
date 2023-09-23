@@ -19,11 +19,12 @@ class Battery:
 
 #################################################################################
 class Controller:
-    def __init__(self, battery, env=None):
+    def __init__(self, battery, env=None, time = 0):
         self.panels     = []
         self.devices    = []
         self.battery    = battery
         self.env        = env
+        self.time       = time
 
 
     ### PANELS SECTION ###
@@ -46,6 +47,7 @@ class Controller:
             info += f'''Panel info: {p.info()}\n'''
         print(info)
 
+    ###
     def panels_power(self):
         power = None
         for p in self.panels:
@@ -56,11 +58,17 @@ class Controller:
 
         return power
 
+    ###
     def set_condition(self, condition_list):
         for p in self.panels:
             p.set_condition(condition_list)
 
-    ### Simpy machinery
+    ###
+    def set_time(self, time):
+        self.time = time
+
+
+    ### SimPy machinery
     def run(self):
         while True:
             print(f'''Clock {self.env.now}''')

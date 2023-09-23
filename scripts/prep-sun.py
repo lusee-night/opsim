@@ -5,7 +5,7 @@ from nav.coordinates import *
 #######################################
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose",  action='store_true', help="Verbose mode")
-parser.add_argument("-f", "--cachefile",type=str,            help="The cache file", default='')
+parser.add_argument("-f", "--cachefile",type=str,            help="The cache file for Sun coordinates (output)", default='')
 parser.add_argument("-r", "--timerange",type=str,            help="The time range", default='')
 #######################################
 
