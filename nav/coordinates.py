@@ -17,8 +17,10 @@ class Sun:
         self.alt    = alt
         self.az     = az
         self.N      = 0
+        self.verbose= False
         self.finalize()
 
+    ###
     def finalize(self):
         if self.az is not None:
             self.N = self.az.size
@@ -50,14 +52,14 @@ class Sun:
     def read(self, filename):
         try:
             with open(filename, 'rb') as f: mjd_alt_az = np.load(f)
-            print(f'''Loaded data from file "{filename}", number of points for the three components: {mjd_alt_az.size}''')
+            if self.verbose: print(f'''Loaded data from file "{filename}", number of points for the three components: {mjd_alt_az.size}''')
 
             self.mjd = mjd_alt_az[:,0]
             self.alt = mjd_alt_az[:,1]
             self.az  = mjd_alt_az[:,2]
             self.finalize()
         except:
-            print(f'''ERROR using file {filename} as the data source''')
+            if self.verbose: print(f'''ERROR using file {filename} as the data source''')
             self.N = 0
 
 

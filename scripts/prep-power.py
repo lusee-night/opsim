@@ -1,6 +1,9 @@
 #! /usr/bin/env python
 import argparse
+import os
+
 from nav.coordinates import *
+from bms.parts       import Battery, Controller
 
 #######################################
 parser = argparse.ArgumentParser()
@@ -9,7 +12,7 @@ parser.add_argument("-c", "--cachefile",type=str,            help="The cache fil
 parser.add_argument("-p", "--power",    type=str,            help="The cache file for the power data (output)", default='')
 #######################################
 
-# Example of the time range: "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
+# Example of the time range used to calculate nav cache for the Sun: "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
 
 args    = parser.parse_args()
 
@@ -20,6 +23,14 @@ verb        = args.verbose
 if verb:
     print("*** Verbose mode ***")
     print(f'''*** Using nav cache file: "{cachefile}", writing to the power cache file: "{power}" ***''')
+    print(f'''*** Current directory: {os.getcwd()} ***''')
+
+mySun = Sun()
+mySun.verbose=verb
+
+mySun.read(cachefile)
+if verb: print(f'''*** Number of points read from the file {cachefile}: {mySun.N} ***''')
+
 
 # "track" is imported from "coordinates", and wraps "Observation"
 # (times, alt, az) = track(timerange)
