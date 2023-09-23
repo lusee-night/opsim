@@ -27,7 +27,7 @@ class Panel: # base, "abstract"
         # The "normal" is specific to each of the three (or more) subclassed panels
         self.normal     = normal
         self.normal_rot = self.r_tot.apply(self.normal)
-        self.dot_sun    = self.dot(sun)
+        self.dot_sun    = self.dot(sun.xyz)
 
         self.choice_list = [self.dot_sun, self.dot_sun, 0, 0]
     ###

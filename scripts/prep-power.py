@@ -32,20 +32,18 @@ mySun.read(cachefile)
 if verb: print(f'''*** Number of points read from the file {cachefile}: {mySun.N} ***''')
 
 
-# "track" is imported from "coordinates", and wraps "Observation"
-# (times, alt, az) = track(timerange)
+battery = Battery(0.0) # Dummy battery, just to satisfy the controller
+ctr     = Controller(battery)
+ctr.add_all_panels(mySun)
+ctr.set_condition(mySun.condition)
 
-# N = times.size
+pwr = ctr.panels_power()
 
-# print(N)
-# mjds = np.empty(N)
-# for i in range(N): mjds[i] = times[i].mjd
+if power=='':
+    for p in pwr: print(p)
+    exit(0)
 
-# result = np.column_stack((mjds, alt, az))
+with open(power, 'wb') as f: np.save(f, pwr)
 
-# print(result)
 
-# with open(cachefile, 'wb') as f:
-#     np.save(f, result)
-    
 exit(0)
