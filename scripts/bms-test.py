@@ -1,3 +1,7 @@
+################################################################
+# DEPRECATED UNTIL FURTHER NOTICE -- CHANGES IN DEPENDENICES ETC
+################################################################
+
 #! /usr/bin/env python
 import argparse
 import bms
