@@ -1,4 +1,11 @@
 #! /usr/bin/env python
+
+#######################################
+# Work in progress, coding deferred
+# until we add same to the sim notebook
+#######################################
+
+
 import argparse
 import os
 
