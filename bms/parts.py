@@ -21,13 +21,12 @@ class Battery:
 
 #################################################################################
 class Controller:
-    def __init__(self, battery, env=None, time = 0):
+    def __init__(self, battery, env=None, time = None):
         self.panels     = []
         self.devices    = []
         self.battery    = battery
         self.env        = env
         self.time       = time
-
 
     ### PANELS SECTION ###
     def add_panel(self, panel):
@@ -74,7 +73,7 @@ class Controller:
     def run(self):
         while True:
             myT = int(self.env.now)
-            print(f'''Clock: {myT}, power: {Panel.profile[myT]}''')
+            print(f'''Clock: {self.time[myT]}, power: {Panel.profile[myT]}''')
             yield self.env.timeout(1)
 
 #################################################################################
