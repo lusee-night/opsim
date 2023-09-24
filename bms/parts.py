@@ -78,12 +78,17 @@ class Controller:
 
 #################################################################################
 class Device():
-    def __init__(self, name='', state=None):
+    def __init__(self, name, state):
         self.name   = name
         self.state  = state
 
-    def set_state(self, state):
-        self.state = state
+class ControllerHardware(Device):
+    def __init__(self, name, state):
+        Device.__init__(self, name, state)
 
-    def set_voltage(self, voltage):
-        self.voltage = voltage
+
+    # def set_state(self, state):
+    #     self.state = state
+
+    # def set_voltage(self, voltage):
+    #     self.voltage = voltage
