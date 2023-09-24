@@ -59,7 +59,7 @@ class Sun:
             self.az  = mjd_alt_az[:,2]
             self.finalize()
         except:
-            if self.verbose: print(f'''ERROR using file {filename} as the data source''')
+            if self.verbose: print(f'''ERROR using file {filename} as the data source for the Sun trajectory''')
             self.N = 0
 
 

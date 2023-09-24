@@ -1,15 +1,17 @@
-import numpy as np
-import simpy
-from enum import Enum
+import  numpy as np
+import  simpy
+from    enum import Enum
 
-from bms.panels import EPanel, TPanel, WPanel
+from    bms.panels import * # EPanel, TPanel, WPanel
 
 #################################################################################
 class Battery:
     def __init__(self, voltage=0.0, charge=0.0, temperature=0.0):
         self.voltage    = voltage
         self.charge     = charge
+ 
         self.temperature= temperature
+        self.verbose    = True
 
     def set_voltage(self, voltage):
         self.voltage = voltage
@@ -71,7 +73,8 @@ class Controller:
     ### SimPy machinery
     def run(self):
         while True:
-            print(f'''Clock {self.env.now}''')
+            myT = int(self.env.now)
+            print(f'''Clock: {myT}, power: {Panel.profile[myT]}''')
             yield self.env.timeout(1)
 
 #################################################################################
