@@ -28,8 +28,6 @@ class Panel: # base, "abstract"
         self.name       = name
         self.area       = area
         self.env        = env
-
-
         
         # The "normal" is specific to each of the three (or more) subclassed panels
         self.normal     = normal

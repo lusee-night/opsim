@@ -78,12 +78,12 @@ class Controller:
 
 #################################################################################
 class Device():
-    def __init__(self, name, state):
+    def __init__(self, name=None, state=None):
         self.name   = name
         self.state  = state
 
 class ControllerHardware(Device):
-    def __init__(self, name, state):
+    def __init__(self, name=None, state=None):
         Device.__init__(self, name, state)
 
 
