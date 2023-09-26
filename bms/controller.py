@@ -16,6 +16,11 @@ class Controller:
     ### PANELS SECTION ###
     def add_panel(self, panel):
         self.panels.append(panel)
+
+    ### DEVICES SECTION ###
+    def add_device(self, device):
+        self.devices.append(device)
+
     ###
     def add_all_panels(self, sun):
         self.add_panel(EPanel(sun, 'E'))
@@ -66,6 +71,9 @@ class Controller:
                 self.battery.put(myPwr)
             except:
                 pass
+
+            for d in self.devices:
+                self.battery.get(d.current) # print(self.battery.level)
 
             self.monitor.charge+=myPwr
             self.monitor.battery[myT] = self.battery.level

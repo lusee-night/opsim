@@ -29,6 +29,7 @@ class Device():
 class ControllerHardware(Device):
     def __init__(self, name=None, state=None):
         Device.__init__(self, name, state)
+        self.current = 0.1
 
 
 #################################################################################
