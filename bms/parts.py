@@ -25,11 +25,15 @@ class Device():
     def __init__(self, name=None, state=None):
         self.name   = name
         self.state  = state
+        self.currents = {}
 
 class ControllerHardware(Device):
     def __init__(self, name=None, state=None):
         Device.__init__(self, name, state)
-        self.current = 0.1
+        self.currents = dict(ON=0.1, OFF=0.0)
+
+    def current(self):
+        return self.currents[self.state]
 
 
 #################################################################################

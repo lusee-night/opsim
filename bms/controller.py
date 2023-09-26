@@ -73,7 +73,7 @@ class Controller:
                 pass
 
             for d in self.devices:
-                self.battery.get(d.current) # print(self.battery.level)
+                self.battery.get(d.current()) # print(self.battery.level)
 
             self.monitor.charge+=myPwr
             self.monitor.battery[myT] = self.battery.level
