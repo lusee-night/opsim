@@ -66,6 +66,9 @@ class Controller:
             myT = int(self.env.now)
 
             myPwr = Panel.profile[myT]
+
+            clock = self.time[myT]
+
             self.monitor.buffer[myT] = myPwr
             try:
                 self.battery.put(myPwr)
@@ -73,7 +76,8 @@ class Controller:
                 pass
 
             for d in self.devices:
-                self.battery.get(d.current()) # print(self.battery.level)
+                if clock >60720.0: d.state='OFF'
+                if d.current()>0.0: self.battery.get(d.current())
 
             self.monitor.charge+=myPwr
             self.monitor.battery[myT] = self.battery.level
