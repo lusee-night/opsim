@@ -61,8 +61,7 @@ class Controller:
     def set_time(self, time):
         self.time = time
 
-    ### SimPy machinery
-    # print(f'''Clock: {self.time[myT]}, power: {Panel.profile[myT]}''')
+    ### SimPy machinery: print(f'''Clock: {self.time[myT]}, power: {Panel.profile[myT]}''')
 
     def run(self):
         while True:
