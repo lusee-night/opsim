@@ -1,8 +1,8 @@
 import  numpy as np
 from    enum import Enum
 
-# At present, this is the device description, current drawn from
-# the PSU, depending on the state:
+# An example of a device profile.
+# Recently, read from YAML and kept here for reference:
 
 DeviceProfiles = {
     "ControllerHardware": dict(ON=0.1, OFF=0.0)
@@ -10,10 +10,10 @@ DeviceProfiles = {
 
 #################################################################################
 class Device():
-    def __init__(self, name=None, state=None, profile = None):
-        self.name   = name
-        self.state  = state
-        self.currents = profile
+    def __init__(self, name=None, profile = None, state='OFF'):
+        self.name       = name
+        self.state      = state
+        self.currents   = profile
 
     def current(self):
         return self.currents[self.state]

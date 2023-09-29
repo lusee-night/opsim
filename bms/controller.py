@@ -9,7 +9,7 @@ class Controller:
         self.env        = env
         self.monitor    = monitor
         self.panels     = []
-        self.devices    = []
+        self.devices    = {}
 
 
 
@@ -19,7 +19,10 @@ class Controller:
 
     ### DEVICES SECTION ###
     def add_device(self, device):
-        self.devices.append(device)
+        self.devices[device.name]=device
+
+    def set_device_state(self, name, state):
+        self.devices[name].state = state
 
     ###
     def add_all_panels(self, sun):
@@ -63,11 +66,9 @@ class Controller:
 
     def run(self):
         while True:
-            myT = int(self.env.now)
-
-            myPwr = Panel.profile[myT]
-
-            clock = self.time[myT]
+            myT     = int(self.env.now)
+            myPwr   = Panel.profile[myT]
+            clock   = self.time[myT]
 
             self.monitor.buffer[myT] = myPwr
             try:
@@ -75,9 +76,11 @@ class Controller:
             except:
                 pass
 
-            for d in self.devices:
-                if clock >60720.0: d.state='OFF'
-                if d.current()>0.0: self.battery.get(d.current())
+            for k in self.devices.keys():
+                the_device = self.devices[k]
+                if clock >60720.0: the_device.state = 'OFF'
+                cur = the_device.current()
+                if cur>0.0: self.battery.get(cur)
 
             self.monitor.charge+=myPwr
             self.monitor.battery[myT] = self.battery.level
