@@ -9,6 +9,10 @@ horizon = 0.0
 to_rad  = np.pi/180
 sun_rad = 0.265*to_rad
 
+# This was borrowed from the temperature-related cell in Ben's notebook
+hrs_per_lunar_day = 2551443/3600
+t_inc = 0.25
+
 ############################################################################
 class Sun:
     radius = 0.265*to_rad
