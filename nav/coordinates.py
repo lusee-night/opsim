@@ -37,9 +37,10 @@ class Sun:
             self.condition =  [self.alt>horizon+self.radius, self.alt>horizon, self.alt>horizon-self.radius, self.alt<=horizon-self.radius]
 
             # Sunrise calculations
-            iMidnight = np.argmin(self.alt)
-            iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight            
-            self.hrsFromSunrise = (self.mjd - self.mjd[iSunrise])*24
+            self.iMidnight = np.argmin(self.alt)
+            self.iSunrise = np.argmin(np.abs(self.alt[self.iMidnight:])) + self.iMidnight            
+            self.hrsFromSunrise = (self.mjd - self.mjd[self.iSunrise])*24
+            self.sunrise = self.mjd[self.iSunrise]
 
     ###
     def calculate(self, interval):
