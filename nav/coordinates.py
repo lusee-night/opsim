@@ -36,6 +36,11 @@ class Sun:
             self.xyz = sun
             self.condition =  [self.alt>horizon+self.radius, self.alt>horizon, self.alt>horizon-self.radius, self.alt<=horizon-self.radius]
 
+            # Sunrise calculations
+            iMidnight = np.argmin(self.alt)
+            iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight            
+            self.hrsFromSunrise = (self.mjd - self.mjd[iSunrise])*24
+
     ###
     def calculate(self, interval):
         # Note the crafty logic in the Observation class constructor -
@@ -68,10 +73,10 @@ class Sun:
 
 
     ###
-    def hrsFromSunrise(self):
-        iMidnight = np.argmin(self.alt)
-        iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight
-        return (self.mjd - self.mjd[iSunrise])*24
+    # def hrsFromSunrise(self):
+    #     iMidnight = np.argmin(self.alt)
+    #     iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight
+    #     return (self.mjd - self.mjd[iSunrise])*24
 
 ########################################################################################################################
 ### -- non-class functions:
