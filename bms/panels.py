@@ -58,7 +58,7 @@ class Panel: # base, "abstract"
         p = np.poly1d(np.polyfit(pvTemp, pvPwr, 2))
         return p(T)
 
-    ### Static method to read the power profile
+    ### Static method to read the panel exposure profile
     @staticmethod
     def read_profile(filename):
         try:

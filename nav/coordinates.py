@@ -22,6 +22,7 @@ class Sun:
         self.az     = az
         self.N      = 0
         self.verbose= False
+        self.temperature = None
         self.finalize()
 
     ###
@@ -44,11 +45,9 @@ class Sun:
 
     ###
     def calculate(self, interval):
-        # Note the crafty logic in the Observation class constructor -
-        # it's hand-made polymorphism.
+        # Note the crafty logic in the Observation class constructor - it's hand-made polymorphism.
         # When a string is supplied, it defaults to 15 min time steps.
-        # And in this case, the interval is a string.
-        # Need to improve the logic, later.
+        # And in this case, the interval is a string. Need to improve the logic, later.
         
         o = O(interval)
         (alt, az) = o.get_track_solar('sun')
@@ -59,7 +58,7 @@ class Sun:
         self.finalize()
 
     ###
-    def read(self, filename):
+    def read_trajectory(self, filename):
         try:
             with open(filename, 'rb') as f: mjd_alt_az = np.load(f)
             if self.verbose: print(f'''Loaded data from file "{filename}", number of points for the three components: {mjd_alt_az.size}''')
@@ -72,6 +71,16 @@ class Sun:
             if self.verbose: print(f'''ERROR using file {filename} as the data source for the Sun trajectory''')
             self.N = 0
 
+
+    def read_temperature(self, filename):
+        try:
+            temp_data = np.loadtxt(filename, delimiter=',')
+            if self.verbose: print(f'''Loaded data from file "{filename}", number of points: {temp_data.size}''')
+            x = temp_data[7:35,0]-5+self.sunrise # 60726.14583333333
+            y = temp_data[7:35,1]
+            self.temperature = np.interp(self.mjd, x, y) -273.
+        except:
+            if self.verbose: print(f'''ERROR using file {filename} as the data source for the power profile''')
 
     ###
     # def hrsFromSunrise(self):
