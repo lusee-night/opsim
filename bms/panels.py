@@ -35,6 +35,8 @@ class Panel: # base, "abstract"
         self.dot_sun    = self.dot(sun.xyz)
 
         self.choice_list = [self.dot_sun, self.dot_sun, 0, 0]
+        self.temperature = sun.temperature
+    
     ###
     def dot(self, sun):
         buffer = self.area*np.dot(sun, self.normal_rot)
@@ -45,7 +47,9 @@ class Panel: # base, "abstract"
         self.condition_list = condition_list
     ###
     def power(self):
-        return np.select(self.condition_list, self.choice_list)
+        pwr = np.select(self.condition_list, self.choice_list)
+        pwr*=2.0
+        return pwr
     ###
     def info(self):
         return f'''Panel {self.name}'''

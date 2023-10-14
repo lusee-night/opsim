@@ -37,6 +37,8 @@ ctr     = Controller(battery)
 ctr.add_all_panels(mySun)
 ctr.set_condition(mySun.condition)
 
+
+# Harvest the power -- this method is just an aggregator
 pwr = ctr.panels_power()
 
 if power=='':

@@ -43,6 +43,9 @@ class Sun:
             self.hrsFromSunrise = (self.mjd - self.mjd[self.iSunrise])*24
             self.sunrise = self.mjd[self.iSunrise]
 
+            # Keep it separate to unclutter the main ctor
+            self.temperature = None
+
     ###
     def calculate(self, interval):
         # Note the crafty logic in the Observation class constructor - it's hand-made polymorphism.

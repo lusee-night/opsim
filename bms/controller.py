@@ -41,7 +41,9 @@ class Controller:
             info += f'''Panel info: {p.info()}\n'''
         print(info)
 
+    
     ###
+    # An aggregator, to collect power from the panels
     def panels_power(self):
         power = None
         for p in self.panels:
