@@ -10,8 +10,7 @@ class Controller:
         self.monitor    = monitor
         self.panels     = []
         self.devices    = {}
-
-
+        self.power      = None # this is calculated later
 
     ### PANELS SECTION ###
     def add_panel(self, panel):
@@ -44,7 +43,7 @@ class Controller:
     
     ###
     # An aggregator, to collect power from the panels
-    def panels_power(self):
+    def calculate_power(self):
         power = None
         for p in self.panels:
             if power is None:
@@ -52,7 +51,7 @@ class Controller:
             else:
                 power = power + p.power()
 
-        return power
+        self.power = power
 
     ###
     def set_condition(self, condition_list):
@@ -63,12 +62,17 @@ class Controller:
     def set_time(self, time):
         self.time = time
 
-    ### SimPy machinery: print(f'''Clock: {self.time[myT]}, power: {Panel.profile[myT]}''')
 
+
+    ######### Simulation code
     def run(self):
+    
+        ### SimPy machinery: print(f'''Clock: {self.time[myT]}, power: {Panel.profile[myT]}''')
+    
         while True:
             myT     = int(self.env.now)
-            myPwr   = Panel.profile[myT]
+            myPwr   = self.power[myT]
+            # myPwr   = Panel.profile[myT]
             clock   = self.time[myT]
 
             self.monitor.buffer[myT] = myPwr
