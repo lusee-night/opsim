@@ -13,6 +13,11 @@ the development procerss.
 * Put in place the stepping action with SimPy (simple `yield` in place 09/23/2023)
 * Make the power output series generator to save data in files
 
-## Missing
+### October 2023
 
-* Power output is currently just the projected area, no efficiency added -- __FIXME__
+* Added the temperature profile to the Sun class
+* Added the sunrise index to the Sun class
+
+## FIXME
+
+* 202310 -- the logic for reading in the prefab temperature profile is crafty, need to generalize
