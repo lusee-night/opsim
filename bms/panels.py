@@ -25,6 +25,7 @@ class Panel: # base, "abstract"
 
     ###
     def __init__(self, sun, name = '', normal=(None, None, None), env=None, area=1.0):
+        self.sun        = sun
         self.name       = name
         self.area       = area
         self.env        = env
@@ -46,10 +47,15 @@ class Panel: # base, "abstract"
     def set_condition(self, condition_list):
         self.condition_list = condition_list
     ###
-    def power(self):
+    def exposure(self):
         pwr = np.select(self.condition_list, self.choice_list)
-        pwr*=2.0
+        # pwr*=2.0
         return pwr
+    
+    ###
+    def power(self):
+        eff = Panel.pvEfficiency(self.sun.temperature)
+        return eff*np.select(self.condition_list, self.choice_list)
     ###
     def info(self):
         return f'''Panel {self.name}'''
