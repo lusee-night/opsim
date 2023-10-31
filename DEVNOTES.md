@@ -17,6 +17,7 @@ the development procerss.
 
 * Added the temperature profile to the Sun class
 * Added the sunrise index to the Sun class
+* Improved the API in _luseepy_ so a tuple of start and end can be provided as an argument
 
 ## FIXME
 
