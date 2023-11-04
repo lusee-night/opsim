@@ -2,8 +2,9 @@
 import argparse
 import os
 
-from nav.coordinates import *
-from bms.parts       import Battery, Controller
+from nav.coordinates    import *
+from bms.battery        import Battery
+from bms.controller     import Controller
 
 #######################################
 parser = argparse.ArgumentParser()
@@ -28,11 +29,11 @@ if verb:
 mySun = Sun()
 mySun.verbose=verb
 
-mySun.read(cachefile)
+mySun.read_trajectory(cachefile)
 if verb: print(f'''*** Number of points read from the file {cachefile}: {mySun.N} ***''')
 
 
-battery = Battery(0.0) # Dummy battery, just to satisfy the controller
+battery = Battery(env=None, capacity=1000.) # Dummy battery, just to satisfy the controller
 ctr     = Controller(battery)
 ctr.add_all_panels(mySun)
 ctr.set_condition(mySun.condition)
