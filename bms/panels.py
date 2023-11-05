@@ -54,7 +54,8 @@ class Panel: # base, "abstract"
     
     ###
     def power(self):
-        eff = Panel.pvEfficiency(self.sun.temperature)
+        eff = 1.0 # default to 1.o if the temperature curve is not set for the sun
+        if self.sun.temperature is not None: eff = Panel.pvEfficiency(self.sun.temperature)
         return eff*np.select(self.condition_list, self.choice_list)
     ###
     def info(self):

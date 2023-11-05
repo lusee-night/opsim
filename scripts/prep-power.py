@@ -29,21 +29,26 @@ if verb:
 mySun = Sun()
 mySun.verbose=verb
 
+# NB. In this app the temperature curve for the Sun is not set, efficiency will default to 1.0
+
 mySun.read_trajectory(cachefile)
 if verb: print(f'''*** Number of points read from the file {cachefile}: {mySun.N} ***''')
 
+# Dummy battery, needed for the controller API
+# It must have none-zero capacity because of the SimPy requirements
+battery = Battery(env=None, capacity=1000.)
 
-battery = Battery(env=None, capacity=1000.) # Dummy battery, just to satisfy the controller
-ctr     = Controller(battery)
+# Create thec controller and set the sun information for it
+ctr = Controller(battery)
 ctr.add_all_panels(mySun)
 ctr.set_condition(mySun.condition)
 
 
 # Harvest the power -- this method is just an aggregator
-pwr = ctr.panels_power()
+ctr.calculate_power()
 
 if power=='':
-    for p in pwr: print(p)
+    for p in ctr.power: print(p)
     exit(0)
 
 with open(power, 'wb') as f: np.save(f, pwr)

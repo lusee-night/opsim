@@ -76,6 +76,7 @@ class Sun:
 
 
     def read_temperature(self, filename):
+        # FIXME: transforms of the temp curve are hacky, will need to revisit.
         try:
             temp_data = np.loadtxt(filename, delimiter=',')
             if self.verbose: print(f'''Loaded data from file "{filename}", number of points: {temp_data.size}''')
