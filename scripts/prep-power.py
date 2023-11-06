@@ -45,10 +45,13 @@ if tempfile !='':
             if verb: print(f'''Loaded data from file "{tempfile}", number of points: {temp_data.size}''')
             x = temp_data[7:35,0]-5 # 60726.14583333333
             y = temp_data[7:35,1]
-            print(x.size, y.size)
+            print(x, y)
             exit(0)
 
     mySun.read_temperature(tempfile)
+else:
+    mySun.set_temperature()
+
 
 # Dummy battery, needed for the controller API
 # It must have none-zero capacity because of the SimPy requirements

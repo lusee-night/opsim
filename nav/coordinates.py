@@ -15,14 +15,31 @@ t_inc = 0.25
 
 ############################################################################
 class Sun:
+    # Class variables defined here:
     radius = 0.265*to_rad
+
+    temperature_data = np.array([
+        [
+        0.97142587, 1.25497185, 1.49126017, 1.57396107, 1.71573406,  1.96383679,
+        2.35371251, 2.92080447, 3.29295856, 3.77853105, 4.3030911,   5.05626011,
+        5.99649069, 6.92589139, 7.85754246, 8.68792711, 9.32590556,  10.04489714,
+        10.925915,  11.39174053,11.60440001,12.02971898,12.3487082,  12.50229561,
+        12.73858392,13.07529477,13.58922185,14.0347941],
+        [
+        127.7813564,  159.18763879, 188.01454941, 202.60166081, 224.71386936,
+        251.48469189, 269.86445226, 298.62190044, 311.88922557, 329.55583827,
+        341.68861029, 356.46095485, 367.52349083, 372.14788814, 368.93111584,
+        360.06638601, 351.03626943, 335.19773162, 310.1725111,  297.92727609,
+        287.92468542, 254.72164138, 225.35060835, 206.19055329, 187.24274457,
+        154.12266955, 133.7180792,  117.42748427]])
+    
     def __init__(self, mjd=None, alt=None, az=None):
-        self.mjd    = mjd
-        self.alt    = alt
-        self.az     = az
-        self.N      = 0
-        self.verbose= False
-        self.temperature = None
+        self.mjd        = mjd
+        self.alt        = alt
+        self.az         = az
+        self.N          = 0
+        self.verbose    = False
+        self.temperature= None
         self.finalize()
 
     ###
@@ -42,9 +59,6 @@ class Sun:
             self.iSunrise = np.argmin(np.abs(self.alt[self.iMidnight:])) + self.iMidnight            
             self.hrsFromSunrise = (self.mjd - self.mjd[self.iSunrise])*24
             self.sunrise = self.mjd[self.iSunrise]
-
-            # Keep it separate to unclutter the main ctor
-            self.temperature = None
 
     ###
     def calculate(self, interval):
@@ -74,7 +88,7 @@ class Sun:
             if self.verbose: print(f'''ERROR using file {filename} as the data source for the Sun trajectory''')
             self.N = 0
 
-
+    ###
     def read_temperature(self, filename):
         # FIXME: transforms of the temp curve are hacky, will need to revisit.
         try:
@@ -85,6 +99,11 @@ class Sun:
             self.temperature = np.interp(self.mjd, x, y) -273.
         except:
             if self.verbose: print(f'''ERROR using file {filename} as the data source for the power profile''')
+
+    ###
+    def set_temperature(self):
+        self.temperature = np.interp(self.mjd, self.temperature_data[0], self.temperature_data[1]) -273.
+
 
     ###
     # def hrsFromSunrise(self):
