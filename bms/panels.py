@@ -18,8 +18,6 @@ class Panel: # base, "abstract"
     r3 = R.from_euler('z', lander_yaw,      degrees=True) # + is nose right,    - is nose left
     r_tot = r1*r2*r3
 
-    # If set, represents the time series for the generated power
-    profile    = None
     verbose    = True
 
 
@@ -68,16 +66,6 @@ class Panel: # base, "abstract"
         pvPwr = np.array([152, 130, 110]) / 426.47  # Stated AM0 normal incidence power output of top panel
         p = np.poly1d(np.polyfit(pvTemp, pvPwr, 2))
         return p(T)
-
-    ### Static method to read the panel exposure profile
-    @staticmethod
-    def read_profile(filename):
-        try:
-            with open(filename, 'rb') as f: Panel.profile = np.load(f)
-            if Panel.verbose: print(f'''Loaded data from file "{filename}", number of points: {Panel.profile.size}''')
-        except:
-            if Panel.verbose: print(f'''ERROR using file {filename} as the data source for the power profile''')
-
 
 # ------------------------------------------------------------
 class EPanel(Panel):

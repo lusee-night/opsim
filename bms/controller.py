@@ -3,6 +3,10 @@ from    bms.parts   import *
 
 #################################################################################
 class Controller:
+    verbose = True
+    profile = None# If set, represents the time series for the generated power
+
+    # ---
     def __init__(self, env=None, time = None, battery = None, monitor = None):
         self.time       = time
         self.battery    = battery
@@ -63,6 +67,14 @@ class Controller:
         self.time = time
 
 
+    ### Static method to read the panel exposure profile
+    @staticmethod
+    def read_profile(filename):
+        try:
+            with open(filename, 'rb') as f: Controller.profile = np.load(f)
+            if Controller.verbose: print(f'''Loaded data from file "{filename}", number of points: {Controller.profile.size}''')
+        except:
+            if Controller.verbose: print(f'''ERROR using file {filename} as the data source for the power profile''')
 
     ######### Simulation code
     def run(self):

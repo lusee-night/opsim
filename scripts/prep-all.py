@@ -1,15 +1,21 @@
 #! /usr/bin/env python
 import argparse
-from nav.coordinates import *
-from bms.parts       import Battery, Controller
 
-# The script to prepare ALL of the conditions data.
+from nav.coordinates    import *
+from bms.battery        import Battery
+from bms.controller     import Controller
+
+# The script to prepare ALL of the conditions data. NB. on hold due to refactoring
 
 #######################################
 parser = argparse.ArgumentParser()
+
 parser.add_argument("-v", "--verbose",      action='store_true', help="Verbose mode")
+parser.add_argument("-V", "--veryverbose",  action='store_true', help="Very verbose mode")
+
 parser.add_argument("-c", "--cachefile",    type=str,            help="The cache file (output)", default='')
 parser.add_argument("-t", "--timerange",    type=str,            help="The time range", default='')
+
 parser.add_argument("-b", "--begin",        type=str,            help="Begin (start)", default='')
 parser.add_argument("-e", "--end",          type=str,            help="End (stop)", default='')
 #######################################
@@ -20,19 +26,20 @@ args    = parser.parse_args()
 
 cachefile   = args.cachefile
 timerange   = args.timerange
+
 verb        = args.verbose
+very        = args.veryverbose
 
 begin       = args.begin
 end         = args.end
 
+# ---
 if verb:
     print("*** Verbose mode ***")
-    print(f'''*** Cache file: "{cachefile}", begin: "{begin}, end: {end}" ***''')
+    print(f'''*** Cache file (output): "{cachefile}", begin: "{begin}, end: {end}" ***''')
 
-# exit(0)
 
-# "track" is imported from "coordinates", and wraps "Observation"
-(times, alt, az) = track((begin, end))
+(times, alt, az) = track((begin, end)) # "track" is imported from "coordinates", and wraps "Observation"
 
 N = times.size
 
@@ -43,9 +50,10 @@ for i in range(N): mjds[i] = times[i].mjd # FIXME - change to list comprehension
 
 result = np.column_stack((mjds, alt, az))
 
-print(result)
+if very: print(result)
 
-with open(cachefile, 'wb') as f:
-    np.save(f, result)
+if cachefile != '':
+    with open(cachefile, 'wb') as f:
+        np.save(f, result)
     
 exit(0)
