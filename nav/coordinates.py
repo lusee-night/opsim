@@ -40,7 +40,7 @@ class Sun:
         self.N          = 0
         self.verbose    = False
         self.temperature= None
-        self.finalize()
+        # self.finalize()
 
     ###
     def finalize(self):
@@ -59,6 +59,8 @@ class Sun:
             self.iSunrise = np.argmin(np.abs(self.alt[self.iMidnight:])) + self.iMidnight            
             self.hrsFromSunrise = (self.mjd - self.mjd[self.iSunrise])*24
             self.sunrise = self.mjd[self.iSunrise]
+
+        self.set_temperature()
 
     ###
     def calculate(self, interval):
@@ -102,7 +104,7 @@ class Sun:
 
     ###
     def set_temperature(self):
-        self.temperature = np.interp(self.mjd, self.temperature_data[0], self.temperature_data[1]) -273.
+        self.temperature = np.interp(self.mjd, self.temperature_data[0] + self.sunrise, self.temperature_data[1]) -273.
 
 
     ###
