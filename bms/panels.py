@@ -47,7 +47,6 @@ class Panel: # base, "abstract"
     ###
     def exposure(self):
         pwr = np.select(self.condition_list, self.choice_list)
-        # pwr*=2.0
         return pwr
     
     ###
