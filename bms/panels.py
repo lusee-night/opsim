@@ -37,8 +37,8 @@ class Panel: # base, "abstract"
         self.temperature = sun.temperature
     
     ###
-    def dot(self, sun):
-        buffer = self.area*np.dot(sun, self.normal_rot)
+    def dot(self, sun_xyz):
+        buffer = self.area*np.dot(sun_xyz, self.normal_rot)
         buffer[buffer<0] = 0.0
         return buffer
     ###
