@@ -7,6 +7,14 @@ from nav.coordinates    import *
 from bms.battery        import Battery
 from bms.controller     import Controller
 
+
+###
+#
+#  DEPRECATED UNTIL FURTHER NOTICE, FUNCTIONALITY ADDED TO THE SIMULATION
+#
+###
+
+
 #######################################
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose",  action='store_true', help="Verbose mode")

@@ -33,6 +33,11 @@ class Sun:
         287.92468542, 254.72164138, 225.35060835, 206.19055329, 187.24274457,
         154.12266955, 133.7180792,  117.42748427]])
     
+
+    ### ---
+    ### This constructor only creates a stub, and the object will be finalized later
+    ### based on how the data is obtained
+    ###
     def __init__(self, mjd=None, alt=None, az=None):
         self.mjd        = mjd
         self.alt        = alt
@@ -40,8 +45,12 @@ class Sun:
         self.N          = 0
         self.verbose    = False
         self.temperature= None
-        # self.finalize()
+        self.crossings  = None
+        self.day        = None
 
+    ### ---
+    ### That's an important method that finishes the creation of the object, which is only stubbed out in the constructor.
+    ### It is internal still, and is driven from either the "calculate" or "read_trajectory"
     ###
     def finalize(self):
         if self.az is not None:
@@ -54,19 +63,21 @@ class Sun:
             self.xyz = sun
             self.condition =  [self.alt>horizon+self.radius, self.alt>horizon, self.alt>horizon-self.radius, self.alt<=horizon-self.radius]
 
-            # Sunrise calculations
-            self.iMidnight = np.argmin(self.alt)
-            self.iSunrise = np.argmin(np.abs(self.alt[self.iMidnight:])) + self.iMidnight            
+            # Sunrise calculations -- FIXME -- working on multiple sinrises
+            self.iMidnight  = np.argmin(self.alt)
+            self.iSunrise   = np.argmin(np.abs(self.alt[self.iMidnight:])) + self.iMidnight            
             self.hrsFromSunrise = (self.mjd - self.mjd[self.iSunrise])*24
-            self.sunrise = self.mjd[self.iSunrise]
+            self.sunrise    = self.mjd[self.iSunrise]
 
+            detect          = np.signbit(self.alt)
+            self.crossings  = np.where(np.diff(detect))[0]
+            self.day        = ~detect
         self.set_temperature()
 
     ###
     def calculate(self, interval):
         # Note the crafty logic in the Observation class constructor - it's hand-made polymorphism.
-        # When a string is supplied, it defaults to 15 min time steps.
-        # And in this case, the interval is a string. Need to improve the logic, later.
+        # After update in Nov 2023, the Observation ctor can take a tuple of start and end time points.
         
         o = O(interval)
         (alt, az) = o.get_track_solar('sun')
