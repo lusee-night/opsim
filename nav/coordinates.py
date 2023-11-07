@@ -115,7 +115,7 @@ class Sun:
 
 ########################################################################################################################
 ### -- non-class functions:
-def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
+def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00", or a tuple of two strings.
     o = O(interval)
     length = len(o.times)
     (alt, az) = o.get_track_solar('sun')
