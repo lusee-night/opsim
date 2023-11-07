@@ -62,9 +62,9 @@ class Controller:
         for p in self.panels:
             p.set_condition(condition_list)
 
-    ###
-    def set_time(self, time):
-        self.time = time
+    ### Unused for now
+    # def set_time(self, time):
+    #    self.time = time
 
 
     ### Static method to read the panel exposure profile
