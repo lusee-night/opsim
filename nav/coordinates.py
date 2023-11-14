@@ -2,7 +2,7 @@ import numpy as np
 
 import lusee
 from lusee import Observation as O
-
+from lusee import Satellite, ObservedSatellite
 
 ### Keep these simple defaults for now:
 horizon = 0.0
@@ -123,6 +123,33 @@ class Sun:
     #     iMidnight = np.argmin(self.alt)
     #     iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight
     #     return (self.mjd - self.mjd[iSunrise])*24
+
+
+###
+
+# class Sat:
+
+#     def __init__(self, mjd=None, alt=None, az=None):
+#         self.mjd        = mjd
+#         self.alt        = alt
+#         self.az         = az
+#         self.N          = 0
+#     ###
+#     def calculate(self, interval):
+#         # Note the crafty logic in the Observation class constructor - it's hand-made polymorphism.
+#         # After update in Nov 2023, the Observation ctor can take a tuple of start and end time points.
+        
+#         o = O(interval)
+#         (alt, az) = o.get_track_solar('sun')
+#         mjd = [timepoint.mjd for timepoint in o.times]
+#         self.mjd    = mjd
+#         self.alt    = alt
+#         self.az     = az
+#         self.finalize()
+
+
+
+
 
 ########################################################################################################################
 ### -- non-class functions:
