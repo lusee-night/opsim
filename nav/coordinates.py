@@ -35,8 +35,8 @@ class Sun:
     
 
     ### ---
-    ### This constructor only creates a stub, and the object will be finalized later
-    ### based on how the data is obtained
+    ### This constructor only creates a stub, and the object will
+    ### be finalized later based on how the data are obtained
     ###
     def __init__(self, mjd=None, alt=None, az=None):
         self.mjd        = mjd
@@ -49,8 +49,9 @@ class Sun:
         self.day        = None
 
     ### ---
-    ### That's an important method that finishes the creation of the object, which is only stubbed out in the constructor.
-    ### It is internal still, and is driven from either the "calculate" or "read_trajectory"
+    ### That's an important method that finishes the creation of the object,
+    ### which is only stubbed out in the constructor.
+    ### It is driven from either the "calculate" or "read_trajectory" methods (below)
     ###
     def finalize(self):
         if self.az is not None:
@@ -115,6 +116,7 @@ class Sun:
 
     ###
     def set_temperature(self):
+        # Simple interpolation of the tabulated data, needs plenty of work
         self.temperature = np.interp(self.mjd, self.temperature_data[0] + self.sunrise, self.temperature_data[1]) -273.
 
 
@@ -127,25 +129,25 @@ class Sun:
 
 ###
 
-# class Sat:
+class Sat:
 
-#     def __init__(self, mjd=None, alt=None, az=None):
-#         self.mjd        = mjd
-#         self.alt        = alt
-#         self.az         = az
-#         self.N          = 0
-#     ###
-#     def calculate(self, interval):
-#         # Note the crafty logic in the Observation class constructor - it's hand-made polymorphism.
-#         # After update in Nov 2023, the Observation ctor can take a tuple of start and end time points.
+    def __init__(self, mjd=None, alt=None, az=None):
+        self.mjd        = mjd
+        self.alt        = alt
+        self.az         = az
+        self.N          = 0
+    ###
+    def calculate(self, interval):
+        # Note the crafty logic in the Observation class constructor - it's hand-made polymorphism.
+        # After update in Nov 2023, the Observation ctor can take a tuple of start and end time points.
         
-#         o = O(interval)
-#         (alt, az) = o.get_track_solar('sun')
-#         mjd = [timepoint.mjd for timepoint in o.times]
-#         self.mjd    = mjd
-#         self.alt    = alt
-#         self.az     = az
-#         self.finalize()
+        o = O(interval)
+        # (alt, az) = o.get_track_solar('sun')
+        # mjd = [timepoint.mjd for timepoint in o.times]
+        # self.mjd    = mjd
+        # self.alt    = alt
+        # self.az     = az
+        # self.finalize()
 
 
 

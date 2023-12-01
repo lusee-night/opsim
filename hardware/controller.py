@@ -1,4 +1,4 @@
-from bms.panels import *; from bms.parts import *
+from hardware.panels import *; from hardware.parts import *
 # ---
 class Controller:
     verbose = True
