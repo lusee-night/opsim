@@ -1,0 +1,27 @@
+# This is a generic test input for the simulation
+
+period:
+  start: "2025-02-10 00:00:00"
+  end:   "2025-02-11 23:45:00"
+
+location:
+    latitude:                     -23.814 # degrees
+    longitude:                    182.258 # degrees
+    height:                       0 # meters
+
+satellites:
+  esa:
+    semi_major_km:                5738
+    eccentricity:                 0.56489
+    inclination_deg:              57.097
+    raan_deg:                     0
+    argument_of_pericenter_deg:   72.625
+    aposelene_ref_time:           '2024-05-01T00:00:00'
+
+  elytra:
+    semi_major_km:                5738
+    eccentricity:                 0.56489
+    inclination_deg:              57.097
+    raan_deg:                     0
+    argument_of_pericenter_deg:   72.625
+    aposelene_ref_time:           '2024-05-01T00:00:00'

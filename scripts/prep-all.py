@@ -2,8 +2,6 @@
 import argparse
 
 from nav.coordinates    import *
-from bms.battery        import Battery
-from bms.controller     import Controller
 
 # The script to prepare ALL of the conditions data. NB. on hold due to refactoring
 
@@ -38,6 +36,11 @@ if verb:
     print("*** Verbose mode ***")
     print(f'''*** Cache file (output): "{cachefile}", begin: "{begin}, end: {end}" ***''')
 
+
+if begin=='' or end=='':
+    if verb:
+        print('Missing inputs, exiting...')
+    exit(-1)
 
 (times, alt, az) = track((begin, end)) # "track" is imported from "coordinates", and wraps "Observation"
 
