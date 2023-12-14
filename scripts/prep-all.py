@@ -6,8 +6,6 @@
 import argparse
 import yaml
 
-from nav.coordinates    import *
-
 # Pretty print the dictionary we read from the input YAML, for an extra check:
 def pretty(d, indent=0):
     for key, value in d.items():
