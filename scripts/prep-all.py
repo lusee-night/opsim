@@ -22,64 +22,72 @@ def pretty(d, indent=0):
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-v", "--verbose",      action='store_true', help="Verbose mode")
-parser.add_argument("-y", "--yamlfile",     type=str,            help="The input - a YAML file containing configuration", default='')
-parser.add_argument("-o", "--outputfile",   type=str,            help="The outpuut", default='')
+parser.add_argument("-c", "--conffile",     type=str,            help="The input - a YAML file containing configuration", default='')
+parser.add_argument("-o", "--outputfile",   type=str,            help="The output", default='')
+parser.add_argument("-i", "--inspectfile",  type=str,            help="File to inspect (overrides other options)", default='')
 #######################################
 
 # Example of the time range: "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
 
 args    = parser.parse_args()
 
-yamlfile    = args.yamlfile
-outputfile  = args.outputfile
 verb        = args.verbose
+
+conffile    = args.conffile
+outputfile  = args.outputfile
+inspectfile = args.inspectfile
 
 
 # ---
 if verb:
     print("*** Verbose mode ***")
-    print(f'''*** Configuration file (YAML): "{yamlfile}" ***''')
-    print(f'''*** Output file (YAML): "{outputfile}" ***''')
+    if inspectfile == '':
+        print(f'''*** Configuration file (YAML): "{conffile}" ***''')
+        print(f'''*** Output file (HDF5): "{outputfile}" ***''')
+    else:
+        print(f'''*** File to inspect: "{inspectfile}" ***''')
 
 
-f = open(yamlfile, 'r')
 
-content = yaml.safe_load(f)
+if inspectfile != '': # inspect and exit
+    f = h5py.File(inspectfile, "r")
+    ds = f["/meta/configuration"]
+    # confstring = list(ds)[0]
+    conf    = yaml.safe_load(ds[0,])
+    check   = yaml.dump(conf)
+    print(check)
+    exit(0)
 
+
+if conffile=='' or outputfile=='':
+    print('Incomplete input parameters, exiting...')
+    exit(-2)
+
+f = open(conffile, 'r')
+
+conf = yaml.safe_load(f)  # ingest the configuration data
 
 if verb:
-    print("*** Top-level keys ***")
-    print(*content.keys())
-    print("*** Content ***")
-    pretty(content)
+    print("*** Top-level configuration keys ***")
+    print(*conf.keys())
+    # print("*** Content ***")
+    # pretty(content)
 
+
+# groups = {}
 
 f = h5py.File(outputfile, 'w')
+grp = f.create_group('meta')
 
+dt = h5py.string_dtype(encoding='utf-8')                     
+ds = grp.create_dataset('configuration', (1,), dtype=dt)
+ds[0,] = yaml.dump(conf)
+f.close()
 
-groups = {}
-
-
-parsed = yaml.dump(content)
-
-
-dt = h5py.string_dtype(encoding='utf-8')
-
-
-grp = f.create_group('test')
-                     
-ds = grp.create_dataset('VLDS', (1,), dtype=dt)
-ds[0,] = parsed
-
-anew = yaml.safe_load(ds[0,])
-again = yaml.dump(anew)
-
-print(again)
-
+exit(0)
 
 # for cntK, cntV in content.items():
 #     grp = f.create_group(cntK)
-
 #     if isinstance(cntV, dict):
 #         l = len(cntV)
 #         print('!', l, cntV)
@@ -87,13 +95,6 @@ print(again)
 #         for i in range(0,l):
 #             ds[i] = cntV[i]
 #     groups[cntK] = grp
-
-
 #dt = h5py.string_dtype(encoding='utf-8')
 #ds = grp.create_dataset('VLDS', (100,100), dtype=dt)
 #ds[0,2] = 'foo'
-
-
-f.close()
-
-exit(0)
