@@ -1,3 +1,11 @@
 # Description of the available modes of the hardware components
-modes:
-  foo:
+science:
+  spectrometer: SCIENCE
+  comms: OFF
+  bms: OFF
+  controller: SCIENCE
+charge:
+  spectrometer: OFF
+  comms: OFF
+  bms: ON
+  controller: CHARGE
