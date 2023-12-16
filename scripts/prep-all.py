@@ -8,6 +8,13 @@ import yaml
 
 import h5py
 
+
+# lusee "nav" package
+
+import nav
+from nav.coordinates import *
+
+# ----------------------------------------------------------------------------------
 # Pretty print the dictionary we read from the input YAML, for an extra check:
 def pretty(d, indent=0):
     for key, value in d.items():
@@ -49,42 +56,75 @@ if verb:
 
 
 
+# -- INSPECT EXISTING DATA
 if inspectfile != '': # inspect and exit
     f = h5py.File(inspectfile, "r")
-    ds = f["/meta/configuration"]
-    # confstring = list(ds)[0]
-    conf    = yaml.safe_load(ds[0,])
+    ds_meta = f["/meta/configuration"]
+    conf    = yaml.safe_load(ds_meta[0,])
     check   = yaml.dump(conf)
     print(check)
+
+    ds_data = f["/data/orbitals"]
+    data_array = np.array(ds_data[:])
+    print(f'''Shape of the data payload: {data_array.shape}''')
+
+    print('First 10 rows')
+    print(data_array[:10])
+
     exit(0)
 
-
+# -- PRODUCE DATA
 if conffile=='' or outputfile=='':
     print('Incomplete input parameters, exiting...')
     exit(-2)
 
 f = open(conffile, 'r')
-
 conf = yaml.safe_load(f)  # ingest the configuration data
 
 if verb:
     print("*** Top-level configuration keys ***")
     print(*conf.keys())
-    # print("*** Content ***")
-    # pretty(content)
-
 
 # groups = {}
 
 f = h5py.File(outputfile, 'w')
-grp = f.create_group('meta')
+
+grp_meta = f.create_group('meta')
 
 dt = h5py.string_dtype(encoding='utf-8')                     
-ds = grp.create_dataset('configuration', (1,), dtype=dt)
-ds[0,] = yaml.dump(conf)
+ds_meta = grp_meta.create_dataset('configuration', (1,), dtype=dt)
+ds_meta[0,] = yaml.dump(conf)
+
+# ---
+t_start, t_end = (conf['period']['start'], conf['period']['end']) # a tuple of (start, end)
+
+if verb:
+    print(f'''*** Time range: "{t_start}" to "{t_end}"***''')
+
+# ------------------------------------------------------
+# Do the calculation (solar)
+o = O((t_start, t_end))
+(times, alt, az) = track_from_observation(o)
+N = times.size
+
+mjd = [t.mjd for t in times]
+
+print(N, mjd)
+
+result = np.column_stack((mjd, alt, az))
+
+grp_data = f.create_group('data')
+ds_data = grp_data.create_dataset("orbitals", data=result)
+
+
 f.close()
 
 exit(0)
+
+
+
+
+
 
 # for cntK, cntV in content.items():
 #     grp = f.create_group(cntK)
