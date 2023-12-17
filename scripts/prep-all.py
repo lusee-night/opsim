@@ -102,16 +102,31 @@ if verb:
     print(f'''*** Time range: "{t_start}" to "{t_end}"***''')
 
 # ------------------------------------------------------
-# Do the calculation (solar)
-o = O((t_start, t_end))
-(times, alt, az) = track_from_observation(o)
+#
+# Do the calculation (solar and sat)
+#
+#
+
+loc = conf['location']
+lat = loc['latitude']
+lon = loc['longitude']
+
+print(lat, lon)
+observation = O((t_start, t_end), lat, lon)
+(times, alt, az) = track_from_observation(observation)
 N = times.size
 
 mjd = [t.mjd for t in times]
 
 print(N, mjd)
 
-result = np.column_stack((mjd, alt, az))
+S       = Satellite()
+obsat   = ObservedSatellite(observation, S)
+
+N = len(obsat.mjd)
+print(N, obsat.mjd)
+
+result = np.column_stack((mjd, alt, az, obsat.alt, obsat.az))
 
 grp_data = f.create_group('data')
 ds_data = grp_data.create_dataset("orbitals", data=result)
@@ -120,21 +135,3 @@ ds_data = grp_data.create_dataset("orbitals", data=result)
 f.close()
 
 exit(0)
-
-
-
-
-
-
-# for cntK, cntV in content.items():
-#     grp = f.create_group(cntK)
-#     if isinstance(cntV, dict):
-#         l = len(cntV)
-#         print('!', l, cntV)
-#         ds = grp.create_dataset('VLDS', (l,), dtype=dt)
-#         for i in range(0,l):
-#             ds[i] = cntV[i]
-#     groups[cntK] = grp
-#dt = h5py.string_dtype(encoding='utf-8')
-#ds = grp.create_dataset('VLDS', (100,100), dtype=dt)
-#ds[0,2] = 'foo'

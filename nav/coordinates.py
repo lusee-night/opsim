@@ -47,6 +47,7 @@ class Sun:
         self.temperature= None
         self.crossings  = None
         self.day        = None
+        self.finalize()
 
     ### ---
     ### That's an important method that finishes the creation of the object,
@@ -54,7 +55,7 @@ class Sun:
     ### It is driven from either the "calculate" or "read_trajectory" methods (below)
     ###
     def finalize(self):
-        if self.az is not None:
+        if self.az is not None and self.alt is not None and self.mjd is not None:
             self.N = self.az.size
             self.alt_top = np.asarray(self.alt) + self.radius
             sun = np.zeros((len(self.alt),3))
@@ -135,23 +136,12 @@ class Sat:
         self.mjd        = mjd
         self.alt        = alt
         self.az         = az
-        self.N          = 0
+        self.N          = self.az.size
+
+        detect          = np.signbit(self.alt)
+        self.crossings  = np.where(np.diff(detect))[0]
+        self.up         = ~detect
     ###
-    def calculate(self, interval):
-        # Note the crafty logic in the Observation class constructor - it's hand-made polymorphism.
-        # After update in Nov 2023, the Observation ctor can take a tuple of start and end time points.
-        
-        o = O(interval)
-        # (alt, az) = o.get_track_solar('sun')
-        # mjd = [timepoint.mjd for timepoint in o.times]
-        # self.mjd    = mjd
-        # self.alt    = alt
-        # self.az     = az
-        # self.finalize()
-
-
-
-
 
 ########################################################################################################################
 ### -- non-class functions:
