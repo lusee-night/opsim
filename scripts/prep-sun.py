@@ -2,6 +2,11 @@
 import argparse
 from nav.coordinates import *
 
+
+# NB. In December of 2023, we are migrating to the HDF5 data format,
+# and inclusion of the satellite data, so this particular script is likely
+# to be deprecated soon.
+
 #######################################
 parser = argparse.ArgumentParser()
 
