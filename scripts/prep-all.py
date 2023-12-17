@@ -14,6 +14,9 @@ import h5py
 import nav
 from nav.coordinates import *
 
+from    lunarsky.time       import Time
+
+
 # ----------------------------------------------------------------------------------
 # Pretty print the dictionary we read from the input YAML, for an extra check:
 def pretty(d, indent=0):
@@ -105,28 +108,52 @@ if verb:
 #
 # Do the calculation (solar and sat)
 #
-#
 
+# Lander location
 loc = conf['location']
 lat = loc['latitude']
 lon = loc['longitude']
 
-print(lat, lon)
+print(f'''Latitude: {lat}, longitude: {lon}''')
 observation = O((t_start, t_end), lat, lon)
-(times, alt, az) = track_from_observation(observation)
+(times, alt, az) = track_from_observation(observation) # Sun
 N = times.size
-
 mjd = [t.mjd for t in times]
 
-print(N, mjd)
+if verb: print(f'''Sun: generated {N} data points''')
 
-S       = Satellite()
-obsat   = ObservedSatellite(observation, S)
+esa = conf['satellites']['esa']
+semi_major_km               = esa['semi_major_km']
+eccentricity                = esa['eccentricity']
+inclination_deg             = esa['inclination_deg']
+raan_deg                    = esa['raan_deg']
+argument_of_pericenter_deg  = esa['argument_of_pericenter_deg']
+aposelene_ref_time          = Time(esa['aposelene_ref_time'])
 
-N = len(obsat.mjd)
-print(N, obsat.mjd)
 
-result = np.column_stack((mjd, alt, az, obsat.alt, obsat.az))
+esaSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
+obsEsaSat   = ObservedSatellite(observation, esaSat)
+
+N = len(obsEsaSat.mjd)
+if verb: print(f'''ESA Satellite: generated {N} data points''')
+
+
+elytra = conf['satellites']['elytra']
+semi_major_km               = elytra['semi_major_km']
+eccentricity                = elytra['eccentricity']
+inclination_deg             = elytra['inclination_deg']
+raan_deg                    = elytra['raan_deg']
+argument_of_pericenter_deg  = elytra['argument_of_pericenter_deg']
+aposelene_ref_time          = Time(elytra['aposelene_ref_time'])
+
+
+elytraSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
+obsElytraSat   = ObservedSatellite(observation, elytraSat)
+
+N = len(obsElytraSat.mjd)
+if verb: print(f'''Elytra Satellite: generated {N} data points''')
+
+result = np.column_stack((mjd, alt, az, obsEsaSat.alt, obsEsaSat.az, obsElytraSat.alt, obsElytraSat.az))
 
 grp_data = f.create_group('data')
 ds_data = grp_data.create_dataset("orbitals", data=result)
@@ -135,3 +162,11 @@ ds_data = grp_data.create_dataset("orbitals", data=result)
 f.close()
 
 exit(0)
+
+# Reference: the satellite ctor API
+# semi_major_km               = 5738,
+# eccentricity                = 0.56489,
+# inclination_deg             = 57.097,
+# raan_deg                    = 0,
+# argument_of_pericenter_deg  = 72.625,
+# aposelene_ref_time          = Time("2024-05-01T00:00:00")
