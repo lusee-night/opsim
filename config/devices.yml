@@ -1,4 +1,16 @@
 devices:
-  controller:   {'OFF':0.0, 'SCIENCE':0.3}
-  comms:        {'OFF':0.0, 'LOW':0.1, 'HIGH':1.0}
-  spectrometer: {'OFF':0.0, 'SCIENCE':0.5}
+  spectrometer:
+    'OFF':      0.0
+    SCIENCE:    0.5
+  comms:
+    'OFF':      0.0
+    LOW:        0.1
+    HIGH:       1.0
+  bms:
+    'OFF':      0.0
+    'ON':       0.1
+  controller:
+    'OFF':      0.1
+    SCIENCE:    0.3
+
+

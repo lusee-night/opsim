@@ -9,3 +9,9 @@ charge:
   comms: OFF
   bms: ON
   controller: CHARGE
+comms:
+  spectrometer: OFF
+  comms: ON
+  bms: ON
+  controller: COMMS
+  
