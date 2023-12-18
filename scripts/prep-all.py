@@ -99,7 +99,10 @@ ds_meta = grp_meta.create_dataset('configuration', (1,), dtype=dt)
 ds_meta[0,] = yaml.dump(conf)
 
 # ---
-t_start, t_end = (conf['period']['start'], conf['period']['end']) # a tuple of (start, end)
+prd = conf['period']
+
+t_start, t_end = (prd['start'], prd['end']) # a tuple of (start, end)
+deltaT = prd['deltaT']
 
 if verb:
     print(f'''*** Time range: "{t_start}" to "{t_end}"***''')
@@ -113,9 +116,10 @@ if verb:
 loc = conf['location']
 lat = loc['latitude']
 lon = loc['longitude']
+hgt = loc['height']
 
 print(f'''Latitude: {lat}, longitude: {lon}''')
-observation = O((t_start, t_end), lat, lon)
+observation = O((t_start, t_end), lat, lon, hgt, deltaT)
 (times, alt, az) = track_from_observation(observation) # Sun
 N = times.size
 mjd = [t.mjd for t in times]

@@ -73,7 +73,6 @@ class Controller:
         while True:
             myT     = int(self.env.now)
             myPwr   = self.power[myT]
-            # myPwr   = Panel.profile[myT]
             clock   = self.sun.mjd[myT]
 
             self.monitor.buffer[myT] = myPwr
