@@ -57,22 +57,22 @@ class Simulator:
     
         while True:
             myT     = int(self.env.now)
-            myPwr   = self.power[myT]
+            myPwr   = self.controller.power[myT]
             clock   = self.sun.mjd[myT]
 
             self.monitor.buffer[myT] = myPwr
-            try:
-                self.battery.put(myPwr)
-            except:
-                pass
+            # try:
+            #     self.battery.put(myPwr)
+            # except:
+            #     pass
 
-            for k in self.devices.keys():
-                the_device = self.devices[k]
-                if clock >60720.0: the_device.state = 'OFF'
-                cur = the_device.current()
-                if cur>0.0: self.battery.get(cur)
+            # for k in self.devices.keys():
+            #     the_device = self.devices[k]
+            #     if clock >60720.0: the_device.state = 'OFF'
+            #     cur = the_device.current()
+            #     if cur>0.0: self.battery.get(cur)
 
-            self.monitor.charge+=myPwr
-            self.monitor.battery[myT] = self.battery.level
+            # self.monitor.charge+=myPwr
+            # self.monitor.battery[myT] = self.battery.level
             
             yield self.env.timeout(1)
