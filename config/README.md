@@ -15,3 +15,14 @@ Power profile of the devices.
 * `modes` : definition of modes of operation of the components
 * `conf` : configuration for prepped data production (cache)
 * `devices` : states and power draw
+
+
+## MJD to date conversion
+
+```python
+from astropy.time import Time
+t = Time(val=60725,format='mjd')
+t.datetime
+datetime.datetime(2025, 2, 19, 0, 0)
+```
+
