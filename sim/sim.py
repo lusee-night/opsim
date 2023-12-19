@@ -1,4 +1,5 @@
 import simpy
+import yaml
 import h5py
 
 # local packages
@@ -9,15 +10,22 @@ import nav          # Astro/observation wrapper classes
 from   nav import *
 
 class Simulator:
-    def __init__(self, orbitals=None, modes=None, devices=None):
-        self.orbitals   = orbitals
-        self.modes      = modes
-        self.devices    = devices
+    def __init__(self, orbitals_f=None, modes_f=None, devices_f=None):
+        # Filenames
+        self.orbitals_f   = orbitals_f
+        self.modes_f      = modes_f
+        self.devices_f    = devices_f
 
+        # Orbitals
         self.sun        = None
         self.esa        = None
+        # LuSEE devices
+        self.devices    = {}
+
 
         self.read_orbitals()
+        self.read_devices()
+
         self.env = simpy.Environment()
 
     # ---
@@ -33,11 +41,11 @@ class Simulator:
         Controller.verbose = True
 
         self.controller.add_all_panels()
-        self.controller.calculate_power()   
+        self.controller.calculate_power()
 
     # ---
     def read_orbitals(self):
-        f = h5py.File(self.orbitals, "r")
+        f = h5py.File(self.orbitals_f, "r")
         ds_data = f["/data/orbitals"]
         da = np.array(ds_data[:]) # data array
         print(f'''Shape of the data payload: {da.shape}''')
@@ -45,10 +53,19 @@ class Simulator:
         self.esa = Sat(da[:,0], da[:,3] , da[:,4])
 
     # ---
+    def read_devices(self):
+        f = open(self.devices_f, 'r')
+        profiles = yaml.safe_load(f)  # ingest the configuration data
+        for device_name in profiles.keys():
+            device = Device(device_name, profiles[device_name])
+            self.devices[device.name]=device
+    
+    
+    # ---
     def info(self):
-        print(self.orbitals)
-        print(self.modes)
-        print(self.devices)
+        print(f'''Orbitals file: {self.orbitals_f}''')
+        print(f'''Modes file: {self.modes_f}''')
+        print(f'''Devices file: {self.devices_f}''')
 
     ######### Simulation code
     def run(self):
@@ -61,18 +78,19 @@ class Simulator:
             clock   = self.sun.mjd[myT]
 
             self.monitor.buffer[myT] = myPwr
-            # try:
-            #     self.battery.put(myPwr)
-            # except:
-            #     pass
+            try:
+                # print(myPwr)
+                self.battery.put(myPwr)
+            except:
+                pass
 
-            # for k in self.devices.keys():
-            #     the_device = self.devices[k]
-            #     if clock >60720.0: the_device.state = 'OFF'
-            #     cur = the_device.current()
-            #     if cur>0.0: self.battery.get(cur)
+            for k in self.devices.keys():
+                the_device = self.devices[k]
+                if clock >60720.0: the_device.state = 'OFF'
+                cur = the_device.current()
+                if cur>0.0: self.battery.get(cur)
 
-            # self.monitor.charge+=myPwr
-            # self.monitor.battery[myT] = self.battery.level
+            self.monitor.charge+=myPwr
+            self.monitor.battery[myT] = self.battery.level
             
             yield self.env.timeout(1)
