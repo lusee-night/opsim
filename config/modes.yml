@@ -1,17 +1,22 @@
 # Description of the available modes of the hardware components
 science:
-  spectrometer: SCIENCE
-  comms: OFF
-  bms: OFF
-  controller: SCIENCE
+  spectrometer: 'SCIENCE'
+  comms: 'OFF'
+  bms: 'OFF'
+  controller: 'ON'
 charge:
-  spectrometer: OFF
-  comms: OFF
-  bms: ON
-  controller: CHARGE
+  spectrometer: 'OFF'
+  comms: 'OFF'
+  bms: 'ON'
+  controller: 'ON'
 comms:
-  spectrometer: OFF
-  comms: ON
-  bms: ON
-  controller: COMMS
+  spectrometer: 'OFF'
+  comms: 'ON'
+  bms: 'ON'
+  controller: 'ON'
+powersave:
+  spectrometer: 'OFF'
+  comms: 'OFF'
+  bms: 'OFF'
+  controller: 'ON'
   

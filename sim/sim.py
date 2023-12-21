@@ -10,23 +10,31 @@ import nav          # Astro/observation wrapper classes
 from   nav import *
 
 class Simulator:
-    def __init__(self, orbitals_f=None, modes_f=None, devices_f=None):
+    def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None):
         # Filenames
         self.orbitals_f   = orbitals_f
         self.modes_f      = modes_f
         self.devices_f    = devices_f
+        self.comtable_f   = comtable_f
 
         # Orbitals
         self.sun        = None
         self.esa        = None
-        # LuSEE devices
+        
+        # Other stuff
+        self.modes      = None
+        self.comtable   = None
         self.devices    = {}
 
 
         self.read_orbitals()
         self.read_devices()
+        self.read_modes()
+        self.read_combtable()
 
         self.env = simpy.Environment()
+
+        self.populate()
 
     # ---
     def populate(self):
@@ -52,6 +60,11 @@ class Simulator:
         self.sun = Sun(da[:,0], da[:,1] , da[:,2])
         self.esa = Sat(da[:,0], da[:,3] , da[:,4])
 
+       # ---
+    def read_modes(self):
+        f = open(self.modes_f, 'r')
+        self.modes = yaml.safe_load(f)
+
     # ---
     def read_devices(self):
         f = open(self.devices_f, 'r')
@@ -60,12 +73,25 @@ class Simulator:
             device = Device(device_name, profiles[device_name])
             self.devices[device.name]=device
     
+        # ---
+    def read_combtable(self):
+        f = open(self.comtable_f, 'r')
+        self.comtable = yaml.safe_load(f)
+
     
     # ---
     def info(self):
         print(f'''Orbitals file: {self.orbitals_f}''')
+
         print(f'''Modes file: {self.modes_f}''')
+        print(self.modes)
+
         print(f'''Devices file: {self.devices_f}''')
+
+
+
+        print(f'''Comtable file: {self.comtable_f}''')
+        print(self.comtable)
 
     ######### Simulation code
     def run(self):
