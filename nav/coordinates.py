@@ -74,6 +74,10 @@ class Sun:
             detect          = np.signbit(self.alt)
             self.crossings  = np.where(np.diff(detect))[0]
             self.day        = ~detect
+
+            # Place for future logic dev
+            #if self.day[0]:
+            #    for cr in self.crossings
         self.set_temperature()
 
     ###
@@ -90,6 +94,8 @@ class Sun:
         self.finalize()
 
     ###
+    # NB this will need to be superceded with reading from HDF5, instead of numpy-formatted file.
+    # We are now feeding the HDF5 data as inputs to the constructor after we parsed it elsewhere
     def read_trajectory(self, filename):
         try:
             with open(filename, 'rb') as f: mjd_alt_az = np.load(f)
