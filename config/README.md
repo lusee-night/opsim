@@ -17,12 +17,18 @@ Power profile of the devices.
 * `devices` : states and power draw
 
 
-## MJD to date conversion
+## MJD to datetime, and back: conversion
 
 ```python
 from astropy.time import Time
 t = Time(val=60725,format='mjd')
 t.datetime
 datetime.datetime(2025, 2, 19, 0, 0)
+
+
+import datetime
+t = datetime.datetime(2025, 2, 19, 0, 0)
+b = Time(val=t, format='datetime')
+b.mjd
 ```
 
