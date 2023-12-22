@@ -37,16 +37,14 @@ parser.add_argument("-o", "--outputfile",   type=str,            help="The outpu
 parser.add_argument("-i", "--inspectfile",  type=str,            help="File to inspect (overrides other options)", default='')
 #######################################
 
-# Example of the time range: "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
+# Reference time range often used in testing: "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
 
-args    = parser.parse_args()
+args        = parser.parse_args()
 
 verb        = args.verbose
-
 conffile    = args.conffile
 outputfile  = args.outputfile
 inspectfile = args.inspectfile
-
 
 # ---
 if verb:
@@ -55,9 +53,7 @@ if verb:
         print(f'''*** Configuration file (YAML): "{conffile}" ***''')
         print(f'''*** Output file (HDF5): "{outputfile}" ***''')
     else:
-        print(f'''*** File to inspect: "{inspectfile}" ***''')
-
-
+        print(f'''*** File to inspect (will exit on completion): "{inspectfile}" ***''')
 
 # -- INSPECT EXISTING DATA
 if inspectfile != '': # inspect and exit
@@ -76,46 +72,37 @@ if inspectfile != '': # inspect and exit
 
     exit(0)
 
+# ----------------------------------------------------------------------------------
 # -- PRODUCE DATA
-if conffile=='' or outputfile=='':
-    print('Incomplete input parameters, exiting...')
+if conffile=='':
+    print('Missing configuration, exiting...')
     exit(-2)
 
-f = open(conffile, 'r')
-conf = yaml.safe_load(f)  # ingest the configuration data
+conf_f = open(conffile, 'r')
+conf = yaml.safe_load(conf_f)  # ingest the configuration data
 
 if verb:
     print("*** Top-level configuration keys ***")
     print(*conf.keys())
 
-# groups = {}
-
-f = h5py.File(outputfile, 'w')
-
-grp_meta = f.create_group('meta')
-
-dt = h5py.string_dtype(encoding='utf-8')                     
-ds_meta = grp_meta.create_dataset('configuration', (1,), dtype=dt)
-ds_meta[0,] = yaml.dump(conf)
-
 # ---
-t_start, t_end = (conf['period']['start'], conf['period']['end']) # a tuple of (start, end)
+prd = conf['period']
+t_start, t_end, deltaT= (prd['start'], prd['end'], prd['deltaT'])
 
 if verb:
-    print(f'''*** Time range: "{t_start}" to "{t_end}"***''')
+    print(f'''*** Time range: "{t_start}" to "{t_end}, time step: {deltaT}"***''')
 
 # ------------------------------------------------------
-#
 # Do the calculation (solar and sat)
-#
 
 # Lander location
 loc = conf['location']
 lat = loc['latitude']
 lon = loc['longitude']
+hgt = loc['height']
 
 print(f'''Latitude: {lat}, longitude: {lon}''')
-observation = O((t_start, t_end), lat, lon)
+observation = O((t_start, t_end), lat, lon, hgt, deltaT)
 (times, alt, az) = track_from_observation(observation) # Sun
 N = times.size
 mjd = [t.mjd for t in times]
@@ -155,15 +142,30 @@ if verb: print(f'''Elytra Satellite: generated {N} data points''')
 
 result = np.column_stack((mjd, alt, az, obsEsaSat.alt, obsEsaSat.az, obsElytraSat.alt, obsElytraSat.az))
 
+
+if verb: print('Finished calculations...')
+
+if outputfile == '': # print useful info and exit
+    if verb:
+        print(f'''No output file name detected, will exit now. Shape of the orbitals data: {result.shape}''')
+    exit(0)
+
+
+# Let's output the results, formatted in HDF5
+f = h5py.File(outputfile, 'w')
+grp_meta = f.create_group('meta')
+dt = h5py.string_dtype(encoding='utf-8')                     
+ds_meta = grp_meta.create_dataset('configuration', (1,), dtype=dt)
+ds_meta[0,] = yaml.dump(conf)
+
 grp_data = f.create_group('data')
 ds_data = grp_data.create_dataset("orbitals", data=result)
-
-
 f.close()
 
 exit(0)
 
-# Reference: the satellite ctor API
+# ----- ATTIC
+# Reference numbers: originally in the satellite ctor API
 # semi_major_km               = 5738,
 # eccentricity                = 0.56489,
 # inclination_deg             = 57.097,
