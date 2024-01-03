@@ -4,6 +4,12 @@
 Software for calculations related to operation control for LuSEE-Night, such power
 generation and management, data taking (science), comms etc.
 
+__Glossary__
+
+* _modes_: reference to the modes of the LuSEE-Night apparatus' operations, such as "science"; this choice is in order to conform with the convention in the "ConOps" document.
+* _states_: states of the devices as stipulated by the specific LuSEE _mode_.
+
+
 ## Folders in this repository
 
 ### Configuration and data
@@ -27,6 +33,7 @@ in the simulation. The important one is `prep-all`
 2. _nav_ contains utility accessor methods to interface
 various coordinate calculations
 3. _hardware_: classes describing various elements of the LuSEE hardware
+4. _sim_: the main simulator class
 
 
 ### Archival/reference folders
@@ -38,6 +45,13 @@ and some requisite inputs. Kept for continuity with the power calculation notebo
 
 
 ## Misc
+
+
+### Dependencies
+
+This software depends of the _luseepy_ suite, plus the `simpy` package. This is typically handled
+by setting up an appropriate Python virtual environment. The _hdf5_ interface is provided via the `h5py`
+Python package, which happens to be already in _luseepy_ so no separate installation is required.
 
 ### lzma
 
