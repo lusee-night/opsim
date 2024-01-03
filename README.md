@@ -1,17 +1,41 @@
 # OpSim: Simulation of the LuSEE-Night Operations Logic
 
 ## About
-Software for calculations related to operation control for LuSEE-Night, such power generation, management,
-comms etc.
+Software for calculations related to operation control for LuSEE-Night, such power
+generation and management, data taking (science), comms etc.
 
-## Notes
+## Folders in this repository
 
-1. The `docs` folder cotnains various helpful bits of documentation. _Work in progress._
+### Configuration and data
+
+1. _config_: configuration data, typically formatted in YAML
+2. _data_: pre-calculated data to be fed to the simulator. The current format is HDF5 and a few older files in the _numpy_ format are kept for reference only.
+
+Please see the `README` file in the _config_ folder for more detail on how these pieces
+of configuration relate to each other.
+
+### "Scripts"
+
+1. _scripts_: an assembly of scripts, such as used in preparation of the
+"prefabricated" data on the position of celestial objects, to be later used
+in the simulation. The important one is `prep-all`
+
+
+### Core software
+
+1. _notebooks_: an assembly of notebooks to diagnose the data and run the simulation
+2. _nav_ contains utility accessor methods to interface
+various coordinate calculations
+3. _hardware_: classes describing various elements of the LuSEE hardware
+
+
+### Archival/reference folders
+
+1. The `docs` folder is reserved for the future documentation website materials (if needed)
 2. In the `reference` folder there is a "sandbox" version of the original power
 calculation notebook (heavily modified and not to be used for anything practical)
 and some requisite inputs. Kept for continuity with the power calculation notebook.
-3. The folder `nav` contains utility accessor methods to interface
-coordinate calculations.
+
 
 ## Misc
 
