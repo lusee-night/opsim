@@ -1,13 +1,14 @@
-import simpy
-import yaml
-import h5py
+import  simpy
+import  yaml
+import  h5py
 
 # local packages
-import hardware     # hardware modules
-from hardware import *
+import  hardware     # hardware modules
+from    hardware import *
+from    utils.timeconv import *
 
-import nav          # Astro/observation wrapper classes
-from   nav import *
+import  nav          # Astro/observation wrapper classes
+from    nav import *
 
 class Simulator:
     def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None):
@@ -60,7 +61,7 @@ class Simulator:
         self.sun = Sun(da[:,0], da[:,1] , da[:,2])
         self.esa = Sat(da[:,0], da[:,3] , da[:,4])
 
-       # ---
+    # ---
     def read_modes(self):
         f = open(self.modes_f, 'r')
         self.modes = yaml.safe_load(f)
@@ -73,7 +74,7 @@ class Simulator:
             device = Device(device_name, profiles[device_name])
             self.devices[device.name]=device
     
-        # ---
+    # ---
     def read_combtable(self):
         f = open(self.comtable_f, 'r')
         self.comtable = yaml.safe_load(f)
@@ -91,7 +92,7 @@ class Simulator:
 
 
         print(f'''Comtable file: {self.comtable_f}''')
-        print(self.comtable)
+        print(pretty(self.comtable))
 
     ######### Simulation code
     def run(self):
