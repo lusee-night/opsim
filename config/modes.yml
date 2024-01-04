@@ -1,4 +1,4 @@
-# Description of the available modes of the hardware components
+# Map of the available LuSEE modes to the states of its hardware components
 science:
   spectrometer: 'SCIENCE'
   comms: 'OFF'

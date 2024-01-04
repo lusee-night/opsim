@@ -14,7 +14,7 @@ Power profile of the devices.
 * `comtable` : the _command table_, essentially a schedule of LuSEE modes (and transitions)
 * `modes` : a map of LuSEE modes to the states of the components
 * `conf` : configuration for prepped data production e.g. the _orbitals_ (stored in a cache file)
-* `devices` : states and power draw
+* `devices` : enumerates and maps the device states and power draw
 
 
 ## MJD to datetime, and back: conversion
