@@ -84,13 +84,15 @@ class Simulator:
     def info(self):
         print(f'''Orbitals file: {self.orbitals_f}''')
 
+        print('------------------')
         print(f'''Modes file: {self.modes_f}''')
-        print(self.modes)
+        print(pretty(self.modes))
 
+        print('------------------')
         print(f'''Devices file: {self.devices_f}''')
 
 
-
+        print('------------------')
         print(f'''Comtable file: {self.comtable_f}''')
         print(pretty(self.comtable))
 
