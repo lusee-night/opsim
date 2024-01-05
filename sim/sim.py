@@ -106,6 +106,9 @@ class Simulator:
         print(f'''Comtable file: {self.comtable_f}''')
         print(pretty(self.comtable))
 
+        print('------------------')
+        print(f'''Day condition at start and end of the simulation: {self.sun.day[self.initial_time]}, {self.sun.day[self.until]}''')
+
     ############################## Simulation code #############################
     def simulate(self):
         if self.until is not None:
@@ -116,8 +119,7 @@ class Simulator:
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
     
         while True:
-            myT     = int(self.env.now)
-            print(myT)
+            myT     = int(self.env.now) # print(myT)
 
             myPwr   = self.controller.power[myT]
             clock   = self.sun.mjd[myT]
