@@ -1,43 +1,54 @@
-import simpy
-import yaml
-import h5py
+import  simpy
+import  yaml
+import  h5py
 
 # local packages
-import hardware     # hardware modules
-from hardware import *
+import  hardware     # hardware modules
+from    hardware import *
+from    utils.timeconv import *
 
-import nav          # Astro/observation wrapper classes
-from   nav import *
+import  nav          # Astro/observation wrapper classes
+from    nav import *
 
 class Simulator:
-    def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None):
+    def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None):
+    
         # Filenames
         self.orbitals_f   = orbitals_f
         self.modes_f      = modes_f
         self.devices_f    = devices_f
         self.comtable_f   = comtable_f
 
-        # Orbitals
+        # Stubs for the Orbitals
         self.sun        = None
         self.esa        = None
         
-        # Other stuff
+        # Stubs for other stuff
         self.modes      = None
         self.comtable   = None
         self.devices    = {}
 
-
+        # Read all inputs
         self.read_orbitals()
         self.read_devices()
         self.read_modes()
         self.read_combtable()
 
-        self.env = simpy.Environment()
 
-        self.populate()
+        self.initial_time   = initial_time
+        self.until          = until
+
+        if initial_time is not None:
+            self.env = simpy.Environment(initial_time=initial_time)
+        else:
+            self.env = simpy.Environment()
+
+        self.populate() # -FIXME- Needs work
+
+        self.env.process(self.run()) # Set the callback to this class, for simpy
 
     # ---
-    def populate(self):
+    def populate(self): # Add hardware and the monitor to keep track of the sim
         initial_charge, capacity = 100., 1200. # battery
         self.battery = Battery(self.env, initial_charge, capacity)
 
@@ -60,7 +71,7 @@ class Simulator:
         self.sun = Sun(da[:,0], da[:,1] , da[:,2])
         self.esa = Sat(da[:,0], da[:,3] , da[:,4])
 
-       # ---
+    # ---
     def read_modes(self):
         f = open(self.modes_f, 'r')
         self.modes = yaml.safe_load(f)
@@ -73,7 +84,7 @@ class Simulator:
             device = Device(device_name, profiles[device_name])
             self.devices[device.name]=device
     
-        # ---
+    # ---
     def read_combtable(self):
         f = open(self.comtable_f, 'r')
         self.comtable = yaml.safe_load(f)
@@ -83,29 +94,36 @@ class Simulator:
     def info(self):
         print(f'''Orbitals file: {self.orbitals_f}''')
 
+        print('------------------')
         print(f'''Modes file: {self.modes_f}''')
-        print(self.modes)
+        print(pretty(self.modes))
 
+        print('------------------')
         print(f'''Devices file: {self.devices_f}''')
 
 
-
+        print('------------------')
         print(f'''Comtable file: {self.comtable_f}''')
-        print(self.comtable)
+        print(pretty(self.comtable))
 
-    ######### Simulation code
-    def run(self):
+    ############################## Simulation code #############################
+    def simulate(self):
+        if self.until is not None:
+            self.env.run(until=self.until) # 17760
+        else:
+            self.env.run()
     
-        ### SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
+    def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
     
         while True:
             myT     = int(self.env.now)
+            print(myT)
+
             myPwr   = self.controller.power[myT]
             clock   = self.sun.mjd[myT]
 
             self.monitor.buffer[myT] = myPwr
             try:
-                # print(myPwr)
                 self.battery.put(myPwr)
             except:
                 pass

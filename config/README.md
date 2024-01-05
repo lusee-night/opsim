@@ -2,12 +2,8 @@
 
 ## Purpose
 
-To facilitate running of the OpSim machinery, this folder contains configuration
-data to modify the behavior of the software without having to modofy the source.
-
-## Devices
-
-Power profile of the devices.
+There are several types of configuration data: one for use in pre-calculations of the "orbitals",
+and others, to define the behavior of the simulated LuSEE operation.
 
 ## Files
 
@@ -17,7 +13,7 @@ Power profile of the devices.
 * `devices` : enumerates and maps the device states and power draw
 
 
-## MJD to datetime, and back: conversion
+## Notes on time conversion -- MJD to datetime, and back
 
 ```python
 from astropy.time import Time
