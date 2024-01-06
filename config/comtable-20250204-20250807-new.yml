@@ -1,15 +1,15 @@
 1:
-  start:  60726.13541667
+  start:  60726.0
   mode:   charge
 
 2:
-  start:  60740.9375
+  start:  60740.0
   mode:   powersave
 
 3:
-  start:  60755.73958333
+  start:  60756.0
   mode:   science
 
 4:
-  start:  60770.45833333
+  start:  60770.0
   mode:   powersave
