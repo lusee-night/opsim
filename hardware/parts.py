@@ -11,6 +11,10 @@ class Device():
     def current(self):
         return self.currents[self.state]
 
+    def info(self):
+        name = self.name + ','
+        return f'''Device:{name:16}\tstate:{self.state},\tcurrent:{self.current()}'''
+
 #################################################################################
 class Monitor():
     def __init__(self, size=0):
