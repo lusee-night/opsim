@@ -125,6 +125,9 @@ class Simulator:
         print('------------------')
         print(f'''Devices file: {self.devices_f}''')
 
+        for dk in self.devices.keys():
+            print(self.devices[dk])
+
 
         print('------------------')
         print(f'''Comtable file: {self.comtable_f}''')
@@ -143,7 +146,7 @@ class Simulator:
     
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
     
-        current_mode = None
+        mode = None
 
         while True:
             myT     = int(self.env.now) # print(myT)
@@ -154,13 +157,17 @@ class Simulator:
             sched   = self.find_schedule(clock)
             md = sched['mode']
 
-            if md!=current_mode:
-                current_mode = md
+            if md!=mode:
+                mode = md
                 print(clock, md)
+                print(self.modes[mode])
 
-            self.monitor.buffer[myT] = myPwr
+            bms = (self.modes[mode]['bms'] == 'ON')
+
+            # See if the battery is charging:
             try:
-                self.battery.put(myPwr)
+                if bms:
+                    self.battery.put(myPwr)
             except:
                 pass
 
