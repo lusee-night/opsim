@@ -26,6 +26,7 @@ class Simulator:
         # Stubs for other stuff
         self.modes      = None
         self.comtable   = None
+        self.schedule   = {}
         self.devices    = {}
 
         # Read all inputs
@@ -89,6 +90,29 @@ class Simulator:
         f = open(self.comtable_f, 'r')
         self.comtable = yaml.safe_load(f)
 
+        for k in self.comtable.keys():
+            self.schedule[self.comtable[k]['start']] = k
+ 
+        self.times = list(self.schedule.keys())
+
+    # ---
+    def find_schedule(self, clock):
+        l = len(self.times) - 1 
+        tmax = self.times[l]
+        if clock>=tmax:
+            return self.comtable[self.schedule[tmax]]
+
+
+        ndx = 0
+        for t in self.times:
+            if clock>=t:
+                ndx+=1
+            else:
+                theTime = self.times[ndx-1]
+                return self.comtable[self.schedule[theTime]]
+   
+        return None
+
     
     # ---
     def info(self):
@@ -106,7 +130,11 @@ class Simulator:
         print(f'''Comtable file: {self.comtable_f}''')
         print(pretty(self.comtable))
 
+        print('------------------')
+        print(f'''Day condition at start and end of the simulation: {self.sun.day[self.initial_time]}, {self.sun.day[self.until]}''')
+
     ############################## Simulation code #############################
+    
     def simulate(self):
         if self.until is not None:
             self.env.run(until=self.until) # 17760
@@ -115,12 +143,20 @@ class Simulator:
     
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
     
+        current_mode = None
+
         while True:
-            myT     = int(self.env.now)
-            print(myT)
+            myT     = int(self.env.now) # print(myT)
 
             myPwr   = self.controller.power[myT]
             clock   = self.sun.mjd[myT]
+
+            sched   = self.find_schedule(clock)
+            md = sched['mode']
+
+            if md!=current_mode:
+                current_mode = md
+                print(clock, md)
 
             self.monitor.buffer[myT] = myPwr
             try:
