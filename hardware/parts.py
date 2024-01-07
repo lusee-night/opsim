@@ -11,9 +11,13 @@ class Device():
     def current(self):
         return self.currents[self.state]
 
+    def info(self):
+        name = self.name + ','
+        return f'''Device:{name:16}\tstate:{self.state},\tcurrent:{self.current()}'''
+
 #################################################################################
 class Monitor():
     def __init__(self, size=0):
-        self.buffer = np.empty(size)
-        self.battery= np.empty(size)
-        self.charge = 0
+        self.current    = np.zeros(size, dtype=float)
+        self.battery    = np.zeros(size, dtype=float)
+

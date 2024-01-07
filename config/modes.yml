@@ -1,6 +1,6 @@
 # Map of the available LuSEE modes to the states of its hardware components
 science:
-  spectrometer: 'SCIENCE'
+  spectrometer: 'ON'
   comms: 'OFF'
   bms: 'OFF'
   controller: 'ON'

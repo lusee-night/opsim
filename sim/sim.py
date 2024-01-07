@@ -115,6 +115,22 @@ class Simulator:
 
     
     # ---
+    def current(self):
+        cur = 0.0
+        for dk in self.devices.keys():
+            cur+=self.devices[dk].current()
+        return cur
+
+    def set_state(self, mode):
+        for dk in self.devices.keys():
+            self.devices[dk].state = mode[dk]
+
+    def device_report(self):
+        for dk in self.devices.keys():
+            print(self.devices[dk].info())
+        print('*** Total current:', self.current())
+
+
     def info(self):
         print(f'''Orbitals file: {self.orbitals_f}''')
 
@@ -124,6 +140,8 @@ class Simulator:
 
         print('------------------')
         print(f'''Devices file: {self.devices_f}''')
+
+        self.device_report()
 
 
         print('------------------')
@@ -143,10 +161,12 @@ class Simulator:
     
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
     
-        current_mode = None
+        mode = None
+        charge_current = 0.001 # arbitrary value for BMS current
+
 
         while True:
-            myT     = int(self.env.now) # print(myT)
+            myT     = int(self.env.now)
 
             myPwr   = self.controller.power[myT]
             clock   = self.sun.mjd[myT]
@@ -154,23 +174,61 @@ class Simulator:
             sched   = self.find_schedule(clock)
             md = sched['mode']
 
-            if md!=current_mode:
-                current_mode = md
+            if md!=mode:
+                mode = md
                 print(clock, md)
+                print(self.modes[mode])
 
-            self.monitor.buffer[myT] = myPwr
+                self.set_state(self.modes[mode])
+                self.device_report()
+
+            self.monitor.current[myT] = self.current()
+            
             try:
-                self.battery.put(myPwr)
+                if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
+                    charge   = self.controller.power[myT]*900*charge_current # FIXME replace with deltaT which is available
+                    self.battery.put(charge)
             except:
                 pass
-
-            for k in self.devices.keys():
-                the_device = self.devices[k]
-                if clock >60720.0: the_device.state = 'OFF'
-                cur = the_device.current()
-                if cur>0.0: self.battery.get(cur)
-
-            self.monitor.charge+=myPwr
-            self.monitor.battery[myT] = self.battery.level
             
+            # Draw charge from battery
+            draw_charge = self.current()*0.1
+            self.battery.get(draw_charge)
+
+            self.monitor.battery[myT] = self.battery.level
+
             yield self.env.timeout(1)
+
+        # while True:
+        #     myT     = int(self.env.now)
+
+        #     myPwr   = self.controller.power[myT]
+        #     clock   = self.sun.mjd[myT]
+
+        #     sched   = self.find_schedule(clock)
+        #     md = sched['mode']
+
+        #     if md!=mode:
+        #         mode = md
+        #         print(clock, md)
+        #         print(self.modes[mode])
+
+        #     bms = (self.modes[mode]['bms'] == 'ON')
+
+        #     # See if the battery is charging:
+        #     try:
+        #         if bms:
+        #             self.battery.put(myPwr)
+        #     except:
+        #         pass
+
+        #     for k in self.devices.keys():
+        #         the_device = self.devices[k]
+        #         if clock >60720.0: the_device.state = 'OFF'
+        #         cur = the_device.current()
+        #         if cur>0.0: self.battery.get(cur)
+
+        #     self.monitor.charge+=myPwr
+        #     self.monitor.battery[myT] = self.battery.level
+            
+        #     yield self.env.timeout(100)
