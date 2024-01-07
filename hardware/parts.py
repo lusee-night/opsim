@@ -18,6 +18,6 @@ class Device():
 #################################################################################
 class Monitor():
     def __init__(self, size=0):
-        self.buffer = np.empty(size)
-        self.battery= np.empty(size)
-        self.charge = 0
+        self.current    = np.zeros(size, dtype=float)
+        self.battery    = np.zeros(size, dtype=float)
+

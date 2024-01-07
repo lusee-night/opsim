@@ -162,7 +162,7 @@ class Simulator:
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
     
         mode = None
-        current = 10.0 # arbitrary value for current
+        charge_current = 0.001 # arbitrary value for BMS current
 
 
         while True:
@@ -182,7 +182,22 @@ class Simulator:
                 self.set_state(self.modes[mode])
                 self.device_report()
 
-            yield self.env.timeout(100)
+            self.monitor.current[myT] = self.current()
+            
+            try:
+                if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
+                    charge   = self.controller.power[myT]*900*charge_current # FIXME replace with deltaT which is available
+                    self.battery.put(charge)
+            except:
+                pass
+            
+            # Draw charge from battery
+            draw_charge = self.current()*0.1
+            self.battery.get(draw_charge)
+
+            self.monitor.battery[myT] = self.battery.level
+
+            yield self.env.timeout(1)
 
         # while True:
         #     myT     = int(self.env.now)
