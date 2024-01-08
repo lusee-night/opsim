@@ -10,6 +10,14 @@ from    utils.timeconv import *
 import  nav          # Astro/observation wrapper classes
 from    nav import *
 
+
+#################################################################################
+class Monitor():
+    def __init__(self, size=0):
+        self.current    = np.zeros(size, dtype=float)
+        self.battery    = np.zeros(size, dtype=float)
+
+# ---
 class Simulator:
     def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None):
     
@@ -21,7 +29,8 @@ class Simulator:
 
         # Stubs for the Orbitals
         self.sun        = None
-        self.esa        = None
+        self.lpf        = None
+        self.bge        = None
         
         # Stubs for other stuff
         self.modes      = None
@@ -70,7 +79,8 @@ class Simulator:
         da = np.array(ds_data[:]) # data array
         print(f'''Shape of the data payload: {da.shape}''')
         self.sun = Sun(da[:,0], da[:,1] , da[:,2])
-        self.esa = Sat(da[:,0], da[:,3] , da[:,4])
+        self.lpf = Sat(da[:,0], da[:,3] , da[:,4])
+        self.bge = Sat(da[:,0], da[:,5] , da[:,6])
 
     # ---
     def read_modes(self):
