@@ -21,6 +21,10 @@ class Monitor():
 class Simulator:
     def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None):
     
+        self.verbose      = False
+
+        self.record       = {}
+
         # Filenames
         self.orbitals_f   = orbitals_f
         self.modes_f      = modes_f
@@ -161,6 +165,10 @@ class Simulator:
         print('------------------')
         print(f'''Day condition at start and end of the simulation: {self.sun.day[self.initial_time]}, {self.sun.day[self.until]}''')
 
+    def save_record(self, filename='simulator_log.yml'):
+        with open(filename, 'w') as file:
+            yaml.dump(self.record, file)
+
     ############################## Simulation code #############################
     
     def simulate(self):
@@ -174,11 +182,10 @@ class Simulator:
         mode = None
         charge_current = 0.001 # arbitrary value for BMS current
 
+        cnt = 0
 
         while True:
             myT     = int(self.env.now)
-
-            myPwr   = self.controller.power[myT]
             clock   = self.sun.mjd[myT]
 
             sched   = self.find_schedule(clock)
@@ -186,14 +193,19 @@ class Simulator:
 
             if md!=mode:
                 mode = md
-                print(clock, md)
-                print(self.modes[mode])
-
                 self.set_state(self.modes[mode])
-                self.device_report()
 
+                if self.verbose:
+                    print(f'''Clock:{clock}, mode: {mode}''')
+                    print('Device states:', self.modes[mode])
+                    self.device_report()
+
+                cnt+=1
+                self.record[cnt] = {'start': float(clock), 'mode': mode}
+                
+
+            # Electrical section:
             self.monitor.current[myT] = self.current()
-            
             try:
                 if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
                     charge   = self.controller.power[myT]*900*charge_current # FIXME replace with deltaT which is available
@@ -209,36 +221,3 @@ class Simulator:
 
             yield self.env.timeout(1)
 
-        # while True:
-        #     myT     = int(self.env.now)
-
-        #     myPwr   = self.controller.power[myT]
-        #     clock   = self.sun.mjd[myT]
-
-        #     sched   = self.find_schedule(clock)
-        #     md = sched['mode']
-
-        #     if md!=mode:
-        #         mode = md
-        #         print(clock, md)
-        #         print(self.modes[mode])
-
-        #     bms = (self.modes[mode]['bms'] == 'ON')
-
-        #     # See if the battery is charging:
-        #     try:
-        #         if bms:
-        #             self.battery.put(myPwr)
-        #     except:
-        #         pass
-
-        #     for k in self.devices.keys():
-        #         the_device = self.devices[k]
-        #         if clock >60720.0: the_device.state = 'OFF'
-        #         cur = the_device.current()
-        #         if cur>0.0: self.battery.get(cur)
-
-        #     self.monitor.charge+=myPwr
-        #     self.monitor.battery[myT] = self.battery.level
-            
-        #     yield self.env.timeout(100)
