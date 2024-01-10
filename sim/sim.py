@@ -188,7 +188,7 @@ class Simulator:
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
     
         mode = None
-        charge_current = 0.001 # arbitrary value for BMS current
+        charge_current = 0.0005 # arbitrary value for BMS current
 
         cnt = 0
 
@@ -228,10 +228,20 @@ class Simulator:
             except:
                 pass
 
+            try:
+                if (self.modes[mode]['comms'] == 'ON'): # See if there is data produced
+                    data = self.deltaT*0.0001 # FIXME just a scaling factor for now
+                    self.ssd.get(data)
+            except:
+                pass
+
 
             # Draw charge from battery
             draw_charge = self.current()*0.1
-            self.battery.get(draw_charge)
+            try:
+                self.battery.get(draw_charge)
+            except:
+                pass # FIXME - handle the empty battery
 
             self.monitor.battery[myT]   = self.battery.level
             self.monitor.ssd[myT]       = self.ssd.level
