@@ -1,4 +1,3 @@
-# import  simpy
 from simpy import Container as C
 #################################################################################
 class Battery(C):
