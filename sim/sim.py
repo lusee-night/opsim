@@ -63,8 +63,11 @@ class Simulator:
 
     # ---
     def populate(self): # Add hardware and the monitor to keep track of the sim
-        initial_charge, capacity = 100., 1200. # battery
-        self.battery = Battery(self.env, initial_charge, capacity)
+        initial_charge,     battery_capacity = 100., 1200.  # battery
+        initial_data,       ssd_capacity     = 2., 256.     # SSD
+
+        self.battery    = Battery(self.env, initial_charge, battery_capacity)
+        self.ssd        = SSD(self.env, initial_data, ssd_capacity)
 
         print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
 
@@ -217,12 +220,21 @@ class Simulator:
                     self.battery.put(charge)
             except:
                 pass
-            
+
+            try:
+                if (self.modes[mode]['spectrometer'] == 'ON'): # See if there is data produced
+                    data = self.deltaT*0.0001 # FIXME just a scaling factor for now
+                    self.ssd.put(data)
+            except:
+                pass
+
+
             # Draw charge from battery
             draw_charge = self.current()*0.1
             self.battery.get(draw_charge)
 
-            self.monitor.battery[myT] = self.battery.level
+            self.monitor.battery[myT]   = self.battery.level
+            self.monitor.ssd[myT]       = self.ssd.level
 
             yield self.env.timeout(1)
 
