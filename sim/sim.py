@@ -3,11 +3,11 @@ import  yaml
 import  h5py
 
 # local packages
-import  hardware     # hardware modules
+#import  hardware     # hardware modules
 from    hardware import *
 from    utils.timeconv import *
 
-import  nav          # Astro/observation wrapper classes
+#import  nav          # Astro/observation wrapper classes
 from    nav import *
 
 
@@ -41,6 +41,9 @@ class Simulator:
         self.comtable   = None
         self.schedule   = {}
         self.devices    = {}
+
+        # Metadata to be read with orbitals; can add more if needed
+        self.deltaT     = None
 
         # Read all inputs
         self.read_orbitals()
@@ -79,6 +82,11 @@ class Simulator:
     # ---
     def read_orbitals(self):
         f = h5py.File(self.orbitals_f, "r")
+
+        ds_meta = f["/meta/configuration"] # Expect YAML payload
+        conf    = yaml.safe_load(ds_meta[0,])
+        self.deltaT  = conf['period']['deltaT']
+
         ds_data = f["/data/orbitals"]
         da = np.array(ds_data[:]) # data array
         print(f'''Shape of the data payload: {da.shape}''')
@@ -208,7 +216,7 @@ class Simulator:
             self.monitor.current[myT] = self.current()
             try:
                 if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
-                    charge   = self.controller.power[myT]*900*charge_current # FIXME replace with deltaT which is available
+                    charge   = self.controller.power[myT]*self.deltaT*charge_current # charge current is just a scaling factor here
                     self.battery.put(charge)
             except:
                 pass

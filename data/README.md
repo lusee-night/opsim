@@ -7,6 +7,36 @@ in the HDF5 files are names correspondingly:
 * __meta__: contains the _configuration_ dataset
 * __data__: contains the _orbitals_ dataset
 
+The _/meta/configuration_ contains the metadata supplied in the YAML format, such as:
+```
+period:
+  start: "2025-02-04 00:00:00" # "2025-02-10 00:00:00"
+  end:   "2025-08-07 23:45:00" # "2025-02-11 23:45:00"
+  deltaT: 900
+
+location:
+    latitude:                     -23.814 # degrees
+    longitude:                    182.258 # degrees
+    height:                       0 # meters
+
+satellites:
+  esa:
+    semi_major_km:                5738
+    eccentricity:                 0.56489
+    inclination_deg:              57.097
+    raan_deg:                     0
+    argument_of_pericenter_deg:   72.625
+    aposelene_ref_time:           '2024-05-01T00:00:00'
+
+  elytra:
+    semi_major_km:                5738
+    eccentricity:                 0.56489
+    inclination_deg:              57.097
+    raan_deg:                     0
+    argument_of_pericenter_deg:   252.625
+    aposelene_ref_time:           '2024-05-01T00:00:00'
+```
+
 
 ## Archive
 
