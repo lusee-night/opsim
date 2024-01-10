@@ -2,8 +2,9 @@
 
 ## Current scripts
 
-* `prep-sun` -- pre-calculation of the Sun's trajectory in the sky, to facilitate power and other calculations; saved to a cache file in HDF5 format.
+* `prep-sun` -- pre-calculation of the Sun's trajectory in the sky, to facilitate power and other calculations; saved to a cache file in HDF5 format. For details of the format, please see the README file in the _data_ folder.
 * `time-conversion` -- a simple CLI utility to convert between a few popular time formats, useful for data inspection.
+
 
 ## Deferred/Deprected (moved to "attic")
 
