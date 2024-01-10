@@ -3,20 +3,17 @@ import  yaml
 import  h5py
 
 # local packages
-#import  hardware     # hardware modules
 from    hardware import *
 from    utils.timeconv import *
-
-#import  nav          # Astro/observation wrapper classes
-from    nav import *
-
+from    nav import *  # Astro/observation wrapper classes
 
 #################################################################################
 class Monitor():
     def __init__(self, size=0):
-        self.current    = np.zeros(size, dtype=float)
-        self.battery    = np.zeros(size, dtype=float)
-
+        # Time series --
+        self.current    = np.zeros(size, dtype=float) # Total current drawn by the electronics
+        self.battery    = np.zeros(size, dtype=float) # Battery charge
+        self.ssd        = np.zeros(size, dtype=float) # Storage
 # ---
 class Simulator:
     def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None):
@@ -72,7 +69,7 @@ class Simulator:
         print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
 
         self.monitor    = Monitor(self.sun.N) # to define the discrete time axis
-        self.controller = Controller(self.env, self.sun, self.battery, self.monitor)
+        self.controller = Controller(self.env, self.sun)
 
         Controller.verbose = True
 
