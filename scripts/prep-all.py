@@ -78,8 +78,13 @@ if conffile=='':
     print('Missing configuration, exiting...')
     exit(-2)
 
-conf_f = open(conffile, 'r')
-conf = yaml.safe_load(conf_f)  # ingest the configuration data
+
+try:
+    conf_f = open(conffile, 'r')
+    conf = yaml.safe_load(conf_f)  # ingest the configuration data
+except:
+    print('Error opening and reading the configuration file:', conffile)
+    exit(-2)
 
 if verb:
     print("*** Top-level configuration keys ***")
@@ -102,6 +107,8 @@ lon = loc['longitude']
 hgt = loc['height']
 
 print(f'''Latitude: {lat}, longitude: {lon}''')
+
+# Initialize the Observation obejct with the data gleaned from the configuraiton file
 observation = O((t_start, t_end), lat, lon, hgt, deltaT)
 (times, alt, az) = track_from_observation(observation) # Sun
 N = times.size
@@ -109,38 +116,38 @@ mjd = [t.mjd for t in times]
 
 if verb: print(f'''Sun: generated {N} data points''')
 
-esa = conf['satellites']['esa']
-semi_major_km               = esa['semi_major_km']
-eccentricity                = esa['eccentricity']
-inclination_deg             = esa['inclination_deg']
-raan_deg                    = esa['raan_deg']
-argument_of_pericenter_deg  = esa['argument_of_pericenter_deg']
-aposelene_ref_time          = Time(esa['aposelene_ref_time'])
+lpf = conf['satellites']['lpf']
+semi_major_km               = lpf['semi_major_km']
+eccentricity                = lpf['eccentricity']
+inclination_deg             = lpf['inclination_deg']
+raan_deg                    = lpf['raan_deg']
+argument_of_pericenter_deg  = lpf['argument_of_pericenter_deg']
+aposelene_ref_time          = Time(lpf['aposelene_ref_time'])
 
 
-esaSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
-obsEsaSat   = ObservedSatellite(observation, esaSat)
+lpfSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
+obsLpfSat   = ObservedSatellite(observation, lpfSat)
 
-N = len(obsEsaSat.mjd)
-if verb: print(f'''ESA Satellite: generated {N} data points''')
-
-
-elytra = conf['satellites']['elytra']
-semi_major_km               = elytra['semi_major_km']
-eccentricity                = elytra['eccentricity']
-inclination_deg             = elytra['inclination_deg']
-raan_deg                    = elytra['raan_deg']
-argument_of_pericenter_deg  = elytra['argument_of_pericenter_deg']
-aposelene_ref_time          = Time(elytra['aposelene_ref_time'])
+N = len(obsLpfSat.mjd)
+if verb: print(f'''LPF (ESA) Satellite: generated {N} data points''')
 
 
-elytraSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
-obsElytraSat   = ObservedSatellite(observation, elytraSat)
+bge = conf['satellites']['bge']
+semi_major_km               = bge['semi_major_km']
+eccentricity                = bge['eccentricity']
+inclination_deg             = bge['inclination_deg']
+raan_deg                    = bge['raan_deg']
+argument_of_pericenter_deg  = bge['argument_of_pericenter_deg']
+aposelene_ref_time          = Time(bge['aposelene_ref_time'])
 
-N = len(obsElytraSat.mjd)
-if verb: print(f'''Elytra Satellite: generated {N} data points''')
 
-result = np.column_stack((mjd, alt, az, obsEsaSat.alt, obsEsaSat.az, obsElytraSat.alt, obsElytraSat.az))
+bgeSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
+obsBgeSat   = ObservedSatellite(observation, bgeSat)
+
+N = len(obsBgeSat.mjd)
+if verb: print(f'''BGE (ELytra) Satellite: generated {N} data points''')
+
+result = np.column_stack((mjd, alt, az, obsLpfSat.alt, obsLpfSat.az, obsBgeSat.alt, obsBgeSat.az))
 
 
 if verb: print('Finished calculations...')
