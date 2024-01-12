@@ -1,44 +1,23 @@
 #! /usr/bin/env python
 #######################################################################
-# The script to prepare ALL of the conditions data e.g. Sun, satellites
+# The script to prepare ALL of the "orbitals" data e.g. Sun, satellites
 #######################################################################
 
 import argparse
 import yaml
-
 import h5py
 
-
-# lusee "nav" package
-
-import nav
-from nav.coordinates import *
-
-from    lunarsky.time       import Time
-
-
+# lusee/opsim
+from    nav.coordinates import *
+from    lunarsky.time   import Time
 # ----------------------------------------------------------------------------------
-# Pretty print the dictionary we read from the input YAML, for an extra check:
-def pretty(d, indent=0):
-    for key, value in d.items():
-        print('\t' * indent + str(key))
-        if isinstance(value, dict):
-            pretty(value, indent+1)
-        else:
-            print('\t' * (indent+1) + str(value))
-
-
-#######################################
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-v", "--verbose",      action='store_true', help="Verbose mode")
 parser.add_argument("-c", "--conffile",     type=str,            help="The input - a YAML file containing configuration", default='')
 parser.add_argument("-o", "--outputfile",   type=str,            help="The output", default='')
 parser.add_argument("-i", "--inspectfile",  type=str,            help="File to inspect (overrides other options)", default='')
-#######################################
-
-# Reference time range often used in testing: "2025-02-04 00:00:00 to 2025-03-07 23:45:00"
-
+# ----------------------------------------------------------------------------------
 args        = parser.parse_args()
 
 verb        = args.verbose
@@ -74,7 +53,8 @@ if inspectfile != '': # inspect and exit
     exit(0)
 
 # ----------------------------------------------------------------------------------
-# -- PRODUCE DATA
+# -- READ AND PARSE THE CONFIGURATION DATA
+#
 if conffile=='':
     print('Missing configuration, exiting...')
     exit(-2)
@@ -99,7 +79,7 @@ if verb:
     print(f'''*** Time range: "{t_start}" to "{t_end}, time step: {deltaT}"***''')
 
 # ------------------------------------------------------
-# Do the calculation (solar and sat)
+# -- PRODUCE DATA
 
 # Lander location
 loc = conf['location']
@@ -160,7 +140,7 @@ if outputfile == '': # print useful info and exit
     exit(0)
 
 
-# Let's output the results, formatted in HDF5. There will be two groups, meta and the payload data
+# HDF5 output -- there will be two groups, (a) meta and (b) the payload data
 f = h5py.File(outputfile, 'w')
 
 grp_meta = f.create_group('meta')
@@ -170,16 +150,8 @@ ds_meta[0,] = yaml.dump(conf)
 
 grp_data = f.create_group('data')
 ds_data = grp_data.create_dataset("orbitals", data=result, compression="gzip")
-# ds_data = grp_data.create_dataset("orbitals", data=result)
+
 f.close()
 
 exit(0)
 
-# ----- ATTIC
-# Reference numbers: originally in the satellite ctor API
-# semi_major_km               = 5738,
-# eccentricity                = 0.56489,
-# inclination_deg             = 57.097,
-# raan_deg                    = 0,
-# argument_of_pericenter_deg  = 72.625,
-# aposelene_ref_time          = Time("2024-05-01T00:00:00")
