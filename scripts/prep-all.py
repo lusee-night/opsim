@@ -55,6 +55,7 @@ if verb:
     else:
         print(f'''*** File to inspect (will exit on completion): "{inspectfile}" ***''')
 
+# ----------------------------------------------------------------------------------
 # -- INSPECT EXISTING DATA
 if inspectfile != '': # inspect and exit
     f = h5py.File(inspectfile, "r")
@@ -147,10 +148,11 @@ obsBgeSat   = ObservedSatellite(observation, bgeSat)
 N = len(obsBgeSat.mjd)
 if verb: print(f'''BGE (ELytra) Satellite: generated {N} data points''')
 
+# Combine all data in an array suitable for output
 result = np.column_stack((mjd, alt, az, obsLpfSat.alt, obsLpfSat.az, obsBgeSat.alt, obsBgeSat.az))
 
 
-if verb: print('Finished calculations...')
+if verb: print('Finished calculations, formed the data package...')
 
 if outputfile == '': # print useful info and exit
     if verb:
@@ -158,15 +160,17 @@ if outputfile == '': # print useful info and exit
     exit(0)
 
 
-# Let's output the results, formatted in HDF5
+# Let's output the results, formatted in HDF5. There will be two groups, meta and the payload data
 f = h5py.File(outputfile, 'w')
+
 grp_meta = f.create_group('meta')
-dt = h5py.string_dtype(encoding='utf-8')                     
+dt = h5py.string_dtype(encoding='utf-8')
 ds_meta = grp_meta.create_dataset('configuration', (1,), dtype=dt)
 ds_meta[0,] = yaml.dump(conf)
 
 grp_data = f.create_group('data')
-ds_data = grp_data.create_dataset("orbitals", data=result)
+ds_data = grp_data.create_dataset("orbitals", data=result, compression="gzip")
+# ds_data = grp_data.create_dataset("orbitals", data=result)
 f.close()
 
 exit(0)
