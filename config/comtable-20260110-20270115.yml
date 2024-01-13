@@ -1,0 +1,39 @@
+1:
+  start:  61050.8 # 3 - first full day, start
+  mode:   charge
+
+2:
+  start:  61065.7 # 1429 - sunset
+  mode:   powersave
+
+3:
+  start:  61080.5 # 2847 - day
+  mode:   charge
+
+4:
+  start:  61095.2 # 4267 - sunset
+  mode:   science
+
+5:
+  start:  61110.1 # 5690 - day
+  mode:   charge
+
+6:
+  start:  61124.8 # 7102 - sunset
+  mode:   powersave
+
+7:
+  start:  61139.7 # 8528  - day
+  mode:   comms
+
+8:
+  start:  61154.3 # 9934 - sunset
+  mode:   powersave
+
+9:
+  start:  61169.2 # 11362 - day
+  mode:   charge
+
+10:
+  start:  61183.7 # 12764 - sunset
+  mode:   powersave
