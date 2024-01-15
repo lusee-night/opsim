@@ -3,20 +3,20 @@ science:
   spectrometer: 'ON'
   comms: 'OFF'
   bms: 'OFF'
-  controller: 'ON'
+  dcb: 'ON'
 charge:
   spectrometer: 'OFF'
   comms: 'OFF'
   bms: 'ON'
-  controller: 'ON'
+  dcb: 'ON'
 comms:
   spectrometer: 'OFF'
   comms: 'ON'
   bms: 'ON'
-  controller: 'ON'
+  dcb: 'ON'
 powersave:
   spectrometer: 'OFF'
   comms: 'OFF'
   bms: 'OFF'
-  controller: 'ON'
+  dcb: 'ON'
   

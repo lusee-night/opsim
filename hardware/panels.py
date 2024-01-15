@@ -22,11 +22,15 @@ class Panel: # base, "abstract"
 
 
     ###
-    def __init__(self, sun, name = '', normal=(None, None, None), env=None, area=1.0):
+    def __init__(self, sun, name = '', normal=(None, None, None), env=None, area=1.0, pvEFF_T=None, pvEFF_P=None):
         self.sun        = sun
         self.name       = name
         self.area       = area
         self.env        = env
+        if pvEFF_T is not None: 
+            self.pvEfficiency = Panel.pvEfficiency
+        else:
+            self.pvEfficiency = np.polyfit(pvEFF_T, pvEFF_P, 2)
         
         # The "normal" is specific to each of the three (or more) subclassed panels
         self.normal     = normal
@@ -52,7 +56,7 @@ class Panel: # base, "abstract"
     ###
     def power(self):
         eff = 1.0 # default to 1.o if the temperature curve is not set for the sun
-        if self.sun.temperature is not None: eff = Panel.pvEfficiency(self.sun.temperature)
+        if self.sun.temperature is not None: eff = self.pvEfficiency(self.sun.temperature)
         return eff*np.select(self.condition_list, self.choice_list)
     ###
     def info(self):

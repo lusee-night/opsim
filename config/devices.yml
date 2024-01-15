@@ -1,14 +1,59 @@
-spectrometer:
-  'OFF':      0.0
-  'ON':       0.5
-comms:
-  'OFF':      0.0
-  'ON':       0.1
-bms:
-  'OFF':      0.0
-  'ON':       0.1
-controller:
-  'OFF':      0.0
-  'ON':       0.3
 
+solar_panels:  
+  config:    
+    lander_pitch: 0.0
+    lander_roll: 0.0
+    lander_yaw: 0.0
+    PV_efficiency:
+      temp: -173.15 20.0  126.85
+      power: 0.356414 0.304828 0.257931
+
+  EPanel:
+    normal: 1 0 0 
+    efficiency: 1.0
+    area: 1.0
+  
+  WPanel:
+    normal: -1 0 0 
+    efficiency: 1.0
+    area: 1.0
+  
+  TPanel:
+    normal: 0 0 1
+    efficiency: 1.0
+    area: 1.0
+
+battery:
+  initial: 100.0
+  capacity: 1200
+
+ssd:
+  initial: 0 
+  capacity: 32e6
+
+
+# consumption in amperes at battery voltage
+power_consumers:
+  spectrometer:
+    'OFF':      0.0
+    'ON':       0.5
+  comms:
+    'OFF':      0.0
+    'ON':       0.1
+  bms:
+    'OFF':      0.0
+    'ON':       0.1
+  dcb:
+    'OFF':      0.0
+    'ON':       0.3
+
+# consumption in kB/s
+ssd_consumers:
+  spectrometer:
+    'OFF':      0.0
+    'ON':       2.5
+
+  dcb:
+    'OFF':      0.0
+    'ON':       0.1
 

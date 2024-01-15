@@ -30,6 +30,28 @@ class Controller:
         self.add_panel(WPanel(self.sun, 'W'))
         self.add_panel(TPanel(self.sun, 'T'))
     ###
+    def add_panels_from_config(self, config):
+        lander_roll = float (config['config']['lander_roll'])
+        lander_pitch = float (config['config']['lander_pitch'])
+        lander_yaw = float (config['config']['lander_yaw'])
+
+        if (lander_roll != 0.0) or (lander_pitch != 0.0) or (lander_yaw != 0.0):
+            print ('Lander roll/pitch/yaw: ', lander_roll, lander_pitch, lander_yaw)
+
+        pvEFF_T = np.array([float(x) for x in config['config']['PV_efficiency']['temp'].split()])
+        pvEFF_P = np.array([float(x) for x in config['config']['PV_efficiency']['power'].split()])
+        
+        for panel_name, panel in config.items():
+            if panel_name=='config':
+                continue
+            normal = np.array([float(x) for x in panel['normal'].split()])
+            eff = panel['efficiency']
+            print(f'''Adding panel {panel_name} with normal {normal} and efficiency {eff}''')
+            self.add_panel(Panel(self.sun, panel_name, normal, self.env, eff, pvEFF_T, pvEFF_P))
+                        
+    
+    
+    ###
     def get_panel(self, name):
         for p in self.panels:
             if p.name==name: return p

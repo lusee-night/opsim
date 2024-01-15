@@ -63,20 +63,20 @@ class Simulator:
 
     # ---
     def populate(self): # Add hardware and the monitor to keep track of the sim
-        initial_charge,     battery_capacity = 100., 1200.  # battery
-        initial_data,       ssd_capacity     = 2., 256.     # SSD
 
-        self.battery    = Battery(self.env, initial_charge, battery_capacity)
-        self.ssd        = SSD(self.env, initial_data, ssd_capacity)
 
+        self.battery    = Battery(self.env, self.battery_initial, self.battery_capacity)
         print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
+        self.ssd        = SSD(self.env, self.ssd_initial, self.ssd_capacity)
+        print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
+        
 
         self.monitor    = Monitor(self.sun.N) # to define the discrete time axis
         self.controller = Controller(self.env, self.sun)
 
         Controller.verbose = True
 
-        self.controller.add_all_panels()
+        self.controller.add_panels_from_config(self.panel_config)
         self.controller.calculate_power()
 
     # ---
@@ -103,9 +103,15 @@ class Simulator:
     def read_devices(self):
         f = open(self.devices_f, 'r')
         profiles = yaml.safe_load(f)  # ingest the configuration data
-        for device_name in profiles.keys():
-            device = Device(device_name, profiles[device_name])
+        device_profiles = profiles['power_consumers']
+        for device_name in device_profiles.keys():
+            device = Device(device_name, device_profiles[device_name])
             self.devices[device.name]=device
+        self.battery_capacity = float(profiles['battery']['capacity'])
+        self.battery_initial = float(profiles['battery']['initial'])
+        self.ssd_capacity = float(profiles['ssd']['capacity'])
+        self.ssd_initial = float(profiles['ssd']['initial'])
+        self.panel_config = profiles['solar_panels']
     
     # ---
     def read_combtable(self):
