@@ -46,7 +46,8 @@ class Simulator:
         self.read_orbitals()
         self.read_devices()
         self.read_modes()
-        self.read_combtable()
+        if comtable_f is not None:
+            self.read_combtable()
 
 
         self.initial_time   = initial_time
@@ -58,6 +59,7 @@ class Simulator:
             self.env = simpy.Environment()
 
         self.populate() # -FIXME- Needs work
+        self.create_command_table = False
 
         self.env.process(self.run()) # Set the callback to this class, for simpy
 
@@ -141,7 +143,57 @@ class Simulator:
    
         return None
 
-    
+    # ---
+    def init_generate_schedule(self, myT):
+        day = self.sun.alt[myT] > 0
+        self.last_day_state = day
+        if day:
+            self.last_sunrise_mjd = self.sun.mjd[myT]
+        else:
+            self.last_sunset_mjd = self.sun.mjd[myT]
+        self.last_comm = self.sun.mjd[myT]
+
+    # --
+    def generate_schedule(self, myT):
+        ## all of this is purely placeholder now
+        ## don't take it too seriously
+
+        sched = {}
+        day = self.sun.alt[myT] > 0
+        mjd_now = self.sun.mjd[myT]
+        if not day:
+            if self.last_day_state:
+                # day to night transition
+                self.last_sunset_mjd = self.sun.mjd[myT]
+            # let's switch between science and powersave every 48 hours
+            tick = (mjd_now - self.last_sunset_mjd) / 2.0
+            if int(tick)%2==0:
+                sched['mode'] = 'science'
+            else:
+                sched['mode'] = 'powersave'
+        else:
+            if not self.last_day_state:
+                # night to day transition
+                self.last_sunrise_mjd = self.sun.mjd[myT]
+            comm_opportunity = self.lpf.alt[myT] > 0.1
+            need_comm = ( (mjd_now-self.last_comm)>4  # we haven't talked for a while
+                            or (self.battery.level <0.2*self.battery_capacity)  # we are low on battery so might as well use this opportunity
+                            or ((self.battery.level<0.8*self.battery_capacity) and (mjd_now-self.last_sunrise_mjd)>12)) # we have two days to fully charge
+            calib_opportunity = self.bge.alt[myT] > -0.1
+            if calib_opportunity:
+                sched['mode'] = 'science'
+            else:
+                if comm_opportunity and need_comm:
+                    sched['mode'] = 'comms'
+                    self.last_comm = self.sun.mjd[myT]
+                else:
+                    sched['mode'] = 'science'
+        self.last_day_state = day
+        return sched
+
+
+
+
     # ---
     def current(self):
         cur = 0.0
@@ -185,7 +237,12 @@ class Simulator:
 
     ############################## Simulation code #############################
     
-    def simulate(self):
+    def simulate(self, create_command_table = False):
+        self.create_command_table = create_command_table
+        if create_command_table:
+            myT     = int(self.env.now)
+            self.init_generate_schedule(myT)
+
         if self.until is not None:
             self.env.run(until=self.until) # 17760
         else:
@@ -202,7 +259,11 @@ class Simulator:
             myT     = int(self.env.now)
             clock   = self.sun.mjd[myT]
 
-            sched   = self.find_schedule(clock)
+            if self.create_command_table:
+                sched = self.generate_schedule(myT)
+            else:
+                sched  = self.find_schedule(clock)
+            
             md = sched['mode']
 
             if md!=mode:
