@@ -47,7 +47,7 @@ power_consumers:
   comms:
     'OFF':      0.0
     'ON':       0.1
-    'TRANSF':   19
+    'TX':       19
   bms:
     'OFF':      0.0
     'ON':       1.0
@@ -71,5 +71,5 @@ ssd_consumers:
   comms:
     'OFF':      0.0
     'ON':       0.0
-    'TRANSF':   -20.0   
+    'TX':   -20.0   
 

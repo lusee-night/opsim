@@ -9,877 +9,887 @@
   ssd_expected_fill: 0.054793125
   start: 61054.833333333336
 3:
-  battery_expected_fill: 0.20977403482623183
+  battery_expected_fill: 0.2075925943830186
   mode: science
-  ssd_expected_fill: 0.0548015625
+  ssd_expected_fill: 0.0531140625
   start: 61054.864583333336
 4:
-  battery_expected_fill: 0.1788414401817259
+  battery_expected_fill: 0.17665999973851268
   mode: comms
-  ssd_expected_fill: 0.0605390625
+  ssd_expected_fill: 0.0588515625
   start: 61055.28125
 5:
-  battery_expected_fill: 0.20074175072286463
+  battery_expected_fill: 0.21899697364027979
   mode: science
-  ssd_expected_fill: 0.060541875
-  start: 61055.291666666664
-6:
-  battery_expected_fill: 0.199968435856752
-  mode: comms
-  ssd_expected_fill: 0.0606853125
+  ssd_expected_fill: 0.0577321875
   start: 61055.302083333336
-7:
-  battery_expected_fill: 0.2218499307710803
-  mode: science
-  ssd_expected_fill: 0.060688125
-  start: 61055.3125
-8:
-  battery_expected_fill: 0.19091733612657436
+6:
+  battery_expected_fill: 0.18729106412966118
   mode: comms
-  ssd_expected_fill: 0.066425625
+  ssd_expected_fill: 0.063613125
   start: 61055.729166666664
-9:
-  battery_expected_fill: 0.21231807159496538
+7:
+  battery_expected_fill: 0.20796465278364779
   mode: science
-  ssd_expected_fill: 0.0664284375
+  ssd_expected_fill: 0.0630534375
   start: 61055.739583333336
-10:
-  battery_expected_fill: 0.17983884721823412
+8:
+  battery_expected_fill: 0.19945818925640862
   mode: comms
-  ssd_expected_fill: 0.0724528125
+  ssd_expected_fill: 0.06463125
+  start: 61055.854166666664
+9:
+  battery_expected_fill: 0.21995711940135784
+  mode: science
+  ssd_expected_fill: 0.0640715625
+  start: 61055.864583333336
+10:
+  battery_expected_fill: 0.19675767341797837
+  mode: comms
+  ssd_expected_fill: 0.0683746875
   start: 61056.177083333336
 11:
-  battery_expected_fill: 0.20054385983315984
+  battery_expected_fill: 0.2167355392184997
   mode: science
-  ssd_expected_fill: 0.072455625
+  ssd_expected_fill: 0.067815
   start: 61056.1875
 12:
-  battery_expected_fill: 0.1997705449670472
+  battery_expected_fill: 0.18425631484176844
   mode: comms
-  ssd_expected_fill: 0.0725990625
-  start: 61056.197916666664
-13:
-  battery_expected_fill: 0.22043852119538235
-  mode: science
-  ssd_expected_fill: 0.072039375
-  start: 61056.208333333336
-14:
-  battery_expected_fill: 0.1895059265508764
-  mode: comms
-  ssd_expected_fill: 0.077776875
+  ssd_expected_fill: 0.073839375
   start: 61056.625
-15:
-  battery_expected_fill: 0.209325305141624
+13:
+  battery_expected_fill: 0.20334854661811164
   mode: science
-  ssd_expected_fill: 0.0777796875
+  ssd_expected_fill: 0.0732796875
   start: 61056.635416666664
+14:
+  battery_expected_fill: 0.1994819722875484
+  mode: comms
+  ssd_expected_fill: 0.073996875
+  start: 61056.6875
+15:
+  battery_expected_fill: 0.21843596037210955
+  mode: science
+  ssd_expected_fill: 0.0734371875
+  start: 61056.697916666664
 16:
-  battery_expected_fill: 0.19927221188215957
+  battery_expected_fill: 0.1905966251920542
   mode: comms
-  ssd_expected_fill: 0.079644375
-  start: 61056.770833333336
-17:
-  battery_expected_fill: 0.21876354963508263
-  mode: science
-  ssd_expected_fill: 0.0796471875
-  start: 61056.78125
-18:
-  battery_expected_fill: 0.19711073338392845
-  mode: comms
-  ssd_expected_fill: 0.0836634375
+  ssd_expected_fill: 0.0786009375
   start: 61057.072916666664
-19:
-  battery_expected_fill: 0.2158625432614581
+17:
+  battery_expected_fill: 0.20862128825517942
   mode: science
-  ssd_expected_fill: 0.08366625
+  ssd_expected_fill: 0.07804125
   start: 61057.083333333336
-20:
-  battery_expected_fill: 0.18261000401861419
+18:
+  battery_expected_fill: 0.19934150986182764
   mode: comms
-  ssd_expected_fill: 0.0898340625
+  ssd_expected_fill: 0.0797625
+  start: 61057.208333333336
+19:
+  battery_expected_fill: 0.21700901800006062
+  mode: science
+  ssd_expected_fill: 0.0792028125
+  start: 61057.21875
+20:
+  battery_expected_fill: 0.19380957201668114
+  mode: comms
+  ssd_expected_fill: 0.0835059375
   start: 61057.53125
 21:
-  battery_expected_fill: 0.20009115867682284
+  battery_expected_fill: 0.21056357986048543
   mode: science
-  ssd_expected_fill: 0.089274375
+  ssd_expected_fill: 0.08294625
   start: 61057.541666666664
 22:
-  battery_expected_fill: 0.1993178438107102
+  battery_expected_fill: 0.19973717173490835
   mode: comms
-  ssd_expected_fill: 0.0894178125
-  start: 61057.552083333336
+  ssd_expected_fill: 0.084954375
+  start: 61057.6875
 23:
-  battery_expected_fill: 0.21673714399777072
+  battery_expected_fill: 0.21601887067535566
   mode: science
-  ssd_expected_fill: 0.088858125
-  start: 61057.5625
+  ssd_expected_fill: 0.0843946875
+  start: 61057.697916666664
 24:
-  battery_expected_fill: 0.18580454935326476
+  battery_expected_fill: 0.19513936929031414
   mode: comms
-  ssd_expected_fill: 0.094595625
+  ssd_expected_fill: 0.0882675
   start: 61057.979166666664
 25:
-  battery_expected_fill: 0.20188118199450636
+  battery_expected_fill: 0.21048885511715135
   mode: science
-  ssd_expected_fill: 0.0940359375
+  ssd_expected_fill: 0.0877078125
   start: 61057.989583333336
 26:
-  battery_expected_fill: 0.1995612373961684
+  battery_expected_fill: 0.19966244699157426
   mode: comms
-  ssd_expected_fill: 0.09446625
-  start: 61058.020833333336
+  ssd_expected_fill: 0.0897159375
+  start: 61058.135416666664
 27:
-  battery_expected_fill: 0.2154994833066734
+  battery_expected_fill: 0.21448646107635413
   mode: science
-  ssd_expected_fill: 0.0939065625
-  start: 61058.03125
+  ssd_expected_fill: 0.08915625
+  start: 61058.145833333336
 28:
-  battery_expected_fill: 0.18611351839439275
+  battery_expected_fill: 0.1936069596913126
   mode: comms
-  ssd_expected_fill: 0.0993571875
+  ssd_expected_fill: 0.0930290625
   start: 61058.427083333336
 29:
-  battery_expected_fill: 0.20151965860356746
+  battery_expected_fill: 0.20828595308608294
   mode: science
-  ssd_expected_fill: 0.09936
+  ssd_expected_fill: 0.092469375
   start: 61058.4375
 30:
-  battery_expected_fill: 0.19997302887134216
+  battery_expected_fill: 0.19977948955884378
   mode: comms
-  ssd_expected_fill: 0.099646875
-  start: 61058.458333333336
+  ssd_expected_fill: 0.0940471875
+  start: 61058.552083333336
 31:
-  battery_expected_fill: 0.21548648356624653
+  battery_expected_fill: 0.21488354696439632
   mode: science
-  ssd_expected_fill: 0.0990871875
-  start: 61058.46875
+  ssd_expected_fill: 0.0934875
+  start: 61058.5625
 32:
-  battery_expected_fill: 0.18455388892174057
+  battery_expected_fill: 0.19091078611490422
   mode: comms
-  ssd_expected_fill: 0.1048246875
+  ssd_expected_fill: 0.0979340625
   start: 61058.885416666664
 33:
-  battery_expected_fill: 0.20146227383131196
+  battery_expected_fill: 0.2070920242100712
   mode: science
-  ssd_expected_fill: 0.104265
+  ssd_expected_fill: 0.097374375
   start: 61058.895833333336
 34:
-  battery_expected_fill: 0.19991564409908666
+  battery_expected_fill: 0.19935887554894471
   mode: comms
-  ssd_expected_fill: 0.104551875
-  start: 61058.916666666664
+  ssd_expected_fill: 0.09880875
+  start: 61059.0
 35:
-  battery_expected_fill: 0.2169206772654924
+  battery_expected_fill: 0.21589075374591213
   mode: science
-  ssd_expected_fill: 0.1039921875
-  start: 61058.927083333336
+  ssd_expected_fill: 0.0982490625
+  start: 61059.010416666664
 36:
-  battery_expected_fill: 0.1867613974870991
+  battery_expected_fill: 0.19191799289642003
   mode: comms
-  ssd_expected_fill: 0.10958625
+  ssd_expected_fill: 0.102695625
   start: 61059.333333333336
 37:
-  battery_expected_fill: 0.20498062961935876
+  battery_expected_fill: 0.20941007821427526
   mode: science
-  ssd_expected_fill: 0.1095890625
+  ssd_expected_fill: 0.1021359375
   start: 61059.34375
 38:
-  battery_expected_fill: 0.19956742555657023
+  battery_expected_fill: 0.19935698495481083
   mode: comms
-  ssd_expected_fill: 0.110593125
-  start: 61059.416666666664
+  ssd_expected_fill: 0.104000625
+  start: 61059.479166666664
 39:
-  battery_expected_fill: 0.21801239113637993
+  battery_expected_fill: 0.21724025393252594
   mode: science
-  ssd_expected_fill: 0.1100334375
-  start: 61059.427083333336
+  ssd_expected_fill: 0.1034409375
+  start: 61059.489583333336
 40:
-  battery_expected_fill: 0.19094637082243723
+  battery_expected_fill: 0.19481412281525914
   mode: comms
-  ssd_expected_fill: 0.11505375
+  ssd_expected_fill: 0.107600625
   start: 61059.791666666664
 41:
-  battery_expected_fill: 0.21033348472786556
+  battery_expected_fill: 0.21347408990628305
   mode: science
-  ssd_expected_fill: 0.1144940625
+  ssd_expected_fill: 0.1070409375
   start: 61059.802083333336
 42:
-  battery_expected_fill: 0.19950707660228847
+  battery_expected_fill: 0.1995544223162554
   mode: comms
-  ssd_expected_fill: 0.1165021875
-  start: 61059.947916666664
+  ssd_expected_fill: 0.1096228125
+  start: 61059.989583333336
 43:
-  battery_expected_fill: 0.21925021949080084
+  battery_expected_fill: 0.21866164612943298
   mode: science
-  ssd_expected_fill: 0.1159425
-  start: 61059.958333333336
+  ssd_expected_fill: 0.109063125
+  start: 61060.0
 44:
-  battery_expected_fill: 0.19837071810575932
+  battery_expected_fill: 0.19932877447661676
   mode: comms
-  ssd_expected_fill: 0.1198153125
-  start: 61060.239583333336
+  ssd_expected_fill: 0.1126490625
+  start: 61060.260416666664
 45:
-  battery_expected_fill: 0.2187190874187794
+  battery_expected_fill: 0.2189902207739453
   mode: science
-  ssd_expected_fill: 0.119255625
-  start: 61060.25
+  ssd_expected_fill: 0.112089375
+  start: 61060.270833333336
 46:
-  battery_expected_fill: 0.1993862157659632
+  battery_expected_fill: 0.18805762612943935
   mode: comms
-  ssd_expected_fill: 0.1228415625
-  start: 61060.510416666664
+  ssd_expected_fill: 0.117826875
+  start: 61060.6875
 47:
-  battery_expected_fill: 0.22022566849864403
+  battery_expected_fill: 0.20845329147125352
   mode: science
-  ssd_expected_fill: 0.122844375
-  start: 61060.520833333336
+  ssd_expected_fill: 0.1172671875
+  start: 61060.697916666664
 48:
-  battery_expected_fill: 0.1993461671136025
+  battery_expected_fill: 0.19994682794401436
   mode: comms
-  ssd_expected_fill: 0.1267171875
-  start: 61060.802083333336
-49:
-  battery_expected_fill: 0.2206361994208925
-  mode: science
-  ssd_expected_fill: 0.1261575
+  ssd_expected_fill: 0.118845
   start: 61060.8125
+49:
+  battery_expected_fill: 0.22052428239662275
+  mode: science
+  ssd_expected_fill: 0.1182853125
+  start: 61060.822916666664
 50:
-  battery_expected_fill: 0.19589012370528772
+  battery_expected_fill: 0.19655152154713065
   mode: comms
-  ssd_expected_fill: 0.1307475
+  ssd_expected_fill: 0.122731875
   start: 61061.145833333336
 51:
-  battery_expected_fill: 0.2176047096259024
+  battery_expected_fill: 0.2175389606533409
   mode: science
-  ssd_expected_fill: 0.1301878125
+  ssd_expected_fill: 0.1221721875
   start: 61061.15625
 52:
-  battery_expected_fill: 0.19981846770531148
+  battery_expected_fill: 0.19975271873275
   mode: comms
-  ssd_expected_fill: 0.133486875
+  ssd_expected_fill: 0.12547125
   start: 61061.395833333336
 53:
-  battery_expected_fill: 0.22176822909271263
+  battery_expected_fill: 0.2209753333057467
   mode: science
-  ssd_expected_fill: 0.1329271875
+  ssd_expected_fill: 0.1249115625
   start: 61061.40625
 54:
-  battery_expected_fill: 0.1993420979754458
+  battery_expected_fill: 0.19932251705459253
   mode: comms
-  ssd_expected_fill: 0.137086875
-  start: 61061.708333333336
+  ssd_expected_fill: 0.1289278125
+  start: 61061.697916666664
 55:
-  battery_expected_fill: 0.22149755806222746
+  battery_expected_fill: 0.2207455631416805
   mode: science
-  ssd_expected_fill: 0.1365271875
-  start: 61061.71875
+  ssd_expected_fill: 0.128368125
+  start: 61061.708333333336
 56:
-  battery_expected_fill: 0.1967514823466227
+  battery_expected_fill: 0.1952261725599631
   mode: comms
-  ssd_expected_fill: 0.1411171875
+  ssd_expected_fill: 0.1331015625
   start: 61062.052083333336
 57:
-  battery_expected_fill: 0.2190189769190236
+  battery_expected_fill: 0.21676652031795957
   mode: science
-  ssd_expected_fill: 0.14112
+  ssd_expected_fill: 0.132541875
   start: 61062.0625
 58:
-  battery_expected_fill: 0.1996861052662074
+  battery_expected_fill: 0.19975359326348127
   mode: comms
-  ssd_expected_fill: 0.1447059375
-  start: 61062.322916666664
+  ssd_expected_fill: 0.1356975
+  start: 61062.291666666664
 59:
-  battery_expected_fill: 0.22195721154691306
+  battery_expected_fill: 0.22130094684683657
   mode: science
-  ssd_expected_fill: 0.14414625
-  start: 61062.333333333336
+  ssd_expected_fill: 0.1351378125
+  start: 61062.302083333336
 60:
-  battery_expected_fill: 0.19953108042964623
+  battery_expected_fill: 0.1996481305956824
   mode: comms
-  ssd_expected_fill: 0.1483059375
-  start: 61062.635416666664
+  ssd_expected_fill: 0.1391540625
+  start: 61062.59375
 61:
-  battery_expected_fill: 0.22171363873743247
+  battery_expected_fill: 0.221121077549717
   mode: science
-  ssd_expected_fill: 0.14774625
-  start: 61062.645833333336
+  ssd_expected_fill: 0.138594375
+  start: 61062.604166666664
 62:
-  battery_expected_fill: 0.198514192754053
+  battery_expected_fill: 0.19482837210188694
   mode: comms
-  ssd_expected_fill: 0.152049375
+  ssd_expected_fill: 0.14347125
   start: 61062.958333333336
 63:
-  battery_expected_fill: 0.8107545370298965
+  battery_expected_fill: 0.8077021109978412
   mode: science
-  ssd_expected_fill: 0.136940625
-  start: 61063.25
+  ssd_expected_fill: 0.1272403125
+  start: 61063.260416666664
 64:
-  battery_expected_fill: 0.7983814991720936
+  battery_expected_fill: 0.796102388006151
   mode: comms
-  ssd_expected_fill: 0.139235625
+  ssd_expected_fill: 0.129391875
   start: 61063.416666666664
 65:
-  battery_expected_fill: 0.81991192241501
+  battery_expected_fill: 0.816905664434663
   mode: science
-  ssd_expected_fill: 0.1392384375
+  ssd_expected_fill: 0.1288321875
   start: 61063.427083333336
 66:
-  battery_expected_fill: 0.7998057358960803
+  battery_expected_fill: 0.799892737380184
   mode: comms
-  ssd_expected_fill: 0.1429678125
-  start: 61063.697916666664
+  ssd_expected_fill: 0.1319878125
+  start: 61063.65625
 67:
-  battery_expected_fill: 0.8209533880320093
+  battery_expected_fill: 0.8203748025926189
   mode: science
-  ssd_expected_fill: 0.142408125
-  start: 61063.708333333336
+  ssd_expected_fill: 0.131428125
+  start: 61063.666666666664
 68:
-  battery_expected_fill: 0.7993005717808543
+  battery_expected_fill: 0.7994953012075764
   mode: comms
-  ssd_expected_fill: 0.146424375
-  start: 61064.0
+  ssd_expected_fill: 0.1353009375
+  start: 61063.947916666664
 69:
-  battery_expected_fill: 0.8199521264637495
+  battery_expected_fill: 0.8195114389847657
   mode: science
-  ssd_expected_fill: 0.1458646875
-  start: 61064.010416666664
+  ssd_expected_fill: 0.13474125
+  start: 61063.958333333336
 70:
-  battery_expected_fill: 0.7959793656142564
+  battery_expected_fill: 0.7916721038047092
   mode: comms
-  ssd_expected_fill: 0.15031125
+  ssd_expected_fill: 0.139905
   start: 61064.333333333336
 71:
-  battery_expected_fill: 0.8159838289651827
+  battery_expected_fill: 0.8109494203412311
   mode: science
-  ssd_expected_fill: 0.1503140625
+  ssd_expected_fill: 0.1393453125
   start: 61064.34375
 72:
-  battery_expected_fill: 0.7997442167768164
+  battery_expected_fill: 0.7993496973495409
   mode: comms
-  ssd_expected_fill: 0.15332625
-  start: 61064.5625
+  ssd_expected_fill: 0.141496875
+  start: 61064.5
 73:
-  battery_expected_fill: 0.8192447819875309
+  battery_expected_fill: 0.8182652281982185
   mode: science
-  ssd_expected_fill: 0.1527665625
-  start: 61064.572916666664
+  ssd_expected_fill: 0.1409371875
+  start: 61064.510416666664
 74:
-  battery_expected_fill: 0.7999119103347139
+  battery_expected_fill: 0.7973857268131761
   mode: comms
-  ssd_expected_fill: 0.1563525
-  start: 61064.833333333336
+  ssd_expected_fill: 0.14481
+  start: 61064.791666666664
 75:
-  battery_expected_fill: 0.8187568357474151
+  battery_expected_fill: 0.8156085338525496
   mode: science
-  ssd_expected_fill: 0.1557928125
-  start: 61064.84375
+  ssd_expected_fill: 0.1442503125
+  start: 61064.802083333336
 76:
-  battery_expected_fill: 0.799423964094598
+  battery_expected_fill: 0.7993689216641833
   mode: comms
-  ssd_expected_fill: 0.15937875
-  start: 61065.104166666664
+  ssd_expected_fill: 0.1472625
+  start: 61065.020833333336
 77:
-  battery_expected_fill: 0.8175502071956788
+  battery_expected_fill: 0.8169957251234314
   mode: science
-  ssd_expected_fill: 0.1593815625
-  start: 61065.114583333336
+  ssd_expected_fill: 0.1467028125
+  start: 61065.03125
 78:
-  battery_expected_fill: 0.7997639652750871
+  battery_expected_fill: 0.7999827980689524
   mode: comms
-  ssd_expected_fill: 0.162680625
-  start: 61065.354166666664
+  ssd_expected_fill: 0.1498584375
+  start: 61065.260416666664
 79:
-  battery_expected_fill: 0.8171729298181672
+  battery_expected_fill: 0.8169395239328814
   mode: science
-  ssd_expected_fill: 0.1621209375
-  start: 61065.364583333336
+  ssd_expected_fill: 0.14929875
+  start: 61065.270833333336
 80:
-  battery_expected_fill: 0.7916535392364488
+  battery_expected_fill: 0.7999265968784024
   mode: comms
-  ssd_expected_fill: 0.166854375
-  start: 61065.708333333336
+  ssd_expected_fill: 0.152454375
+  start: 61065.5
 81:
-  battery_expected_fill: 0.8079619165361442
+  battery_expected_fill: 0.8161669461943502
   mode: science
-  ssd_expected_fill: 0.1668571875
-  start: 61065.71875
+  ssd_expected_fill: 0.1518946875
+  start: 61065.510416666664
 82:
-  battery_expected_fill: 0.7700694880966228
+  battery_expected_fill: 0.762808220432575
   mode: powersave
-  ssd_expected_fill: 0.173885625
+  ssd_expected_fill: 0.161791875
   start: 61066.229166666664
 83:
-  battery_expected_fill: 0.7401525905896977
+  battery_expected_fill: 0.73289132292565
   mode: science
-  ssd_expected_fill: 0.174155625
+  ssd_expected_fill: 0.162061875
   start: 61067.229166666664
 84:
-  battery_expected_fill: 0.7030334770162889
+  battery_expected_fill: 0.6957722093522412
   mode: powersave
-  ssd_expected_fill: 0.181040625
+  ssd_expected_fill: 0.168946875
   start: 61067.729166666664
 85:
-  battery_expected_fill: 0.6731165795093639
+  battery_expected_fill: 0.6658553118453161
   mode: science
-  ssd_expected_fill: 0.181310625
+  ssd_expected_fill: 0.169216875
   start: 61068.729166666664
 86:
-  battery_expected_fill: 0.6359974659359551
+  battery_expected_fill: 0.6287361982719074
   mode: powersave
-  ssd_expected_fill: 0.188195625
+  ssd_expected_fill: 0.176101875
   start: 61069.229166666664
 87:
-  battery_expected_fill: 0.60608056842903
+  battery_expected_fill: 0.5988193007649822
   mode: science
-  ssd_expected_fill: 0.188465625
+  ssd_expected_fill: 0.176371875
   start: 61070.229166666664
 88:
-  battery_expected_fill: 0.5689614548556212
+  battery_expected_fill: 0.5617001871915736
   mode: powersave
-  ssd_expected_fill: 0.195350625
+  ssd_expected_fill: 0.183256875
   start: 61070.729166666664
 89:
-  battery_expected_fill: 0.5390445573486962
+  battery_expected_fill: 0.5317832896846484
   mode: science
-  ssd_expected_fill: 0.195620625
+  ssd_expected_fill: 0.183526875
   start: 61071.729166666664
 90:
-  battery_expected_fill: 0.5019254437752874
+  battery_expected_fill: 0.49466417611123964
   mode: powersave
-  ssd_expected_fill: 0.202505625
+  ssd_expected_fill: 0.190411875
   start: 61072.229166666664
 91:
-  battery_expected_fill: 0.4720085462683623
+  battery_expected_fill: 0.46474727860431453
   mode: science
-  ssd_expected_fill: 0.202775625
+  ssd_expected_fill: 0.190681875
   start: 61073.229166666664
 92:
-  battery_expected_fill: 0.43488943269495356
+  battery_expected_fill: 0.42762816503090584
   mode: powersave
-  ssd_expected_fill: 0.209660625
+  ssd_expected_fill: 0.197566875
   start: 61073.729166666664
 93:
-  battery_expected_fill: 0.40497253518802845
+  battery_expected_fill: 0.39771126752398067
   mode: science
-  ssd_expected_fill: 0.209930625
+  ssd_expected_fill: 0.197836875
   start: 61074.729166666664
 94:
-  battery_expected_fill: 0.3678534216146197
+  battery_expected_fill: 0.360592153950572
   mode: powersave
-  ssd_expected_fill: 0.216815625
+  ssd_expected_fill: 0.204721875
   start: 61075.229166666664
 95:
-  battery_expected_fill: 0.3379365241076946
+  battery_expected_fill: 0.33067525644364687
   mode: science
-  ssd_expected_fill: 0.217085625
+  ssd_expected_fill: 0.204991875
   start: 61076.229166666664
 96:
-  battery_expected_fill: 0.30081741053428585
+  battery_expected_fill: 0.2935561428702383
   mode: powersave
-  ssd_expected_fill: 0.223970625
+  ssd_expected_fill: 0.211876875
   start: 61076.729166666664
 97:
-  battery_expected_fill: 0.27090051302736073
+  battery_expected_fill: 0.2636392453633132
   mode: science
-  ssd_expected_fill: 0.224240625
+  ssd_expected_fill: 0.212146875
   start: 61077.729166666664
 98:
-  battery_expected_fill: 0.2337813994539536
+  battery_expected_fill: 0.22652013178990604
   mode: powersave
-  ssd_expected_fill: 0.231125625
+  ssd_expected_fill: 0.219031875
   start: 61078.229166666664
 99:
-  battery_expected_fill: 0.2038645019470285
+  battery_expected_fill: 0.19660323428298093
   mode: science
-  ssd_expected_fill: 0.231395625
+  ssd_expected_fill: 0.219301875
   start: 61079.229166666664
 100:
-  battery_expected_fill: 0.16674538837362135
+  battery_expected_fill: 0.1594841207095738
   mode: powersave
-  ssd_expected_fill: 0.238280625
+  ssd_expected_fill: 0.226186875
   start: 61079.729166666664
 101:
-  battery_expected_fill: 0.14368444654536658
+  battery_expected_fill: 0.13642317888131902
   mode: science
-  ssd_expected_fill: 0.23848875
+  ssd_expected_fill: 0.226395
   start: 61080.5
 102:
-  battery_expected_fill: 0.03696699502182103
+  battery_expected_fill: 0.029705727357773475
   mode: comms
-  ssd_expected_fill: 0.258283125
+  ssd_expected_fill: 0.246189375
   start: 61081.9375
 103:
-  battery_expected_fill: 0.0771576758258414
+  battery_expected_fill: 0.06844211453298499
   mode: science
-  ssd_expected_fill: 0.25828875
+  ssd_expected_fill: 0.24507
   start: 61081.958333333336
 104:
-  battery_expected_fill: 0.046998396047448106
+  battery_expected_fill: 0.03828283475459169
   mode: comms
-  ssd_expected_fill: 0.2638828125
+  ssd_expected_fill: 0.2506640625
   start: 61082.364583333336
 105:
-  battery_expected_fill: 0.21440516506996563
+  battery_expected_fill: 0.22014515123958298
   mode: science
-  ssd_expected_fill: 0.2639053125
-  start: 61082.447916666664
+  ssd_expected_fill: 0.245626875
+  start: 61082.458333333336
 106:
-  battery_expected_fill: 0.18733914475602292
+  battery_expected_fill: 0.19385244579175293
   mode: comms
-  ssd_expected_fill: 0.268925625
+  ssd_expected_fill: 0.25050375
   start: 61082.8125
 107:
-  battery_expected_fill: 0.20883998035747559
+  battery_expected_fill: 0.21462613457880117
   mode: science
-  ssd_expected_fill: 0.2689284375
+  ssd_expected_fill: 0.2499440625
   start: 61082.822916666664
 108:
-  battery_expected_fill: 0.1995602019641238
+  battery_expected_fill: 0.1821469102020699
   mode: comms
-  ssd_expected_fill: 0.2706496875
-  start: 61082.947916666664
-109:
-  battery_expected_fill: 0.22121393594603886
-  mode: science
-  ssd_expected_fill: 0.2706525
-  start: 61082.958333333336
-110:
-  battery_expected_fill: 0.19878780482877206
-  mode: comms
-  ssd_expected_fill: 0.2748121875
+  ssd_expected_fill: 0.2559684375
   start: 61083.260416666664
-111:
-  battery_expected_fill: 0.22072478973728032
+109:
+  battery_expected_fill: 0.20335674829617378
   mode: science
-  ssd_expected_fill: 0.274815
+  ssd_expected_fill: 0.25540875
   start: 61083.270833333336
-112:
-  battery_expected_fill: 0.18824556536054907
+110:
+  battery_expected_fill: 0.19949017396561053
   mode: comms
-  ssd_expected_fill: 0.280839375
+  ssd_expected_fill: 0.2561259375
+  start: 61083.322916666664
+111:
+  battery_expected_fill: 0.22074492319313985
+  mode: science
+  ssd_expected_fill: 0.25556625
+  start: 61083.333333333336
+112:
+  battery_expected_fill: 0.1929055880130845
+  mode: comms
+  ssd_expected_fill: 0.26073
   start: 61083.708333333336
 113:
-  battery_expected_fill: 0.21041721962878346
+  battery_expected_fill: 0.21435009546691447
   mode: science
-  ssd_expected_fill: 0.2808421875
+  ssd_expected_fill: 0.2601703125
   start: 61083.71875
 114:
-  battery_expected_fill: 0.19959081150320637
+  battery_expected_fill: 0.1818708710901832
   mode: comms
-  ssd_expected_fill: 0.2828503125
-  start: 61083.864583333336
+  ssd_expected_fill: 0.2661946875
+  start: 61084.15625
 115:
-  battery_expected_fill: 0.22179645359950312
+  battery_expected_fill: 0.20334630142313728
   mode: science
-  ssd_expected_fill: 0.282853125
-  start: 61083.875
+  ssd_expected_fill: 0.265635
+  start: 61084.166666666664
 116:
-  battery_expected_fill: 0.1993703224822363
+  battery_expected_fill: 0.19947972709257403
   mode: comms
-  ssd_expected_fill: 0.2870128125
-  start: 61084.177083333336
+  ssd_expected_fill: 0.2663521875
+  start: 61084.21875
 117:
-  battery_expected_fill: 0.22156936501209218
+  battery_expected_fill: 0.22094322781270595
   mode: science
-  ssd_expected_fill: 0.286453125
-  start: 61084.1875
+  ssd_expected_fill: 0.2657925
+  start: 61084.229166666664
 118:
-  battery_expected_fill: 0.19063677036758622
+  battery_expected_fill: 0.19310389263265057
   mode: comms
-  ssd_expected_fill: 0.292190625
+  ssd_expected_fill: 0.27095625
   start: 61084.604166666664
 119:
-  battery_expected_fill: 0.2126661116266757
+  battery_expected_fill: 0.21440608707733566
   mode: science
-  ssd_expected_fill: 0.2921934375
+  ssd_expected_fill: 0.2703965625
   start: 61084.614583333336
 120:
-  battery_expected_fill: 0.19951975890276066
+  battery_expected_fill: 0.19971310462119532
   mode: comms
-  ssd_expected_fill: 0.294631875
-  start: 61084.791666666664
+  ssd_expected_fill: 0.273121875
+  start: 61084.8125
 121:
-  battery_expected_fill: 0.22141624689525077
+  battery_expected_fill: 0.2208654985817883
   mode: science
-  ssd_expected_fill: 0.2946346875
-  start: 61084.802083333336
+  ssd_expected_fill: 0.2725621875
+  start: 61084.822916666664
 122:
-  battery_expected_fill: 0.19976343064409663
+  battery_expected_fill: 0.19998599719674678
   mode: comms
-  ssd_expected_fill: 0.2986509375
-  start: 61085.09375
-123:
-  battery_expected_fill: 0.22137165218523636
-  mode: science
-  ssd_expected_fill: 0.29809125
+  ssd_expected_fill: 0.276435
   start: 61085.104166666664
+123:
+  battery_expected_fill: 0.22085550883525698
+  mode: science
+  ssd_expected_fill: 0.2758753125
+  start: 61085.114583333336
 124:
-  battery_expected_fill: 0.19121237240684305
+  battery_expected_fill: 0.19146954392297633
   mode: comms
-  ssd_expected_fill: 0.3036853125
+  ssd_expected_fill: 0.2813259375
   start: 61085.510416666664
 125:
-  battery_expected_fill: 0.21227470119596864
+  battery_expected_fill: 0.2118047258976975
   mode: science
-  ssd_expected_fill: 0.303688125
+  ssd_expected_fill: 0.28076625
   start: 61085.520833333336
 126:
-  battery_expected_fill: 0.19990166333816625
+  battery_expected_fill: 0.1994316880398951
   mode: comms
-  ssd_expected_fill: 0.305983125
+  ssd_expected_fill: 0.28306125
   start: 61085.6875
 127:
-  battery_expected_fill: 0.22068081973429154
+  battery_expected_fill: 0.219483697621616
   mode: science
-  ssd_expected_fill: 0.3054234375
+  ssd_expected_fill: 0.2825015625
   start: 61085.697916666664
 128:
-  battery_expected_fill: 0.19980131834925002
+  battery_expected_fill: 0.19937751110268712
   mode: comms
-  ssd_expected_fill: 0.30929625
-  start: 61085.979166666664
+  ssd_expected_fill: 0.2862309375
+  start: 61085.96875
 129:
-  battery_expected_fill: 0.22004895287573736
+  battery_expected_fill: 0.21891835934217624
   mode: science
-  ssd_expected_fill: 0.3087365625
-  start: 61085.989583333336
+  ssd_expected_fill: 0.28567125
+  start: 61085.979166666664
 130:
-  battery_expected_fill: 0.18834304336511876
+  battery_expected_fill: 0.18643913496544498
   mode: comms
-  ssd_expected_fill: 0.3146175
+  ssd_expected_fill: 0.291695625
   start: 61086.416666666664
 131:
-  battery_expected_fill: 0.20764551853995883
+  battery_expected_fill: 0.20501446332588066
   mode: science
-  ssd_expected_fill: 0.3140578125
+  ssd_expected_fill: 0.2911359375
   start: 61086.427083333336
 132:
-  battery_expected_fill: 0.19991236987883235
+  battery_expected_fill: 0.1996012592630921
   mode: comms
-  ssd_expected_fill: 0.3154921875
-  start: 61086.53125
+  ssd_expected_fill: 0.29214
+  start: 61086.5
 133:
-  battery_expected_fill: 0.2189388275328016
+  battery_expected_fill: 0.2179769963902701
   mode: science
-  ssd_expected_fill: 0.3149325
-  start: 61086.541666666664
+  ssd_expected_fill: 0.2915803125
+  start: 61086.510416666664
 134:
-  battery_expected_fill: 0.19496606668330949
+  battery_expected_fill: 0.19168429094244005
   mode: comms
-  ssd_expected_fill: 0.3193790625
+  ssd_expected_fill: 0.2964571875
   start: 61086.864583333336
 135:
-  battery_expected_fill: 0.21312472394444665
+  battery_expected_fill: 0.2091158013891728
   mode: science
-  ssd_expected_fill: 0.319381875
+  ssd_expected_fill: 0.2958975
   start: 61086.875
 136:
-  battery_expected_fill: 0.1999783712205316
+  battery_expected_fill: 0.199836022995821
   mode: comms
-  ssd_expected_fill: 0.3218203125
-  start: 61087.052083333336
+  ssd_expected_fill: 0.29761875
+  start: 61087.0
 137:
-  battery_expected_fill: 0.21760770340913616
+  battery_expected_fill: 0.2168881494765151
   mode: science
-  ssd_expected_fill: 0.321260625
-  start: 61087.0625
+  ssd_expected_fill: 0.2970590625
+  start: 61087.010416666664
 138:
-  battery_expected_fill: 0.19827483175631994
+  battery_expected_fill: 0.19368870349313566
   mode: comms
-  ssd_expected_fill: 0.3248465625
+  ssd_expected_fill: 0.3013621875
   start: 61087.322916666664
 139:
-  battery_expected_fill: 0.21508930928653383
+  battery_expected_fill: 0.2097760342089451
   mode: science
-  ssd_expected_fill: 0.324286875
+  ssd_expected_fill: 0.3008025
   start: 61087.333333333336
 140:
-  battery_expected_fill: 0.19962301196428084
+  battery_expected_fill: 0.19972294094948068
   mode: comms
-  ssd_expected_fill: 0.327155625
-  start: 61087.541666666664
+  ssd_expected_fill: 0.3026671875
+  start: 61087.46875
 141:
-  battery_expected_fill: 0.21573761161808122
+  battery_expected_fill: 0.21534772466737329
   mode: science
-  ssd_expected_fill: 0.3265959375
-  start: 61087.552083333336
+  ssd_expected_fill: 0.3021075
+  start: 61087.479166666664
 142:
-  battery_expected_fill: 0.19949799942971558
+  battery_expected_fill: 0.19369490841621914
   mode: comms
-  ssd_expected_fill: 0.329608125
+  ssd_expected_fill: 0.30612375
   start: 61087.770833333336
 143:
-  battery_expected_fill: 0.21484117781626885
+  battery_expected_fill: 0.20831093998836797
   mode: science
-  ssd_expected_fill: 0.3296109375
+  ssd_expected_fill: 0.3055640625
   start: 61087.78125
 144:
-  battery_expected_fill: 0.19937488049401586
+  battery_expected_fill: 0.19980447646112884
   mode: comms
-  ssd_expected_fill: 0.3324796875
-  start: 61087.989583333336
+  ssd_expected_fill: 0.307141875
+  start: 61087.895833333336
 145:
-  battery_expected_fill: 0.21456946935240112
+  battery_expected_fill: 0.21398389221844147
   mode: science
-  ssd_expected_fill: 0.33192
-  start: 61088.0
+  ssd_expected_fill: 0.3065821875
+  start: 61087.90625
 146:
-  battery_expected_fill: 0.19755654229792285
+  battery_expected_fill: 0.19001113136894934
   mode: comms
-  ssd_expected_fill: 0.335075625
+  ssd_expected_fill: 0.31102875
   start: 61088.229166666664
 147:
-  battery_expected_fill: 0.21356276125230075
+  battery_expected_fill: 0.20529020350892285
   mode: science
-  ssd_expected_fill: 0.3345159375
+  ssd_expected_fill: 0.3104690625
   start: 61088.239583333336
 148:
-  battery_expected_fill: 0.1996430936622731
+  battery_expected_fill: 0.1998769994461343
   mode: comms
-  ssd_expected_fill: 0.3370978125
-  start: 61088.427083333336
+  ssd_expected_fill: 0.311473125
+  start: 61088.3125
 149:
-  battery_expected_fill: 0.21628785284876514
+  battery_expected_fill: 0.2154285295106947
   mode: science
-  ssd_expected_fill: 0.336538125
-  start: 61088.4375
+  ssd_expected_fill: 0.3109134375
+  start: 61088.322916666664
 150:
-  battery_expected_fill: 0.19850161092817423
+  battery_expected_fill: 0.1891358240628646
   mode: comms
-  ssd_expected_fill: 0.3398371875
+  ssd_expected_fill: 0.3157903125
   start: 61088.677083333336
 151:
-  battery_expected_fill: 0.21590976267979878
+  battery_expected_fill: 0.20581682900008477
   mode: science
-  ssd_expected_fill: 0.33984
+  ssd_expected_fill: 0.315230625
   start: 61088.6875
 152:
-  battery_expected_fill: 0.19967015049143316
+  battery_expected_fill: 0.1996303100711836
   mode: comms
-  ssd_expected_fill: 0.3428521875
-  start: 61088.90625
+  ssd_expected_fill: 0.316378125
+  start: 61088.770833333336
 153:
-  battery_expected_fill: 0.21773401293607791
+  battery_expected_fill: 0.2165847521305161
   mode: science
-  ssd_expected_fill: 0.3422925
-  start: 61088.916666666664
+  ssd_expected_fill: 0.3158184375
+  start: 61088.78125
 154:
-  battery_expected_fill: 0.19994777101548697
+  battery_expected_fill: 0.19029204668268604
   mode: comms
-  ssd_expected_fill: 0.3455915625
-  start: 61089.15625
+  ssd_expected_fill: 0.3206953125
+  start: 61089.135416666664
 155:
-  battery_expected_fill: 0.21867698802413021
+  battery_expected_fill: 0.20824070707873948
   mode: science
-  ssd_expected_fill: 0.345031875
-  start: 61089.166666666664
+  ssd_expected_fill: 0.320135625
+  start: 61089.145833333336
 156:
-  battery_expected_fill: 0.199344116371314
+  battery_expected_fill: 0.19973424355150035
   mode: comms
-  ssd_expected_fill: 0.3486178125
-  start: 61089.427083333336
+  ssd_expected_fill: 0.3217134375
+  start: 61089.260416666664
 157:
-  battery_expected_fill: 0.21873317131436312
+  battery_expected_fill: 0.21799771838017062
   mode: science
-  ssd_expected_fill: 0.348620625
-  start: 61089.4375
+  ssd_expected_fill: 0.32115375
+  start: 61089.270833333336
 158:
-  battery_expected_fill: 0.19940029966154688
+  battery_expected_fill: 0.19479827239679115
   mode: comms
-  ssd_expected_fill: 0.3522065625
-  start: 61089.697916666664
+  ssd_expected_fill: 0.325456875
+  start: 61089.583333333336
 159:
-  battery_expected_fill: 0.21938365344894356
+  battery_expected_fill: 0.21381117570904126
   mode: science
-  ssd_expected_fill: 0.351646875
-  start: 61089.708333333336
+  ssd_expected_fill: 0.3248971875
+  start: 61089.59375
 160:
-  battery_expected_fill: 0.1946375777333388
+  battery_expected_fill: 0.19989150811901357
   mode: comms
-  ssd_expected_fill: 0.356236875
-  start: 61090.041666666664
+  ssd_expected_fill: 0.3274790625
+  start: 61089.78125
 161:
-  battery_expected_fill: 0.2152777720471739
+  battery_expected_fill: 0.21931707880865264
   mode: science
-  ssd_expected_fill: 0.3562396875
-  start: 61090.052083333336
+  ssd_expected_fill: 0.326919375
+  start: 61089.791666666664
 162:
-  battery_expected_fill: 0.19981147472492092
+  battery_expected_fill: 0.1999842071558364
   mode: comms
-  ssd_expected_fill: 0.3591084375
-  start: 61090.260416666664
+  ssd_expected_fill: 0.3305053125
+  start: 61090.052083333336
 163:
-  battery_expected_fill: 0.22081140460216375
+  battery_expected_fill: 0.21991542262249184
   mode: science
-  ssd_expected_fill: 0.35854875
-  start: 61090.270833333336
+  ssd_expected_fill: 0.329945625
+  start: 61090.0625
 164:
-  battery_expected_fill: 0.19993190321712223
+  battery_expected_fill: 0.19980923610356296
   mode: comms
-  ssd_expected_fill: 0.3624215625
-  start: 61090.552083333336
+  ssd_expected_fill: 0.333675
+  start: 61090.333333333336
 165:
-  battery_expected_fill: 0.2213394130932016
+  battery_expected_fill: 0.22019168832525793
   mode: science
-  ssd_expected_fill: 0.361861875
-  start: 61090.5625
+  ssd_expected_fill: 0.3331153125
+  start: 61090.34375
 166:
-  battery_expected_fill: 0.1927267630470336
+  battery_expected_fill: 0.19931218694021643
   mode: comms
-  ssd_expected_fill: 0.3671690625
-  start: 61090.947916666664
+  ssd_expected_fill: 0.336988125
+  start: 61090.625
 167:
-  battery_expected_fill: 0.21455317081746675
+  battery_expected_fill: 0.22008140873393528
   mode: science
-  ssd_expected_fill: 0.367171875
-  start: 61090.958333333336
+  ssd_expected_fill: 0.3364284375
+  start: 61090.635416666664
 168:
-  battery_expected_fill: 0.1998601883613264
+  battery_expected_fill: 0.19688196275055583
   mode: comms
-  ssd_expected_fill: 0.3698971875
-  start: 61091.15625
+  ssd_expected_fill: 0.3407315625
+  start: 61090.947916666664
 169:
-  battery_expected_fill: 0.2218440673010585
+  battery_expected_fill: 0.21798122370658451
   mode: science
-  ssd_expected_fill: 0.3693375
-  start: 61091.166666666664
+  ssd_expected_fill: 0.340171875
+  start: 61090.958333333336
 170:
-  battery_expected_fill: 0.19941793618379167
+  battery_expected_fill: 0.19942166691988095
   mode: comms
-  ssd_expected_fill: 0.3734971875
-  start: 61091.46875
+  ssd_expected_fill: 0.343614375
+  start: 61091.208333333336
 171:
-  battery_expected_fill: 0.22155569506252265
+  battery_expected_fill: 0.2207109221594863
   mode: science
-  ssd_expected_fill: 0.3729375
-  start: 61091.479166666664
+  ssd_expected_fill: 0.3430546875
+  start: 61091.21875
 172:
-  battery_expected_fill: 0.19294304501635465
+  battery_expected_fill: 0.19983142077444477
   mode: comms
-  ssd_expected_fill: 0.3782446875
-  start: 61091.864583333336
+  ssd_expected_fill: 0.3469275
+  start: 61091.5
 173:
-  battery_expected_fill: 0.21513306693816295
+  battery_expected_fill: 0.22125196392618818
   mode: science
-  ssd_expected_fill: 0.3782475
-  start: 61091.875
+  ssd_expected_fill: 0.3463678125
+  start: 61091.510416666664
 174:
-  battery_expected_fill: 0.19966676961590998
+  battery_expected_fill: 0.1949592584783581
   mode: comms
-  ssd_expected_fill: 0.38111625
-  start: 61092.083333333336
+  ssd_expected_fill: 0.3512446875
+  start: 61091.864583333336
 175:
-  battery_expected_fill: 0.22181714576392628
+  battery_expected_fill: 0.216422133585762
   mode: science
-  ssd_expected_fill: 0.3805565625
-  start: 61092.09375
+  ssd_expected_fill: 0.350685
+  start: 61091.875
 176:
-  battery_expected_fill: 0.19939101464665945
+  battery_expected_fill: 0.19940920653128374
   mode: comms
-  ssd_expected_fill: 0.38471625
-  start: 61092.395833333336
+  ssd_expected_fill: 0.353840625
+  start: 61092.104166666664
 177:
-  battery_expected_fill: 0.2214003428313813
+  battery_expected_fill: 0.22082611843103708
   mode: science
-  ssd_expected_fill: 0.3841565625
+  ssd_expected_fill: 0.3532809375
+  start: 61092.114583333336
+178:
+  battery_expected_fill: 0.1999466170459956
+  mode: comms
+  ssd_expected_fill: 0.35715375
+  start: 61092.395833333336
+179:
+  battery_expected_fill: 0.22122879841631302
+  mode: science
+  ssd_expected_fill: 0.3565940625
   start: 61092.40625

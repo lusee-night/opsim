@@ -61,7 +61,7 @@ class Simulator:
 
         self.populate() # -FIXME- Needs work
         self.create_command_table = False
-
+        self.comm_tx = False
         self.env.process(self.run()) # Set the callback to this class, for simpy
 
     # ---
@@ -215,13 +215,19 @@ class Simulator:
     def power(self):
         pwr = 0.0
         for dk in self.devices.keys():
-            pwr+=self.devices[dk].power()
+            if dk=='comms' and self.comm_tx:
+                pwr += self.devices[dk].power_tx()
+            else:
+                pwr += self.devices[dk].power()
         return pwr
     
     def data_rate(self):
         dr = 0.0
         for dk in self.devices.keys():
-            dr+=self.devices[dk].data_rate()
+            if dk=='comms' and self.comm_tx:
+                dr+=self.devices[dk].data_rate_tx()
+            else:
+                dr+=self.devices[dk].data_rate()
         return dr
 
     def set_state(self, mode):
@@ -307,6 +313,11 @@ class Simulator:
                                     'battery_expected_fill': battery_fill,
                                     'ssd_expected_fill': ssd_fill}
                 
+            if (self.lpf.alt[myT]>0.1) and (self.modes[mode]['comms'] == 'ON'):
+                self.comm_tx = True
+            else:
+                self.comm_tx = False
+
 
             # Electrical section:
             self.monitor.power[myT] = self.power()
@@ -322,12 +333,7 @@ class Simulator:
 
             # Data section
             ## first are we communicating:
-            data_rate = self.data_rate()
-            if (self.lpf.alt[myT]>0.3) and (self.modes[mode]['comms'] == 'ON'):
-                transfer_rate=self.devices['comms'].data_rates['TRANSF']
-                # this transfer rate is negative
-                data_rate+=transfer_rate
-    
+            data_rate = self.data_rate()    
             self.monitor.data_rate[myT] = data_rate
             self.ssd.change(data_rate*self.deltaT)
             self.monitor.ssd[myT]       = self.ssd.level/self.ssd.capacity
