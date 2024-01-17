@@ -3,20 +3,27 @@ science:
   spectrometer: 'ON'
   comms: 'OFF'
   bms: 'OFF'
+  pfps: 'ON'
   dcb: 'ON'
+
 charge:
   spectrometer: 'OFF'
   comms: 'OFF'
   bms: 'ON'
+  pfps: 'ON'
   dcb: 'ON'
+
 comms:
   spectrometer: 'OFF'
   comms: 'ON'
   bms: 'ON'
+  pfps: 'ON'
   dcb: 'ON'
+
 powersave:
   spectrometer: 'OFF'
   comms: 'OFF'
   bms: 'OFF'
+  pfps: 'ON'
   dcb: 'ON'
   

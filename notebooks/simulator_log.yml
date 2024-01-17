@@ -1,0 +1,30 @@
+1:
+  mode: charge
+  start: 61050.854166666664
+2:
+  mode: powersave
+  start: 61065.708333333336
+3:
+  mode: charge
+  start: 61080.5
+4:
+  mode: science
+  start: 61095.208333333336
+5:
+  mode: charge
+  start: 61110.104166666664
+6:
+  mode: powersave
+  start: 61124.802083333336
+7:
+  mode: comms
+  start: 61139.708333333336
+8:
+  mode: powersave
+  start: 61154.302083333336
+9:
+  mode: charge
+  start: 61169.208333333336
+10:
+  mode: powersave
+  start: 61183.708333333336

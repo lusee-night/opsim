@@ -11,8 +11,9 @@ from    nav import *  # Astro/observation wrapper classes
 class Monitor():
     def __init__(self, size=0):
         # Time series --
-        self.current    = np.zeros(size, dtype=float) # Total current drawn by the electronics
+        self.power    = np.zeros(size, dtype=float) # Total power drawn by the electronics
         self.battery    = np.zeros(size, dtype=float) # Battery charge
+        self.data_rate  = np.zeros(size, dtype=float) # data rate in/out of the system
         self.ssd        = np.zeros(size, dtype=float) # Storage
 # ---
 class Simulator:
@@ -66,8 +67,9 @@ class Simulator:
     # ---
     def populate(self): # Add hardware and the monitor to keep track of the sim
 
+        Wh2Ch = 1/28*3600 # /28V * 3600s/h
 
-        self.battery    = Battery(self.env, self.battery_initial, self.battery_capacity)
+        self.battery    = Battery(self.env, self.battery_initial_Wh*Wh2Ch, self.battery_capacity_Wh*Wh2Ch)
         print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
         self.ssd        = SSD(self.env, self.ssd_initial, self.ssd_capacity)
         print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
@@ -105,12 +107,27 @@ class Simulator:
     def read_devices(self):
         f = open(self.devices_f, 'r')
         profiles = yaml.safe_load(f)  # ingest the configuration data
-        device_profiles = profiles['power_consumers']
-        for device_name in device_profiles.keys():
-            device = Device(device_name, device_profiles[device_name])
-            self.devices[device.name]=device
-        self.battery_capacity = float(profiles['battery']['capacity'])
-        self.battery_initial = float(profiles['battery']['initial'])
+        power_consumer_devices = profiles['power_consumers'].keys()
+        ssd_consumer_devices = profiles['ssd_consumers'].keys()
+        device_names = power_consumer_devices | ssd_consumer_devices
+
+        if 'bms' not in device_names:
+            print('BMS not found in the device list')
+            raise NotImplementedError
+
+        if 'comms' not in device_names:
+            print('Comms not found in the device list')
+            raise NotImplementedError
+
+        for device_name in device_names:
+            power_profile = profiles['power_consumers'].get(device_name)
+            data_profile = profiles['ssd_consumers'].get(device_name)
+            self.devices[device_name] = Device(device_name, power_profile, data_profile)
+        
+        self.battery_capacity_Wh = float(profiles['battery']['capacity'])
+        self.battery_initial_Wh = float(profiles['battery']['initial'])
+        self.charge_efficiency = float(profiles['battery']['charge_efficiency'])
+        self.discharge_efficiency = float(profiles['battery']['discharge_efficiency'])
         self.ssd_capacity = float(profiles['ssd']['capacity'])
         self.ssd_initial = float(profiles['ssd']['initial'])
         self.panel_config = profiles['solar_panels']
@@ -165,9 +182,9 @@ class Simulator:
             if self.last_day_state:
                 # day to night transition
                 self.last_sunset_mjd = self.sun.mjd[myT]
-            # let's switch between science and powersave every 48 hours
-            tick = (mjd_now - self.last_sunset_mjd) / 2.0
-            if int(tick)%2==0:
+            # let's switch between science and powersave every 12 hours
+            tick = (mjd_now - self.last_sunset_mjd) / 0.5
+            if int(tick)%3==0:
                 sched['mode'] = 'science'
             else:
                 sched['mode'] = 'powersave'
@@ -177,8 +194,8 @@ class Simulator:
                 self.last_sunrise_mjd = self.sun.mjd[myT]
             comm_opportunity = self.lpf.alt[myT] > 0.1
             need_comm = ( (mjd_now-self.last_comm)>4  # we haven't talked for a while
-                            or (self.battery.level <0.2*self.battery_capacity)  # we are low on battery so might as well use this opportunity
-                            or ((self.battery.level<0.8*self.battery_capacity) and (mjd_now-self.last_sunrise_mjd)>12)) # we have two days to fully charge
+                            or (self.battery.level <0.2*self.battery.capacity)  # we are low on battery so might as well use this opportunity
+                            or ((self.battery.level<0.8*self.battery.capacity) and (mjd_now-self.last_sunrise_mjd)>12)) # we have two days to fully charge
             calib_opportunity = self.bge.alt[myT] > -0.1
             if calib_opportunity:
                 sched['mode'] = 'science'
@@ -195,11 +212,17 @@ class Simulator:
 
 
     # ---
-    def current(self):
-        cur = 0.0
+    def power(self):
+        pwr = 0.0
         for dk in self.devices.keys():
-            cur+=self.devices[dk].current()
-        return cur
+            pwr+=self.devices[dk].power()
+        return pwr
+    
+    def data_rate(self):
+        dr = 0.0
+        for dk in self.devices.keys():
+            dr+=self.devices[dk].data_rate()
+        return dr
 
     def set_state(self, mode):
         for dk in self.devices.keys():
@@ -208,7 +231,7 @@ class Simulator:
     def device_report(self):
         for dk in self.devices.keys():
             print(self.devices[dk].info())
-        print('*** Total current:', self.current())
+        print('*** Total power:', self.power(),'W')
 
 
     def info(self):
@@ -251,7 +274,7 @@ class Simulator:
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
     
         mode = None
-        charge_current = 0.0005 # arbitrary value for BMS current
+        
 
         cnt = 0
 
@@ -276,42 +299,38 @@ class Simulator:
                     self.device_report()
 
                 cnt+=1
-                self.record[cnt] = {'start': float(clock), 'mode': mode}
+                
+                battery_fill = float(self.battery.level/self.battery.capacity)
+                ssd_fill = self.ssd.level/self.ssd.capacity
+                self.record[cnt] = {'start': float(clock), 
+                                    'mode': mode,
+                                    'battery_expected_fill': battery_fill,
+                                    'ssd_expected_fill': ssd_fill}
                 
 
             # Electrical section:
-            self.monitor.current[myT] = self.current()
-            try:
-                if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
-                    charge   = self.controller.power[myT]*self.deltaT*charge_current # charge current is just a scaling factor here
-                    self.battery.put(charge)
-            except:
-                pass
-
-            try:
-                if (self.modes[mode]['spectrometer'] == 'ON'): # See if there is data produced
-                    data = self.deltaT*0.0001 # FIXME just a scaling factor for now
-                    self.ssd.put(data)
-            except:
-                pass
-
-            try:
-                if (self.modes[mode]['comms'] == 'ON'): # See if there is data produced
-                    data = self.deltaT*0.0001 # FIXME just a scaling factor for now
-                    self.ssd.get(data)
-            except:
-                pass
-
-
+            self.monitor.power[myT] = self.power()
+            if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
+                charge   = self.controller.power[myT]*self.deltaT/28  # FIXME - hardcoded 28V volts here
+                print ('charge',charge, self.controller.power[myT])
+                self.battery.put(charge*self.charge_efficiency)
+        
             # Draw charge from battery
-            draw_charge = self.current()*0.1
-            try:
-                self.battery.get(draw_charge)
-            except:
-                pass # FIXME - handle the empty battery
+            draw_charge = self.power()*self.deltaT/28  # FIXME - hardcoded 28V volts here
+            self.battery.get(draw_charge/self.discharge_efficiency)
+            self.monitor.battery[myT]   = self.battery.level/self.battery.capacity
 
-            self.monitor.battery[myT]   = self.battery.level
-            self.monitor.ssd[myT]       = self.ssd.level
+            # Data section
+            ## first are we communicating:
+            data_rate = self.data_rate()
+            if (self.lpf.alt[myT]>0.3) and (self.modes[mode]['comms'] == 'ON'):
+                transfer_rate=self.devices['comms'].data_rates['TRANSF']
+                # this transfer rate is negative
+                data_rate+=transfer_rate
+    
+            self.monitor.data_rate[myT] = data_rate
+            self.ssd.change(data_rate*self.deltaT)
+            self.monitor.ssd[myT]       = self.ssd.level/self.ssd.capacity
 
             yield self.env.timeout(1)
 

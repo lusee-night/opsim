@@ -69,6 +69,7 @@ class Controller:
     def calculate_power(self):
         power = None
         for p in self.panels:
+    
             if power is None:
                 power = p.power()
             else:

@@ -20,6 +20,8 @@ class Panel: # base, "abstract"
 
     verbose    = True
 
+    solarConstant = 1361   # W/m^2 at Moon 
+
 
     ###
     def __init__(self, sun, name = '', normal=(None, None, None), env=None, area=1.0, pvEFF_T=None, pvEFF_P=None):
@@ -55,9 +57,11 @@ class Panel: # base, "abstract"
     
     ###
     def power(self):
-        eff = 1.0 # default to 1.o if the temperature curve is not set for the sun
+        eff = 0.3 # default to 1.o if the temperature curve is not set for the sun
         if self.sun.temperature is not None: eff = self.pvEfficiency(self.sun.temperature)
-        return eff*np.select(self.condition_list, self.choice_list)
+        power =  Panel.solarConstant*eff*np.select(self.condition_list, self.choice_list)
+        return power 
+    
     ###
     def info(self):
         return f'''Panel {self.name}'''
