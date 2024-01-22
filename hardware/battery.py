@@ -27,5 +27,5 @@ class Battery(C):
     def charge (self, power, deltaT):
         self.put (power*deltaT/self.Volrage()*self.charge_efficiency)
         
-    def dicharge (self, power, deltaT):
+    def discharge (self, power, deltaT):
         self.get (power*deltaT/self.Voltage()/self.discharge_efficiency)
