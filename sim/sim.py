@@ -67,9 +67,8 @@ class Simulator:
     # ---
     def populate(self): # Add hardware and the monitor to keep track of the sim
 
-        Wh2Ch = 1/28*3600 # /28V * 3600s/h
-
-        self.battery    = Battery(self.env, self.battery_initial_Wh*Wh2Ch, self.battery_capacity_Wh*Wh2Ch)
+        self.battery    = Battery(self.env, self.battery_initial_Wh, self.battery_capacity_Wh,
+                                            self.battery_fiducial_V, self.charge_efficiency,self.discharge_efficiency)
         print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
         self.ssd        = SSD(self.env, self.ssd_initial, self.ssd_capacity)
         print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
@@ -126,6 +125,7 @@ class Simulator:
         
         self.battery_capacity_Wh = float(profiles['battery']['capacity'])
         self.battery_initial_Wh = float(profiles['battery']['initial'])
+        self.battery_fiducial_V = float(profiles['battery']['fiducial_voltage'])
         self.charge_efficiency = float(profiles['battery']['charge_efficiency'])
         self.discharge_efficiency = float(profiles['battery']['discharge_efficiency'])
         self.ssd_capacity = float(profiles['ssd']['capacity'])
@@ -212,7 +212,7 @@ class Simulator:
 
 
     # ---
-    def power(self):
+    def power_out(self):
         pwr = 0.0
         for dk in self.devices.keys():
             if dk=='comms' and self.comm_tx:
@@ -220,6 +220,9 @@ class Simulator:
             else:
                 pwr += self.devices[dk].power()
         return pwr
+    
+    def power_in(self):
+        return self.controller.power[myT]
     
     def data_rate(self):
         dr = 0.0
@@ -320,15 +323,12 @@ class Simulator:
 
 
             # Electrical section:
-            self.monitor.power[myT] = self.power()
+            self.monitor.power[myT] = self.power_out()
+            # put charge into battery if BMS is enabled
             if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
-                charge   = self.controller.power[myT]*self.deltaT/28  # FIXME - hardcoded 28V volts here
-                print ('charge',charge, self.controller.power[myT])
-                self.battery.put(charge*self.charge_efficiency)
-        
+                self.battery.charge(self.power_in(), self.deltaT)
             # Draw charge from battery
-            draw_charge = self.power()*self.deltaT/28  # FIXME - hardcoded 28V volts here
-            self.battery.get(draw_charge/self.discharge_efficiency)
+            self.batery.discharge(self.power_out(), self.deltaT)
             self.monitor.battery[myT]   = self.battery.level/self.battery.capacity
 
             # Data section
