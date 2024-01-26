@@ -1,3 +1,4 @@
+# foundation packages
 import  simpy
 import  yaml
 import  h5py
@@ -11,7 +12,7 @@ from    nav import *  # Astro/observation wrapper classes
 class Monitor():
     def __init__(self, size=0):
         # Time series --
-        self.power    = np.zeros(size, dtype=float) # Total power drawn by the electronics
+        self.power      = np.zeros(size, dtype=float) # Total power drawn by the electronics
         self.battery    = np.zeros(size, dtype=float) # Battery charge
         self.data_rate  = np.zeros(size, dtype=float) # data rate in/out of the system
         self.ssd        = np.zeros(size, dtype=float) # Storage
@@ -19,15 +20,14 @@ class Monitor():
 class Simulator:
     def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None):
     
-        self.verbose      = False
+        self.verbose    = False
+        self.record     = {} # stub for the record of state transitions
 
-        self.record       = {}
-
-        # Filenames
-        self.orbitals_f   = orbitals_f
-        self.modes_f      = modes_f
-        self.devices_f    = devices_f
-        self.comtable_f   = comtable_f
+        # Filenames (input data)
+        self.orbitals_f = orbitals_f
+        self.modes_f    = modes_f
+        self.devices_f  = devices_f
+        self.comtable_f = comtable_f
 
         # Stubs for the Orbitals
         self.sun        = None
@@ -47,9 +47,8 @@ class Simulator:
         self.read_orbitals()
         self.read_devices()
         self.read_modes()
-        if comtable_f is not None:
-            self.read_combtable()
 
+        if comtable_f is not None: self.read_combtable()
 
         self.initial_time   = initial_time
         self.until          = until
@@ -85,6 +84,10 @@ class Simulator:
 
     # ---
     def read_orbitals(self):
+        """ Read previously calculated data on the coordinates of the Sun and the Satellites.
+            The file name is expected to be provides in the attribute orbitals_f.
+        """        
+
         f = h5py.File(self.orbitals_f, "r")
 
         ds_meta = f["/meta/configuration"] # Expect YAML payload
@@ -106,10 +109,11 @@ class Simulator:
     # ---
     def read_devices(self):
         f = open(self.devices_f, 'r')
-        profiles = yaml.safe_load(f)  # ingest the configuration data
-        power_consumer_devices = profiles['power_consumers'].keys()
-        ssd_consumer_devices = profiles['ssd_consumers'].keys()
-        device_names = power_consumer_devices | ssd_consumer_devices
+
+        profiles                = yaml.safe_load(f)  # ingest the configuration data
+        power_consumer_devices  = profiles['power_consumers'].keys()
+        ssd_consumer_devices    = profiles['ssd_consumers'].keys()
+        device_names            = power_consumer_devices | ssd_consumer_devices
 
         if 'bms' not in device_names:
             print('BMS not found in the device list')
@@ -120,9 +124,9 @@ class Simulator:
             raise NotImplementedError
 
         for device_name in device_names:
-            power_profile = profiles['power_consumers'].get(device_name)
-            data_profile = profiles['ssd_consumers'].get(device_name)
-            self.devices[device_name] = Device(device_name, power_profile, data_profile)
+            power_profile               = profiles['power_consumers'].get(device_name)
+            data_profile                = profiles['ssd_consumers'].get(device_name)
+            self.devices[device_name]   = Device(device_name, power_profile, data_profile)
         
         self.battery_capacity_Wh = float(profiles['battery']['capacity'])
         self.battery_initial_Wh = float(profiles['battery']['initial'])
