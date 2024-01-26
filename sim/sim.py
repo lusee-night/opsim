@@ -69,11 +69,11 @@ class Simulator:
         Wh2Ch = 1/28*3600 # /28V * 3600s/h
 
         self.battery    = Battery(self.env, self.battery_initial_Wh*Wh2Ch, self.battery_capacity_Wh*Wh2Ch)
-        print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
-        self.ssd        = SSD(self.env, self.ssd_initial, self.ssd_capacity)
-        print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
-        
+        if self.verbose: print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
 
+        self.ssd        = SSD(self.env, self.ssd_initial, self.ssd_capacity)
+        if self.verbose:  print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
+        
         self.monitor    = Monitor(self.sun.N) # to define the discrete time axis
         self.controller = Controller(self.env, self.sun)
 
@@ -96,7 +96,7 @@ class Simulator:
 
         ds_data = f["/data/orbitals"]
         da = np.array(ds_data[:]) # data array
-        print(f'''Shape of the data payload: {da.shape}''')
+        if self.verbose: print(f'''Shape of the data payload: {da.shape}''')
         self.sun = Sun(da[:,0], da[:,1] , da[:,2])
         self.lpf = Sat(da[:,0], da[:,3] , da[:,4])
         self.bge = Sat(da[:,0], da[:,5] , da[:,6])
@@ -141,8 +141,7 @@ class Simulator:
         f = open(self.comtable_f, 'r')
         self.comtable = yaml.safe_load(f)
 
-        for k in self.comtable.keys():
-            self.schedule[self.comtable[k]['start']] = k
+        for k in self.comtable.keys(): self.schedule[self.comtable[k]['start']] = k
  
         self.times = list(self.schedule.keys())
 
@@ -212,9 +211,6 @@ class Simulator:
         self.last_day_state = day
         return sched
 
-
-
-
     # ---
     def power(self):
         pwr = 0.0
@@ -239,9 +235,9 @@ class Simulator:
             self.devices[dk].state = mode[dk]
 
     def device_report(self):
-        for dk in self.devices.keys():
-            print(self.devices[dk].info())
-        print('*** Total power:', self.power(),'W')
+        if self.verbose:        
+            for dk in self.devices.keys(): print(self.devices[dk].info())
+            print('*** Total power:', self.power(),'W')
 
 
     def info(self):
@@ -272,7 +268,7 @@ class Simulator:
             yaml.dump(self.record, file)
 
     ############################## Simulation code #############################
-    
+    # ---
     def simulate(self, create_command_table = False):
         self.create_command_table = create_command_table
         if create_command_table:
@@ -283,12 +279,9 @@ class Simulator:
             self.env.run(until=self.until) # 17760
         else:
             self.env.run()
-    
+    # ---
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
-    
         mode = None
-        
-
         cnt = 0
 
         while True:
@@ -330,7 +323,9 @@ class Simulator:
             self.monitor.power[myT] = self.power()
             if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
                 charge   = self.controller.power[myT]*self.deltaT/28  # FIXME - hardcoded 28V volts here
-                print ('charge',charge, self.controller.power[myT])
+
+                if self.verbose: print ('charge',charge, self.controller.power[myT])
+
                 self.battery.put(charge*self.charge_efficiency)
         
             # Draw charge from battery
