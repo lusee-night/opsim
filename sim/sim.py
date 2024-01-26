@@ -265,6 +265,9 @@ class Simulator:
         print(f'''Day condition at start and end of the simulation: {self.sun.day[self.initial_time]}, {self.sun.day[self.until]}''')
 
     def save_record(self, filename='simulator_log.yml'):
+        """ Capture the generated state transition record.
+            It's in the same format as the main command table.
+        """
         with open(filename, 'w') as file:
             yaml.dump(self.record, file)
 
