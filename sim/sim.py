@@ -67,10 +67,9 @@ class Simulator:
     # ---
     def populate(self): # Add hardware and the monitor to keep track of the sim
 
-        self.battery    = Battery(self.env, self.battery_initial_Wh, self.battery_capacity_Wh,
-                                            self.battery_fiducial_V, self.charge_efficiency,self.discharge_efficiency)
+        self.battery    = Battery(self.env, self.battery_config)
         print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
-        self.ssd        = SSD(self.env, self.ssd_initial, self.ssd_capacity)
+        self.ssd        = SSD(self.env, self.ssd_config)
         print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
         
 
@@ -123,13 +122,8 @@ class Simulator:
             data_profile = profiles['ssd_consumers'].get(device_name)
             self.devices[device_name] = Device(device_name, power_profile, data_profile)
         
-        self.battery_capacity_Wh = float(profiles['battery']['capacity'])
-        self.battery_initial_Wh = float(profiles['battery']['initial'])
-        self.battery_fiducial_V = float(profiles['battery']['fiducial_voltage'])
-        self.charge_efficiency = float(profiles['battery']['charge_efficiency'])
-        self.discharge_efficiency = float(profiles['battery']['discharge_efficiency'])
-        self.ssd_capacity = float(profiles['ssd']['capacity'])
-        self.ssd_initial = float(profiles['ssd']['initial'])
+        self.battery_config = profiles['battery']
+        self.ssd_config = profiles['ssd']
         self.panel_config = profiles['solar_panels']
     
     # ---
@@ -222,7 +216,7 @@ class Simulator:
         return pwr
     
     def power_in(self):
-        return self.controller.power[myT]
+        return self.controller.power[self.myT]
     
     def data_rate(self):
         dr = 0.0
@@ -240,7 +234,7 @@ class Simulator:
     def device_report(self):
         for dk in self.devices.keys():
             print(self.devices[dk].info())
-        print('*** Total power:', self.power(),'W')
+        print('*** Total power load:', self.power_out(),'W')
 
 
     def info(self):
@@ -283,13 +277,12 @@ class Simulator:
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
     
         mode = None
-        
-
         cnt = 0
 
         while True:
             myT     = int(self.env.now)
             clock   = self.sun.mjd[myT]
+            self.myT = myT
 
             if self.create_command_table:
                 sched = self.generate_schedule(myT)
@@ -328,7 +321,7 @@ class Simulator:
             if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
                 self.battery.charge(self.power_in(), self.deltaT)
             # Draw charge from battery
-            self.batery.discharge(self.power_out(), self.deltaT)
+            self.battery.discharge(self.power_out(), self.deltaT)
             self.monitor.battery[myT]   = self.battery.level/self.battery.capacity
 
             # Data section
