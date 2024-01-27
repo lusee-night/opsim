@@ -90,6 +90,33 @@ class Sun:
 
 
     ### ---
+    def clock(self, mjd):
+        """ This method calculates the "lunar clock" e.g. the time according
+            to 24-hour subdividion of the Lunar day.
+        """
+        
+        if mjd>self.mjd[self.N-1] or mjd<self.mjd[0]: return None
+        print('passed')
+
+        if mjd<self.mjd_crossings[0]: # only one endpoint, use the next cycle as estimate
+            estimate = self.mjd_crossings[1] - self.mjd_crossings[0]
+            if self.day[self.crossings[0]]:
+                  pass
+            else:
+                return 6.0*(1.0-(self.mjd_crossings[0] - mjd)/estimate)
+
+
+        indices = list(range(len(self.mjd_crossings)))
+        rev_indices = indices.reverse()
+    
+        for i in indices:
+            if mjd>self.mjd_crossings[i]:
+                print(self.day[self.crossings[i]])
+                return (self.mjd_crossings[i], self.mjd_crossings[i+1])
+
+        return None
+
+    ### ---
     def precise_crossings(self):
         """ A more precise calculation of crossings based on linear interpolation of alt sign switches.
             Linear interpolation is used to find the intercept of "alt".
@@ -109,11 +136,9 @@ class Sun:
 
             Arguments:
             interval -- the time interval on one of the formats understood by Observation.
+            For example, this can be a string like "2025-02-04 00:00:00 to 2025-03-07 23:45:00", or a tuple of two strings.
         """
-
-        # Note the Observation class constructor - it tries to parse the argument and acts polymorphic.
-        # After update in Nov 2023, the Observation ctor can take a tuple of start and end time points.
-        
+       
         o = O(interval)
         (alt, az)   = o.get_track_solar('sun')
         mjd         = [timepoint.mjd for timepoint in o.times]
@@ -165,7 +190,9 @@ class Sun:
 
 # ---
 class Sat:
-
+    """ A simple container for the "orbitals" type of data for satellites.
+        Adds the crossings and "up" condition calculation, quntized to the deltaT time step.
+    """
     def __init__(self, mjd=None, alt=None, az=None):
         self.mjd        = mjd
         self.alt        = alt
