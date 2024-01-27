@@ -18,9 +18,9 @@ class Monitor():
         self.ssd        = np.zeros(size, dtype=float) # Storage
 # ---
 class Simulator:
-    def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None):
+    def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None, verbose=False):
     
-        self.verbose    = False
+        self.verbose    = verbose
         self.record     = {} # stub for the record of state transitions
 
         # Filenames (input data)
@@ -67,6 +67,7 @@ class Simulator:
 
     # ---
     def populate(self): # Add hardware and the monitor to keep track of the sim
+        self.monitor    = Monitor(self.sun.N) # to define the discrete time axis
 
         Wh2Ch = 1/28*3600 # /28V * 3600s/h
 
@@ -76,10 +77,7 @@ class Simulator:
         self.ssd        = SSD(self.env, self.ssd_initial, self.ssd_capacity)
         if self.verbose:  print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
         
-        self.monitor    = Monitor(self.sun.N) # to define the discrete time axis
-        self.controller = Controller(self.env, self.sun)
-
-        Controller.verbose = self.verbose
+        self.controller = Controller(self.env, self.sun, self.verbose)
 
         self.controller.add_panels_from_config(self.panel_config)
         self.controller.calculate_power()
@@ -88,17 +86,20 @@ class Simulator:
     def read_orbitals(self):
         """ Read previously calculated data on the coordinates of the Sun and the Satellites.
             The file name is expected to be provides in the attribute orbitals_f.
+            The format is HDF5, and it contains two section, metadata and payload (orbitals).
         """        
 
         f = h5py.File(self.orbitals_f, "r")
 
-        ds_meta = f["/meta/configuration"] # Expect YAML payload
+        ds_meta = f["/meta/configuration"] # Expect YAML payload, saved in the configuraiton section
         conf    = yaml.safe_load(ds_meta[0,])
         self.deltaT  = conf['period']['deltaT']
 
         ds_data = f["/data/orbitals"]
         da = np.array(ds_data[:]) # data array
         if self.verbose: print(f'''Shape of the data payload: {da.shape}''')
+
+        # Inflate objects based on this array data:
         self.sun = Sun(da[:,0], da[:,1] , da[:,2])
         self.lpf = Sat(da[:,0], da[:,3] , da[:,4])
         self.bge = Sat(da[:,0], da[:,5] , da[:,6])

@@ -35,10 +35,14 @@ class Sun:
     
 
     ### ---
-    ### This constructor only creates a stub, and the object will
-    ### be finalized later based on how the data are obtained
-    ###
     def __init__(self, mjd=None, alt=None, az=None):
+        """ This constructor only creates a stub, and the object will
+            be finalized later based on how the data are obtained.
+
+            Keyword arguments:
+            alt -- altitude (array)
+            az  -- azimuth  (array)
+        """        
         self.mjd        = mjd
         self.alt        = alt
         self.az         = az
@@ -50,11 +54,16 @@ class Sun:
         self.finalize()
 
     ### ---
-    ### That's an important method that finishes the creation of the object,
-    ### which is only stubbed out in the constructor.
-    ### It is driven from either the "calculate" or "read_trajectory" methods (below)
-    ###
     def finalize(self):
+        """ That's a method that finishes the creation of the object.
+            It is called from the constructor (assuming the input data are given are arguments),
+            or alternatively from either the "calculate" or "read_trajectory" methods (below).
+
+            The crossings are first calculated as indices in the "alt" array where the alt value
+            changes its sign, and then more precisely using linear interpolation between
+            two adjacent points, before and after the crossing.
+        """
+                
         if self.az is not None and self.alt is not None and self.mjd is not None:
             self.N = self.az.size
             self.alt_top = np.asarray(self.alt) + self.radius
@@ -75,28 +84,53 @@ class Sun:
             self.crossings  = np.where(np.diff(detect))[0]
             self.day        = ~detect
 
-            # Place for future logic dev
-            #if self.day[0]:
-            #    for cr in self.crossings
+
+        self.mjd_crossings = np.fromiter(self.precise_crossings(), float)
         self.set_temperature()
 
-    ###
+
+    ### ---
+    def precise_crossings(self):
+        """ A more precise calculation of crossings based on linear interpolation of alt sign switches.
+            Linear interpolation is used to find the intercept of "alt".
+        """
+
+        for crs in self.crossings:
+            (x1, x2) = (self.mjd[crs], self.mjd[crs+1])
+            (y1, y2) = (self.alt[crs], self.alt[crs+1])
+            a = (y2-y1)/(x2-x1)
+            b = y2 -((y2-y1)/(x2-x1))*x2
+            yield (-b)/a
+
+    ### ---
     def calculate(self, interval):
-        # Note the crafty logic in the Observation class constructor - it's hand-made polymorphism.
+        """ Calculate the (alt, az) of the Sun, based on the time interval defined,
+            utilizing the "Observation" class from the luseepy package.
+
+            Arguments:
+            interval -- the time interval on one of the formats understood by Observation.
+        """
+
+        # Note the Observation class constructor - it tries to parse the argument and acts polymorphic.
         # After update in Nov 2023, the Observation ctor can take a tuple of start and end time points.
         
         o = O(interval)
-        (alt, az) = o.get_track_solar('sun')
-        mjd = [timepoint.mjd for timepoint in o.times]
+        (alt, az)   = o.get_track_solar('sun')
+        mjd         = [timepoint.mjd for timepoint in o.times]
         self.mjd    = mjd
         self.alt    = alt
         self.az     = az
         self.finalize()
 
     ###
-    # NB this will need to be superceded with reading from HDF5, instead of numpy-formatted file.
-    # We are now feeding the HDF5 data as inputs to the constructor after we parsed it elsewhere
     def read_trajectory(self, filename):
+        """ Read precalculated data (mjd, alt, az) from a numpy-formatted file.
+            This is largely superceded by feeding the data to the constructor directly,
+            from an application that's capable of parsing HDF5-formatted files.
+
+            Arguments:
+            filename -- the name of the numpy-formatted file to be read.
+        """
         try:
             with open(filename, 'rb') as f: mjd_alt_az = np.load(f)
             if self.verbose: print(f'''Loaded data from file "{filename}", number of points for the three components: {mjd_alt_az.size}''')
@@ -123,19 +157,13 @@ class Sun:
 
     ###
     def set_temperature(self):
-        # Simple interpolation of the tabulated data, needs plenty of work
+        """ Simple interpolation of the tabulated data. Used mainly as a placeholder for a better calculation
+            to be implemented later. It is based on the numerical data incorporated in this class.
+        """
         self.temperature = np.interp(self.mjd, self.temperature_data[0] + self.sunrise, self.temperature_data[1]) -273.
 
 
-    ###
-    # def hrsFromSunrise(self):
-    #     iMidnight = np.argmin(self.alt)
-    #     iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight
-    #     return (self.mjd - self.mjd[iSunrise])*24
-
-
-###
-
+# ---
 class Sat:
 
     def __init__(self, mjd=None, alt=None, az=None):
@@ -147,22 +175,30 @@ class Sat:
         detect          = np.signbit(self.alt)
         self.crossings  = np.where(np.diff(detect))[0]
         self.up         = ~detect
-    ###
+
 
 ########################################################################################################################
-### -- non-class functions:
-def track(interval): # "2025-02-04 00:00:00 to 2025-03-07 23:45:00", or a tuple of two strings.
-    o = O(interval)
-    length = len(o.times)
-    (alt, az) = o.get_track_solar('sun')
+########################################################################################################################
+########################################################################################################################
+### Non-class functions (standalone):
 
+def track(interval):
+    """ Calculate the (alt, az) of the Sun, based on the time interval defined,
+        utilizing the "Observation" class from the luseepy package.
+
+        Arguments:
+        interval -- the time interval on one of the formats understood by Observation.
+        For example, this can be a string like "2025-02-04 00:00:00 to 2025-03-07 23:45:00", or a tuple of two strings.
+    """
+
+    o           = O(interval)
+    length      = len(o.times)
+    (alt, az)   = o.get_track_solar('sun')
     return (o.times, alt, az)
 
-
 def track_from_observation(observation):
-    length = len(observation.times)
-    (alt, az) = observation.get_track_solar('sun')
-
+    length      = len(observation.times)
+    (alt, az)   = observation.get_track_solar('sun')
     return (observation.times, alt, az)
 
 ###
@@ -185,15 +221,9 @@ def sun_condition(alt):
     return [alt>horizon+sun_rad, alt>horizon, alt>horizon-sun_rad, alt<=horizon-sun_rad]
 
 
-
-##############################################
-# sun = np.zeros((length,3))
-
-# sinalt      = np.sin(alt*to_rad)
-# cosalt      = np.cos(alt*to_rad)
-# sinaz       = np.sin(az*to_rad)
-# cosaz       = np.cos(az*to_rad)
-
-# sun[:,0]    = cosalt * sinaz
-# sun[:,1]    = cosalt * cosaz
-# sun[:,2]    = sinalt
+### ATTIC
+# def hrsFromSunrise(self):
+#     iMidnight = np.argmin(self.alt)
+#     iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight
+#     return (self.mjd - self.mjd[iSunrise])*24
+###
