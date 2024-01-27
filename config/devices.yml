@@ -1,4 +1,3 @@
-# ---
 solar_panels:  
   config:    
     lander_pitch: 0.0
@@ -27,13 +26,11 @@ solar_panels:
 # ---
 battery:
   initial: 3000
-  capacity: 6840 
+  capacity: 6840
+  fiducial_voltage: 28 
   charge_efficiency: 0.95
   discharge_efficiency: 0.95
-  VofT:
-    temp: -20 0 20
-    Voltage: 28 28 28
-# ---
+
 ssd:
   initial: 0 
   capacity: 32e6
