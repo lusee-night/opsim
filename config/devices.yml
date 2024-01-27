@@ -40,7 +40,8 @@ ssd:
 power_consumers:
   spectrometer:
     'OFF':      0.0
-    'ON':       12
+    'ON':       10
+    'SCIENCE':  12
   comms:
     'OFF':      0.0
     'ON':       0.1
