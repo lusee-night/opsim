@@ -105,15 +105,15 @@ class Sun:
                 return 6.0*(1.0-(self.mjd_crossings[0] - mjd)/estimate)
 
         if mjd>self.mjd_crossings[-1]: # only one endpoint at the end, use the previous cycle as estimate
-            estimate = self.mjd_crossings[-1] - self.mjd_crossings[-2] #  print(estimate)
-            if self.day[self.crossings[-1]]: # print('day')
-                return 6.0 + 12.0*(1.0-(self.mjd_crossings[0] - mjd)/estimate)
+            estimate = self.mjd_crossings[-1] - self.mjd_crossings[-2] # print(estimate)
+            if self.day[~self.crossings[-1]]: # print('day')
+                return 6.0 + 12.0*(1.0-(mjd - self.mjd_crossings[-1])/estimate)
             else: # print('night')
-                return 6.0*(1.0-(self.mjd_crossings[0] - mjd)/estimate)
+                return 6.0*(1.0-(mjd - self.mjd_crossings[0])/estimate)
 
 
         indices = list(range(len(self.mjd_crossings)))
-        rev_indices = indices.reverse()
+        _ = indices.reverse()
     
         for i in indices:
             if mjd>self.mjd_crossings[i]:
