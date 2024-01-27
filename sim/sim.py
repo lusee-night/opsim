@@ -29,7 +29,7 @@ class Simulator:
         self.devices_f  = devices_f
         self.comtable_f = comtable_f
 
-        # Stubs for the Orbitals
+        # Stubs for the Orbitals data
         self.sun        = None
         self.lpf        = None
         self.bge        = None
@@ -48,7 +48,7 @@ class Simulator:
         self.read_devices()
         self.read_modes()
 
-        if comtable_f is not None: self.read_combtable()
+        if comtable_f is not None: self.read_comtable()
 
         self.initial_time   = initial_time
         self.until          = until
@@ -58,9 +58,11 @@ class Simulator:
         else:
             self.env = simpy.Environment()
 
-        self.populate() # -FIXME- Needs work
+        self.populate()
+
         self.create_command_table = False
         self.comm_tx = False
+
         self.env.process(self.run()) # Set the callback to this class, for simpy
 
     # ---
@@ -77,7 +79,7 @@ class Simulator:
         self.monitor    = Monitor(self.sun.N) # to define the discrete time axis
         self.controller = Controller(self.env, self.sun)
 
-        Controller.verbose = True
+        Controller.verbose = self.verbose
 
         self.controller.add_panels_from_config(self.panel_config)
         self.controller.calculate_power()
@@ -108,9 +110,11 @@ class Simulator:
 
     # ---
     def read_devices(self):
-        f = open(self.devices_f, 'r')
-
-        profiles                = yaml.safe_load(f)  # ingest the configuration data
+        """ Initialize devices using data read from the 'devices file' (YAML)
+        """
+        f                       = open(self.devices_f, 'r')
+        profiles                = yaml.safe_load(f)  # "hold all" dictionary
+    
         power_consumer_devices  = profiles['power_consumers'].keys()
         ssd_consumer_devices    = profiles['ssd_consumers'].keys()
         device_names            = power_consumer_devices | ssd_consumer_devices
@@ -128,21 +132,24 @@ class Simulator:
             data_profile                = profiles['ssd_consumers'].get(device_name)
             self.devices[device_name]   = Device(device_name, power_profile, data_profile)
         
-        self.battery_capacity_Wh = float(profiles['battery']['capacity'])
-        self.battery_initial_Wh = float(profiles['battery']['initial'])
-        self.charge_efficiency = float(profiles['battery']['charge_efficiency'])
-        self.discharge_efficiency = float(profiles['battery']['discharge_efficiency'])
-        self.ssd_capacity = float(profiles['ssd']['capacity'])
-        self.ssd_initial = float(profiles['ssd']['initial'])
-        self.panel_config = profiles['solar_panels']
+
+        # Component data, read from the "devices" file
+        self.battery_capacity_Wh    = float(profiles['battery']['capacity'])
+        self.battery_initial_Wh     = float(profiles['battery']['initial'])
+        self.charge_efficiency      = float(profiles['battery']['charge_efficiency'])
+        self.discharge_efficiency   = float(profiles['battery']['discharge_efficiency'])
+
+        self.ssd_capacity           = float(profiles['ssd']['capacity'])
+        self.ssd_initial            = float(profiles['ssd']['initial'])
+
+        self.panel_config           = profiles['solar_panels']
     
     # ---
-    def read_combtable(self):
+    def read_comtable(self):
         f = open(self.comtable_f, 'r')
         self.comtable = yaml.safe_load(f)
 
         for k in self.comtable.keys(): self.schedule[self.comtable[k]['start']] = k
- 
         self.times = list(self.schedule.keys())
 
     # ---
@@ -151,7 +158,6 @@ class Simulator:
         tmax = self.times[l]
         if clock>=tmax:
             return self.comtable[self.schedule[tmax]]
-
 
         ndx = 0
         for t in self.times:

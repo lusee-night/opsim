@@ -1,30 +1,30 @@
-
+# ---
 solar_panels:  
   config:    
     lander_pitch: 0.0
-    lander_roll: 0.0
-    lander_yaw: 0.0    
+    lander_roll:  0.0
+    lander_yaw:   0.0    
     surface_temperature_table: reference/lunarTemperature30degDiviner.txt
     PV_efficiency:
       temp: -173.15 20.0  126.85
       power: 0.356414 0.304828 0.257931
-    
-    
-  EPanel:
-    normal: 1 0 0 
-    efficiency: 1.0
-    area: 0.1565
   
-  WPanel:
-    normal: -1 0 0 
-    efficiency: 1.0
-    area: 0.1565
+  panels:
+    - name:       EPanel
+      normal:     1 0 0 
+      efficiency: 1.0
+      area:       0.1565
   
-  TPanel:
-    normal: 0 0 1
-    efficiency: 1.0
-    area: .313
-
+    - name:       WPanel
+      normal:     -1 0 0 
+      efficiency: 1.0
+      area:       0.1565
+  
+    - name:       TPanel
+      normal:     0 0 1
+      efficiency: 1.0
+      area:       0.313
+# ---
 battery:
   initial: 3000
   capacity: 6840 
@@ -33,11 +33,10 @@ battery:
   VofT:
     temp: -20 0 20
     Voltage: 28 28 28
-
+# ---
 ssd:
   initial: 0 
   capacity: 32e6
-
 
 # consumption in Watts
 power_consumers:
