@@ -96,13 +96,19 @@ class Sun:
         """
         
         if mjd>self.mjd[self.N-1] or mjd<self.mjd[0]: return None
-        print('passed')
 
-        if mjd<self.mjd_crossings[0]: # only one endpoint, use the next cycle as estimate
+        if mjd<self.mjd_crossings[0]: # only one endpoint at the start, use the next cycle as estimate
             estimate = self.mjd_crossings[1] - self.mjd_crossings[0]
             if self.day[self.crossings[0]]:
-                  pass
+                return 6.0 + 12.0*(1.0-(self.mjd_crossings[0] - mjd)/estimate)
             else:
+                return 6.0*(1.0-(self.mjd_crossings[0] - mjd)/estimate)
+
+        if mjd>self.mjd_crossings[-1]: # only one endpoint at the end, use the previous cycle as estimate
+            estimate = self.mjd_crossings[-1] - self.mjd_crossings[-2] #  print(estimate)
+            if self.day[self.crossings[-1]]: # print('day')
+                return 6.0 + 12.0*(1.0-(self.mjd_crossings[0] - mjd)/estimate)
+            else: # print('night')
                 return 6.0*(1.0-(self.mjd_crossings[0] - mjd)/estimate)
 
 
@@ -111,8 +117,13 @@ class Sun:
     
         for i in indices:
             if mjd>self.mjd_crossings[i]:
-                print(self.day[self.crossings[i]])
-                return (self.mjd_crossings[i], self.mjd_crossings[i+1])
+                estimate = self.mjd_crossings[i+1] - self.mjd_crossings[i] #  print(estimate)
+                if (~self.day[self.crossings[i]]): # day, since crossing is one off by design
+                    return 6.0+12.0*(mjd-self.mjd_crossings[i])/estimate
+                else:
+                    result = 18.0 + 12.0*(mjd-self.mjd_crossings[i])/estimate
+                    if result >24.0: result-=24.0
+                    return result
 
         return None
 
