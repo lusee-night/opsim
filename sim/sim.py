@@ -12,7 +12,8 @@ class Monitor():
     def __init__(self, size=0):
         # Time series --
         self.power    = np.zeros(size, dtype=float) # Total power drawn by the electronics
-        self.battery    = np.zeros(size, dtype=float) # Battery charge
+        self.battery_SOC    = np.zeros(size, dtype=float) # Battery charge
+        self.battery_V      = np.zeros(size, dtype=float) # Battery voltage
         self.data_rate  = np.zeros(size, dtype=float) # data rate in/out of the system
         self.ssd        = np.zeros(size, dtype=float) # Storage
 # ---
@@ -319,10 +320,16 @@ class Simulator:
             self.monitor.power[myT] = self.power_out()
             # put charge into battery if BMS is enabled
             if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
-                self.battery.charge(self.power_in(), self.deltaT)
+                power_in = self.power_in()
+            else:
+                power_in = 0.0
             # Draw charge from battery
-            self.battery.discharge(self.power_out(), self.deltaT)
-            self.monitor.battery[myT]   = self.battery.level/self.battery.capacity
+            power_out = self.power_out()
+            self.battery.set_temperature(20) ## fix once we have thermal
+            self.battery.apply_power(power_in - power_out, self.deltaT)
+            self.battery.age(self.deltaT)
+            self.monitor.battery_SOC[myT]   = self.battery.level/self.battery.capacity
+            self.monitor.battery_V[myT]     = self.battery.Voltage()
 
             # Data section
             ## first are we communicating:
