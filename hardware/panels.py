@@ -24,15 +24,15 @@ class Panel: # base, "abstract"
 
 
     ###
-    def __init__(self, sun, name = '', normal=(None, None, None), env=None, area=1.0, pvEFF_T=None, pvEFF_P=None):
+    def __init__(self, sun, name = '', normal=(None, None, None), env=None, area=0.313, pvEFF_T=None, pvEFF_P=None):
         self.sun        = sun
         self.name       = name
         self.area       = area
         self.env        = env
-        if pvEFF_T is not None: 
-            self.pvEfficiency = Panel.pvEfficiency
-        else:
+        if (pvEFF_T is not None) and (pvEFF_P is not None): 
             self.pvEfficiency = np.polyfit(pvEFF_T, pvEFF_P, 2)
+        else:
+            self.pvEfficiency = Panel.pvEfficiency
         
         # The "normal" is specific to each of the three (or more) subclassed panels
         self.normal     = normal
@@ -77,12 +77,12 @@ class Panel: # base, "abstract"
 # ------------------------------------------------------------
 class EPanel(Panel):
     def __init__(self, sun, name):
-        Panel.__init__(self, sun,  name, (1., 0., 0.))
+        Panel.__init__(self, sun,  name, (1., 0., 0.), area=0.1565)
 
 class WPanel(Panel):
     def __init__(self, sun, name):
-        Panel.__init__(self, sun, name, (-1., 0., 0.))
+        Panel.__init__(self, sun, name, (-1., 0., 0.), area=0.1565)
 
 class TPanel(Panel):
     def __init__(self, sun, name):
-        Panel.__init__(self, sun, name, (0., 0., 1.))
+        Panel.__init__(self, sun, name, (0., 0., 1.), area=0.313)
