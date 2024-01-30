@@ -36,7 +36,7 @@ class Sun:
 
     ### ---
     def __init__(self, mjd=None, alt=None, az=None):
-        """ This constructor only creates a stub, and the object will
+        """ Without valid arguments in the contructor, it constructor only creates a stub, and the object will
             be finalized later based on how the data are obtained.
 
             Keyword arguments:
@@ -51,7 +51,7 @@ class Sun:
         self.temperature= None
         self.crossings  = None
         self.day        = None
-        self.finalize()
+        if mjd is not None and alt is not None and az is not None: self.finalize()
 
     ### ---
     def finalize(self):
