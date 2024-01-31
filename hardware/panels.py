@@ -7,30 +7,27 @@ from   scipy.spatial.transform import Rotation as R
 
 class Panel: # base, "abstract"
 
-    name ='Base Panel Class.' # will be overwritten in the derived classes
-
-    ### Assume that the panel pivot angle is zero for now, easy to add later:
-    lander_pitch, lander_roll, lander_yaw = 0., 0., 0.
-
-    ### Define lander rotations
-    r1 = R.from_euler('x', lander_pitch,    degrees=True) # + is nose down,     - is nose up
-    r2 = R.from_euler('y', lander_roll,     degrees=True) # + is top left,      - is top right
-    r3 = R.from_euler('z', lander_yaw,      degrees=True) # + is nose right,    - is nose left
-    r_tot = r1*r2*r3
-
-    verbose    = True
-
-    solarConstant = 1361   # W/m^2 at Moon 
+    name            ='Base Panel Class.' # will be overwritten in the derived classes
+    verbose         = True
+    solarConstant   = 1361   # W/m^2 at Moon 
 
 
     ###
-    def __init__(self, sun, name = '', normal=(None, None, None), env=None, area=1.0, pvEFF_T=None, pvEFF_P=None):
+    def __init__(self, sun, name = '', lander=(0.0 , 0.0, 0.0), normal=(None, None, None), env=None, area=1.0, pvEFF_T=None, pvEFF_P=None):
+        lander_pitch, lander_roll, lander_yaw = lander
+
+        r1 = R.from_euler('x', lander_pitch,    degrees=True) # + is nose down,     - is nose up
+        r2 = R.from_euler('y', lander_roll,     degrees=True) # + is top left,      - is top right
+        r3 = R.from_euler('z', lander_yaw,      degrees=True) # + is nose right,    - is nose left
+        self.r_tot = r1*r2*r3
+
         self.sun        = sun
         self.name       = name
         self.area       = area
         self.env        = env
+
         if pvEFF_T is not None: 
-            self.pvEfficiency = Panel.pvEfficiency
+                self.pvEfficiency = Panel.pvEfficiency
         else:
             self.pvEfficiency = np.polyfit(pvEFF_T, pvEFF_P, 2)
         

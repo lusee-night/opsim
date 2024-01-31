@@ -252,9 +252,11 @@ class Simulator:
         self.device_report()
 
 
-        print('------------------')
-        print(f'''Comtable file: {self.comtable_f}''')
-        print(pretty(self.comtable))
+
+        if self.comtable is not None:
+            print('------------------')
+            print(f'''Comtable file: {self.comtable_f}''')
+            print(pretty(self.comtable))
 
         print('------------------')
         print(f'''Day condition at start and end of the simulation: {self.sun.day[self.initial_time]}, {self.sun.day[self.until]}''')

@@ -36,12 +36,9 @@ class Controller:
         pcf     = config['config'] # panel config
         panels  = config['panels'] # list of panels
     
-        lander_roll     = float (pcf['lander_roll'])
-        lander_pitch    = float (pcf['lander_pitch'])
-        lander_yaw      = float (pcf['lander_yaw'])
+        lander = np.array([float(x) for x in pcf['lander'].split()])
 
-        if (lander_roll != 0.0) or (lander_pitch != 0.0) or (lander_yaw != 0.0):
-            print ('Lander roll/pitch/yaw: ', lander_roll, lander_pitch, lander_yaw)
+        if self.verbose: print(f'''Lander pitch, roll, yaw: {lander}''')
 
         pvEFF_T = np.array([float(x) for x in pcf['PV_efficiency']['temp'].split()])
         pvEFF_P = np.array([float(x) for x in pcf['PV_efficiency']['power'].split()])
@@ -51,7 +48,8 @@ class Controller:
             normal = np.array([float(x) for x in panel['normal'].split()])
             eff = panel['efficiency']
             if self.verbose: print(f'''Adding panel {panel_name} with normal {normal}, \tefficiency {eff}, and surface area {panel['area']}''')
-            self.add_panel(Panel(self.sun, panel_name, normal, self.env, eff, pvEFF_T, pvEFF_P))
+
+            self.add_panel(Panel(self.sun, name=panel_name, lander=lander, normal=normal, env=self.env, area=panel['area'], pvEFF_T=pvEFF_T, pvEFF_P=pvEFF_P))
 
 
         # for panel_name, panel in config.items():
