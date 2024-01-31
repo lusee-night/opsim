@@ -94,8 +94,8 @@ class Sun:
         """ This method calculates the "lunar clock" e.g. the time according
             to 24-hour subdividion of the Lunar day.
         """
-        
-        if mjd>self.mjd[self.N-1] or mjd<self.mjd[0]: return None
+
+        if mjd>self.mjd[self.N-1] or mjd<self.mjd[0]: raise ValueError
 
         if mjd<self.mjd_crossings[0]: # only one endpoint at the start, use the next cycle as estimate
             estimate = self.mjd_crossings[1] - self.mjd_crossings[0]
@@ -112,12 +112,13 @@ class Sun:
                 return 6.0*(1.0-(mjd - self.mjd_crossings[0])/estimate)
 
 
+        # Main use case -- we have sunrise/sunset point on either side of the point of interest
         indices = list(range(len(self.mjd_crossings)))
         _ = indices.reverse()
     
         for i in indices:
             if mjd>self.mjd_crossings[i]:
-                estimate = self.mjd_crossings[i+1] - self.mjd_crossings[i] #  print(estimate)
+                estimate = self.mjd_crossings[i+1] - self.mjd_crossings[i]
                 if (~self.day[self.crossings[i]]): # day, since crossing is one off by design
                     return 6.0+12.0*(mjd-self.mjd_crossings[i])/estimate
                 else:
@@ -125,7 +126,6 @@ class Sun:
                     if result >24.0: result-=24.0
                     return result
 
-        return None
 
     ### ---
     def precise_crossings(self):
