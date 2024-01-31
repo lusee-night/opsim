@@ -9,17 +9,17 @@ solar_panels:
       power: 0.356414 0.304828 0.257931
   
   panels:
-    - name:       EPanel
+    EPanel:
       normal:     1 0 0 
       efficiency: 1.0
       area:       0.1565
   
-    - name:       WPanel
+    WPanel:
       normal:     -1 0 0 
       efficiency: 1.0
       area:       0.1565
   
-    - name:       TPanel
+    TPanel:
       normal:     0 0 1
       efficiency: 1.0
       area:       0.313

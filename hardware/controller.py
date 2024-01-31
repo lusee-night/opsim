@@ -8,7 +8,6 @@ class Controller:
         self.env        = env
         self.sun        = sun
         self.verbose    = verbose
-
     
         self.panels     = []
         self.devices    = {}
@@ -47,11 +46,12 @@ class Controller:
         pvEFF_T = np.array([float(x) for x in pcf['PV_efficiency']['temp'].split()])
         pvEFF_P = np.array([float(x) for x in pcf['PV_efficiency']['power'].split()])
 
-        for panel in panels:
+        for panel_name in panels:
+            panel = panels[panel_name]
             normal = np.array([float(x) for x in panel['normal'].split()])
             eff = panel['efficiency']
-            if self.verbose: print(f'''Adding panel {panel['name']} with normal {normal}, efficiency {eff} and surface area {panel['area']}''')
-            self.add_panel(Panel(self.sun, panel['name'], normal, self.env, eff, pvEFF_T, pvEFF_P))
+            if self.verbose: print(f'''Adding panel {panel_name} with normal {normal}, \tefficiency {eff}, and surface area {panel['area']}''')
+            self.add_panel(Panel(self.sun, panel_name, normal, self.env, eff, pvEFF_T, pvEFF_P))
 
 
         # for panel_name, panel in config.items():
