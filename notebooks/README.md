@@ -1,6 +1,6 @@
 # Notebooks
 
-## Newsim
+## opsim
 
 The most up-to-date version of the simulation notebook. It is using the following elements
 of the data:
@@ -11,10 +11,20 @@ time series
 * _modes_: major modes of the LuSEE apparatus, mapped onto the states of each hardware component
 * _comtable_: the command table to be executed
 
-## Datacheck
+## datacheck
 
-A simple tool to validate inputs to the simulator, inclusing the _HDF5_-formatted data
-and configuration files (in _YAML)
+A tool to validate inputs to the simulator, inclusing the _HDF5_-formatted data
+and configuration files (in _YAML). Also includes a number of sanity check on
+functionality in the _Sun_ and other classes.
+
+## lusee-test
+
+* _note_: largely superseeded by functionality in _datacheck_, kept for reference
+* calculates the Sun trajectory at runtime, using the wrapped
+`Observation` object from `luseepy`, presented in the utility class `Sun`
+* can also read prefabricated data, for comparison
+* diagnostic printout and graphing of various navigation-related quantities
+
 
 ---
 
@@ -31,14 +41,5 @@ framework to function. This is typically provided by the Python virtual environm
 
 ## Archive
 
-### lusee-test
-
-* calculates the Sun trajectory at runtime, using the wrapped
-`Observation` object from `luseepy`, presented in the utility class `Sun`
-* can also read prefabricated data, for comparison
-* diagnostic printout and graphing of various navigation-related quantities
-* _note_: largely superseeded
-
-### sim
-
-The original version of the simulation notebook, utilizing `SimPy`; _note_: largely superseeded.
+The _attic_ folder contains early versions of this software, kept for reference now.
+Officially deprecated and not in a functional state for the most part.
