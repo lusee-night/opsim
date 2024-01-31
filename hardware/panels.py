@@ -27,7 +27,7 @@ class Panel: # base, "abstract"
         self.env        = env
 
         if pvEFF_T is not None: 
-                self.pvEfficiency = Panel.pvEfficiency
+            self.pvEfficiency = Panel.pvEfficiency
         else:
             self.pvEfficiency = np.polyfit(pvEFF_T, pvEFF_P, 2)
         
