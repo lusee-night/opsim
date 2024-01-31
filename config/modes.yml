@@ -1,29 +1,25 @@
 # Map of the available LuSEE modes to the states of its hardware components
 science:
-  spectrometer: 'ON'
-  comms: 'OFF'
-  bms: 'OFF'
-  pfps: 'ON'
-  dcb: 'ON'
+  preamp:       'ON'
+  spectrometer: 'SCIENCE'
+  UT:           'OFF'
+  PCDU:         'HIBER'
+  PFPS:         'ON'
+  DCB:          'ON'
 
-charge:
+maint:
+  preamp:       'ON'
   spectrometer: 'OFF'
-  comms: 'OFF'
-  bms: 'ON'
-  pfps: 'ON'
-  dcb: 'ON'
-
-comms:
-  spectrometer: 'OFF'
-  comms: 'ON'
-  bms: 'ON'
-  pfps: 'ON'
-  dcb: 'ON'
+  UT:           'ON'
+  PCDU:         'ON'
+  PFPS:         'ON'
+  DCB:          'ON'
 
 powersave:
+  preamp:       'ON'
   spectrometer: 'OFF'
-  comms: 'OFF'
-  bms: 'OFF'
-  pfps: 'ON'
-  dcb: 'ON'
+  UT:           'OFF'
+  PCDU:         'HIBER'
+  PFPS:         'ON'
+  DCB:          'ON'
   

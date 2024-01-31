@@ -109,12 +109,12 @@ class Simulator:
         ssd_consumer_devices = profiles['ssd_consumers'].keys()
         device_names = power_consumer_devices | ssd_consumer_devices
 
-        if 'bms' not in device_names:
-            print('BMS not found in the device list')
+        if 'PCDU' not in device_names:
+            print('PCDU not found in the device list')
             raise NotImplementedError
 
-        if 'comms' not in device_names:
-            print('Comms not found in the device list')
+        if 'UT' not in device_names:
+            print('UT not found in the device list')
             raise NotImplementedError
 
         for device_name in device_names:
@@ -195,7 +195,7 @@ class Simulator:
                 sched['mode'] = 'science'
             else:
                 if comm_opportunity and need_comm:
-                    sched['mode'] = 'comms'
+                    sched['mode'] = 'maint'
                     self.last_comm = self.sun.mjd[myT]
                 else:
                     sched['mode'] = 'science'
@@ -204,32 +204,60 @@ class Simulator:
 
 
 
-
+    def PFPS_custom(self, pwr):
+        Pq = float(pwr[0])
+        fact = float(pwr[1])
+        pow = sum([self.devices[k].power() for k in pwr[2].strip().split('+')])
+        return Pq + fact*pow
+    
+    
     # ---
-    def power_out(self):
+    def power_out(self, verbose = False):
         pwr = 0.0
+        if verbose: print ("Mode: ", self.current_mode)
         for dk in self.devices.keys():
-            if dk=='comms' and self.comm_tx:
+            if dk=='UT' and self.comm_tx:
                 pwr += self.devices[dk].power_tx()
+            elif dk=='PFPS':
+                pwr_str = self.devices[dk].power()
+                if type(pwr_str)==float:
+                    cpower = pwr_str
+                else:
+                    pwr_str = pwr_str.split(',')
+                    assert(pwr_str[0].strip()=='CUSTOM')
+                    cpower = self.PFPS_custom(pwr_str[1:])
             else:
-                pwr += self.devices[dk].power()
+                cpower = self.devices[dk].power()
+            if verbose: print (f'     Device: {dk:12} : {cpower:4.1f} W')
+            pwr += cpower
+        if verbose: print (f'   Total power: {pwr:4.1f} W\n')
         return pwr
     
+    def power_info(self):
+        for mode in self.modes:
+            self.set_mode(mode)
+            self.power_out(verbose=True)
+
+
     def power_in(self):
         return self.controller.power[self.myT]
     
     def data_rate(self):
         dr = 0.0
         for dk in self.devices.keys():
-            if dk=='comms' and self.comm_tx:
+            if dk=='UT' and self.comm_tx:
                 dr+=self.devices[dk].data_rate_tx()
             else:
                 dr+=self.devices[dk].data_rate()
         return dr
 
-    def set_state(self, mode):
+    def set_mode (self,mode):
+        self.current_mode = mode
+        self.set_state(self.modes[mode])
+
+    def set_state(self, mode_info):
         for dk in self.devices.keys():
-            self.devices[dk].state = mode[dk]
+            self.devices[dk].state = mode_info[dk]
 
     def device_report(self):
         for dk in self.devices.keys():
@@ -293,7 +321,7 @@ class Simulator:
 
             if md!=mode:
                 mode = md
-                self.set_state(self.modes[mode])
+                self.set_mode(mode)
 
                 if self.verbose:
                     print(f'''Clock:{clock}, mode: {mode}''')
@@ -309,7 +337,7 @@ class Simulator:
                                     'battery_expected_fill': battery_fill,
                                     'ssd_expected_fill': ssd_fill}
                 
-            if (self.lpf.alt[myT]>0.1) and (self.modes[mode]['comms'] == 'ON'):
+            if (self.lpf.alt[myT]>0.1) and (self.modes[mode]['UT'] == 'ON'):
                 self.comm_tx = True
             else:
                 self.comm_tx = False
@@ -317,8 +345,8 @@ class Simulator:
 
             # Electrical section:
             self.monitor.power[myT] = self.power_out()
-            # put charge into battery if BMS is enabled
-            if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
+            # put charge into battery if PCDU is enabled
+            if (self.modes[mode]['PCDU'] == 'ON'): # See if the battery is charging:
                 self.battery.charge(self.power_in(), self.deltaT)
             # Draw charge from battery
             self.battery.discharge(self.power_out(), self.deltaT)

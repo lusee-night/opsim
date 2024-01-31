@@ -2,6 +2,11 @@ class Device():
     def __init__(self, name=None, power_profile = None, data_profile = None, state='OFF'):
         self.name       = name
         self.state      = state
+        # add OFF state if not present
+        if (power_profile is not None) and ('OFF' not in power_profile):
+            power_profile['OFF'] = 0.0
+        if (data_profile is not None) and ('OFF' not in data_profile):
+            data_profile['OFF'] = 0.0
         self.powers   = power_profile
         self.data_rates = data_profile
 
