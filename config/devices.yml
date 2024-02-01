@@ -46,6 +46,8 @@ power_consumers:
   UT:
     'ON':       5.3
     'TX':       19
+  PDU: 
+    'ON':       0.9
   PCDU:
     'HIBER':    0.8
     'ON':       1.5
