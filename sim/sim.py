@@ -47,8 +47,7 @@ class Simulator:
         self.read_orbitals()
         self.read_devices()
         self.read_modes()
-        if comtable_f is not None:
-            self.read_combtable()
+        if comtable_f is not None: self.read_comtable()
 
 
         self.initial_time   = initial_time
@@ -127,7 +126,7 @@ class Simulator:
         self.panel_config = profiles['solar_panels']
     
     # ---
-    def read_combtable(self):
+    def read_comtable(self):
         f = open(self.comtable_f, 'r')
         self.comtable = yaml.safe_load(f)
 
