@@ -9,8 +9,9 @@ class SSD(C):
         C.__init__(self, env, init=initial, capacity=capacity)
 
     def change (self, delta):
-        if delta>0:
+
+        if delta>=0:
             self.put(delta)
         else:
-            self.get(min(-delta, self.level))
+            if self.level>0.0: self.get(min(-delta, self.level))
             
