@@ -207,14 +207,33 @@ class Simulator:
         self.last_day_state = day
         return sched
 
+    def PFPS_custom(self, pwr):
+        Pq = float(pwr[0])
+        fact = float(pwr[1])
+        pow = sum([self.devices[k].power() for k in pwr[2].strip().split('+')])
+        return Pq + fact*pow
+    
+    
     # ---
-    def power_out(self):
+    def power_out(self, verbose = False):
         pwr = 0.0
+        if verbose: print ("Mode: ", self.current_mode)
         for dk in self.devices.keys():
-            if dk=='comms' and self.comm_tx:
+            if dk=='UT' and self.comm_tx:
                 pwr += self.devices[dk].power_tx()
+            elif dk=='PFPS':
+                pwr_str = self.devices[dk].power()
+                if type(pwr_str)==float:
+                    cpower = pwr_str
+                else:
+                    pwr_str = pwr_str.split(',')
+                    assert(pwr_str[0].strip()=='CUSTOM')
+                    cpower = self.PFPS_custom(pwr_str[1:])
             else:
-                pwr += self.devices[dk].power()
+                cpower = self.devices[dk].power()
+            if verbose: print (f'     Device: {dk:12} : {cpower:4.1f} W')
+            pwr += cpower
+        if verbose: print (f'   Total power: {pwr:4.1f} W\n')
         return pwr
     
     def power_in(self):
