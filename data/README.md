@@ -10,8 +10,8 @@ in the HDF5 files are names correspondingly:
 The _/meta/configuration_ contains the metadata supplied in the YAML format, such as:
 ```
 period:
-  start: "2025-02-04 00:00:00" # "2025-02-10 00:00:00"
-  end:   "2025-08-07 23:45:00" # "2025-02-11 23:45:00"
+  start: "2026-01-10 20:00:00" # "2025-02-10 00:00:00"
+  end:   "2027-01-15 02:00:00" # "2025-02-11 23:45:00"
   deltaT: 900
 
 location:
@@ -20,7 +20,7 @@ location:
     height:                       0 # meters
 
 satellites:
-  esa:
+  lpf:
     semi_major_km:                5738
     eccentricity:                 0.56489
     inclination_deg:              57.097
@@ -28,7 +28,7 @@ satellites:
     argument_of_pericenter_deg:   72.625
     aposelene_ref_time:           '2024-05-01T00:00:00'
 
-  elytra:
+  bge:
     semi_major_km:                5738
     eccentricity:                 0.56489
     inclination_deg:              57.097

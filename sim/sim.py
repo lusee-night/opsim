@@ -67,18 +67,14 @@ class Simulator:
 
     # ---
     def populate(self): # Add hardware and the monitor to keep track of the sim
+        self.monitor    = Monitor(self.sun.N) # to define the discrete time axis
 
         self.battery    = Battery(self.env, self.battery_config)
-        print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
+        if self.verbose: print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
         self.ssd        = SSD(self.env, self.ssd_config)
-        print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
-        
+        if self.verbose: print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
 
-        self.monitor    = Monitor(self.sun.N) # to define the discrete time axis
-        self.controller = Controller(self.env, self.sun)
-
-        Controller.verbose = True
-
+        self.controller = Controller(self.env, self.sun, self.verbose)
         self.controller.add_panels_from_config(self.panel_config)
         self.controller.calculate_power()
 
@@ -111,11 +107,14 @@ class Simulator:
 
     # ---
     def read_devices(self):
-        f = open(self.devices_f, 'r')
-        profiles = yaml.safe_load(f)  # ingest the configuration data
-        power_consumer_devices = profiles['power_consumers'].keys()
-        ssd_consumer_devices = profiles['ssd_consumers'].keys()
-        device_names = power_consumer_devices | ssd_consumer_devices
+        """ Initialize devices using data read from the 'devices file' (YAML)
+        """
+        f                       = open(self.devices_f, 'r')
+        profiles                = yaml.safe_load(f)  # "hold all" dictionary
+    
+        power_consumer_devices  = profiles['power_consumers'].keys()
+        ssd_consumer_devices    = profiles['ssd_consumers'].keys()
+        device_names            = power_consumer_devices | ssd_consumer_devices
 
         if 'PCDU' not in device_names:
             print('PCDU not found in the device list')
@@ -126,10 +125,11 @@ class Simulator:
             raise NotImplementedError
 
         for device_name in device_names:
-            power_profile = profiles['power_consumers'].get(device_name)
-            data_profile = profiles['ssd_consumers'].get(device_name)
-            self.devices[device_name] = Device(device_name, power_profile, data_profile)
-        
+            power_profile               = profiles['power_consumers'].get(device_name)
+            data_profile                = profiles['ssd_consumers'].get(device_name)
+            self.devices[device_name]   = Device(device_name, power_profile, data_profile)
+     
+        # Component data, read from the "devices" file
         self.battery_config = profiles['battery']
         self.ssd_config = profiles['ssd']
         self.panel_config = profiles['solar_panels']
@@ -139,9 +139,7 @@ class Simulator:
         f = open(self.comtable_f, 'r')
         self.comtable = yaml.safe_load(f)
 
-        for k in self.comtable.keys():
-            self.schedule[self.comtable[k]['start']] = k
- 
+        for k in self.comtable.keys(): self.schedule[self.comtable[k]['start']] = k
         self.times = list(self.schedule.keys())
 
     # ---
@@ -150,7 +148,6 @@ class Simulator:
         tmax = self.times[l]
         if clock>=tmax:
             return self.comtable[self.schedule[tmax]]
-
 
         ndx = 0
         for t in self.times:
@@ -210,8 +207,11 @@ class Simulator:
         self.last_day_state = day
         return sched
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> main
     def PFPS_custom(self, pwr):
         Pq = float(pwr[0])
         fact = float(pwr[1])
@@ -268,9 +268,9 @@ class Simulator:
             self.devices[dk].state = mode_info[dk]
 
     def device_report(self):
-        for dk in self.devices.keys():
-            print(self.devices[dk].info())
-        print('*** Total power load:', self.power_out(),'W')
+        if self.verbose:        
+            for dk in self.devices.keys(): print(self.devices[dk].info())
+            print('*** Total power:', self.power_out(),'W')
 
 
     def info(self):
@@ -286,19 +286,24 @@ class Simulator:
         self.device_report()
 
 
-        print('------------------')
-        print(f'''Comtable file: {self.comtable_f}''')
-        print(pretty(self.comtable))
+
+        if self.comtable is not None:
+            print('------------------')
+            print(f'''Comtable file: {self.comtable_f}''')
+            print(pretty(self.comtable))
 
         print('------------------')
         print(f'''Day condition at start and end of the simulation: {self.sun.day[self.initial_time]}, {self.sun.day[self.until]}''')
 
     def save_record(self, filename='simulator_log.yml'):
+        """ Capture the generated state transition record.
+            It's in the same format as the main command table.
+        """
         with open(filename, 'w') as file:
             yaml.dump(self.record, file)
 
     ############################## Simulation code #############################
-    
+    # ---
     def simulate(self, create_command_table = False):
         self.create_command_table = create_command_table
         if create_command_table:
@@ -309,9 +314,8 @@ class Simulator:
             self.env.run(until=self.until) # 17760
         else:
             self.env.run()
-    
+    # ---
     def run(self): # SimPy machinery: print(f'''Clock: {self.sun.mjd[myT]}, power: {Panel.profile[myT]}''')
-    
         mode = None
         cnt = 0
 

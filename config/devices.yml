@@ -28,11 +28,10 @@ battery:
   fiducial_voltage: 28 
   charge_efficiency: 0.95
   discharge_efficiency: 0.95
- 
+
 ssd:
   initial: 0 
   capacity: 32e6
-
 
 # consumption in Watts
 power_consumers:
