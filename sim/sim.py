@@ -207,11 +207,7 @@ class Simulator:
         self.last_day_state = day
         return sched
 
-<<<<<<< HEAD
 
-
-=======
->>>>>>> main
     def PFPS_custom(self, pwr):
         Pq = float(pwr[0])
         fact = float(pwr[1])
