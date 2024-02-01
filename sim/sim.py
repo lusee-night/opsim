@@ -1,3 +1,4 @@
+# foundation packages
 import  simpy
 import  yaml
 import  h5py
@@ -11,25 +12,24 @@ from    nav import *  # Astro/observation wrapper classes
 class Monitor():
     def __init__(self, size=0):
         # Time series --
-        self.power    = np.zeros(size, dtype=float) # Total power drawn by the electronics
+        self.power      = np.zeros(size, dtype=float) # Total power drawn by the electronics
         self.battery    = np.zeros(size, dtype=float) # Battery charge
         self.data_rate  = np.zeros(size, dtype=float) # data rate in/out of the system
         self.ssd        = np.zeros(size, dtype=float) # Storage
 # ---
 class Simulator:
-    def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None):
+    def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None, verbose=False):
     
-        self.verbose      = False
+        self.verbose    = verbose
+        self.record     = {} # stub for the record of state transitions
 
-        self.record       = {}
+        # Filenames (input data)
+        self.orbitals_f = orbitals_f
+        self.modes_f    = modes_f
+        self.devices_f  = devices_f
+        self.comtable_f = comtable_f
 
-        # Filenames
-        self.orbitals_f   = orbitals_f
-        self.modes_f      = modes_f
-        self.devices_f    = devices_f
-        self.comtable_f   = comtable_f
-
-        # Stubs for the Orbitals
+        # Stubs for the Orbitals data
         self.sun        = None
         self.lpf        = None
         self.bge        = None
@@ -47,8 +47,8 @@ class Simulator:
         self.read_orbitals()
         self.read_devices()
         self.read_modes()
-        if comtable_f is not None: self.read_comtable()
 
+        if comtable_f is not None: self.read_comtable()
 
         self.initial_time   = initial_time
         self.until          = until
@@ -58,9 +58,11 @@ class Simulator:
         else:
             self.env = simpy.Environment()
 
-        self.populate() # -FIXME- Needs work
+        self.populate()
+
         self.create_command_table = False
         self.comm_tx = False
+
         self.env.process(self.run()) # Set the callback to this class, for simpy
 
     # ---
@@ -82,15 +84,22 @@ class Simulator:
 
     # ---
     def read_orbitals(self):
+        """ Read previously calculated data on the coordinates of the Sun and the Satellites.
+            The file name is expected to be provides in the attribute orbitals_f.
+            The format is HDF5, and it contains two section, metadata and payload (orbitals).
+        """        
+
         f = h5py.File(self.orbitals_f, "r")
 
-        ds_meta = f["/meta/configuration"] # Expect YAML payload
+        ds_meta = f["/meta/configuration"] # Expect YAML payload, saved in the configuraiton section
         conf    = yaml.safe_load(ds_meta[0,])
         self.deltaT  = conf['period']['deltaT']
 
         ds_data = f["/data/orbitals"]
         da = np.array(ds_data[:]) # data array
-        print(f'''Shape of the data payload: {da.shape}''')
+        if self.verbose: print(f'''Shape of the data payload: {da.shape}''')
+
+        # Inflate objects based on this array data:
         self.sun = Sun(da[:,0], da[:,1] , da[:,2])
         self.lpf = Sat(da[:,0], da[:,3] , da[:,4])
         self.bge = Sat(da[:,0], da[:,5] , da[:,6])
