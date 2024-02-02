@@ -35,36 +35,35 @@ ssd:
 
 # consumption in Watts
 power_consumers:
+  preamp: 
+    'ON':       0.9
   spectrometer:
-    'OFF':      0.0
-    'ON':       10
-    'SCIENCE':  12
-  comms:
-    'OFF':      0.0
-    'ON':       0.1
-    'TX':       19
-  bms:
-    'OFF':      0.0
-    'ON':       1.0
-  pfps:
-    'OFF':      0.0
-    'ON':       6.1   # 6 + 0.1 PDU
-  dcb:
-    'OFF':      0.0
+    'ANALOG':   1.4
+    'ON':       8.0
+    'SCIENCE':  11.5
+  DCB:
     'ON':       2.0
-
+  UT:
+    'ON':       5.3
+    'TX':       19
+  PDU: 
+    'ON':       0.9
+  PCDU:
+    'HIBER':    0.8
+    'ON':       1.5
+  PFPS:
+    # what the line below does is sum powers of devices in the
+    # third item, multiplies by second item and adds the first item 
+    'ON':       CUSTOM, 1.0, 0.45, preamp+spectrometer+DCB
+  
 # consumption in kB/s
 ssd_consumers:
   spectrometer:
-    'OFF':      0.0
-    'ON':       5.0
-
-  dcb:
-    'OFF':      0.0
+    'ON':       0.0
+    'SCIENCE':  5.0
+  DCB:
     'ON':       0.1
-  
-  comms:
-    'OFF':      0.0
+  UT:
     'ON':       0.0
     'TX':   -20.0   
 

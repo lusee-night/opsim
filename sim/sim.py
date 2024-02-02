@@ -116,12 +116,12 @@ class Simulator:
         ssd_consumer_devices    = profiles['ssd_consumers'].keys()
         device_names            = power_consumer_devices | ssd_consumer_devices
 
-        if 'bms' not in device_names:
-            print('BMS not found in the device list')
+        if 'PCDU' not in device_names:
+            print('PCDU not found in the device list')
             raise NotImplementedError
 
-        if 'comms' not in device_names:
-            print('Comms not found in the device list')
+        if 'UT' not in device_names:
+            print('UT not found in the device list')
             raise NotImplementedError
 
         for device_name in device_names:
@@ -200,12 +200,13 @@ class Simulator:
                 sched['mode'] = 'science'
             else:
                 if comm_opportunity and need_comm:
-                    sched['mode'] = 'comms'
+                    sched['mode'] = 'maint'
                     self.last_comm = self.sun.mjd[myT]
                 else:
                     sched['mode'] = 'science'
         self.last_day_state = day
         return sched
+
 
     def PFPS_custom(self, pwr):
         Pq = float(pwr[0])
@@ -236,21 +237,31 @@ class Simulator:
         if verbose: print (f'   Total power: {pwr:4.1f} W\n')
         return pwr
     
+    def power_info(self):
+        for mode in self.modes:
+            self.set_mode(mode)
+            self.power_out(verbose=True)
+
+
     def power_in(self):
         return self.controller.power[self.myT]
     
     def data_rate(self):
         dr = 0.0
         for dk in self.devices.keys():
-            if dk=='comms' and self.comm_tx:
+            if dk=='UT' and self.comm_tx:
                 dr+=self.devices[dk].data_rate_tx()
             else:
                 dr+=self.devices[dk].data_rate()
         return dr
 
-    def set_state(self, mode):
+    def set_mode (self,mode):
+        self.current_mode = mode
+        self.set_state(self.modes[mode])
+
+    def set_state(self, mode_info):
         for dk in self.devices.keys():
-            self.devices[dk].state = mode[dk]
+            self.devices[dk].state = mode_info[dk]
 
     def device_report(self):
         if self.verbose:        
@@ -318,7 +329,7 @@ class Simulator:
 
             if md!=mode:
                 mode = md
-                self.set_state(self.modes[mode])
+                self.set_mode(mode)
 
                 if self.verbose:
                     print(f'''Clock:{clock}, mode: {mode}''')
@@ -334,7 +345,7 @@ class Simulator:
                                     'battery_expected_fill': battery_fill,
                                     'ssd_expected_fill': ssd_fill}
                 
-            if (self.lpf.alt[myT]>0.1) and (self.modes[mode]['comms'] == 'ON'):
+            if (self.lpf.alt[myT]>0.1) and (self.modes[mode]['UT'] == 'ON'):
                 self.comm_tx = True
             else:
                 self.comm_tx = False
@@ -342,8 +353,8 @@ class Simulator:
 
             # Electrical section:
             self.monitor.power[myT] = self.power_out()
-            # put charge into battery if BMS is enabled
-            if (self.modes[mode]['bms'] == 'ON'): # See if the battery is charging:
+            # put charge into battery if PCDU is enabled
+            if (self.modes[mode]['PCDU'] == 'ON'): # See if the battery is charging:
                 self.battery.charge(self.power_in(), self.deltaT)
             # Draw charge from battery
             self.battery.discharge(self.power_out(), self.deltaT)
