@@ -244,6 +244,27 @@ class Simulator:
             self.power_out(verbose=True)
 
     # ---
+    def power_for_mode(self, mode):
+        self.set_mode(mode)
+        power = {}
+        for dk in self.devices.keys():
+            if dk=='UT' and self.comm_tx:
+                pwr += self.devices[dk].power_tx()
+            elif dk=='PFPS':
+                pwr_str = self.devices[dk].power()
+                if type(pwr_str)==float:
+                    cpower = pwr_str
+                else:
+                    pwr_str = pwr_str.split(',')
+                    assert(pwr_str[0].strip()=='CUSTOM')
+                    cpower = self.PFPS_custom(pwr_str[1:])
+            else:
+                cpower = self.devices[dk].power()
+            power[dk] = cpower
+        return power
+
+
+    # ---
     def power_in(self):
         return self.controller.power[self.myT]
     

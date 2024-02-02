@@ -22,16 +22,11 @@ class Controller:
     def add_device(self, device):
         self.devices[device.name]=device
 
+    # ---
     def set_device_state(self, name, state):
         self.devices[name].state = state
 
-    ###
-    def add_all_panels(self):
-        self.add_panel(EPanel(self.sun, 'E'))
-        self.add_panel(WPanel(self.sun, 'W'))
-        self.add_panel(TPanel(self.sun, 'T'))
-
-    ###
+    ### ---
     def add_panels_from_config(self, config):
         pcf     = config['config'] # panel config
         panels  = config['panels'] # list of panels
@@ -51,23 +46,12 @@ class Controller:
 
             self.add_panel(Panel(self.sun, name=panel_name, lander=lander, normal=normal, env=self.env, area=panel['area'], pvEFF_T=pvEFF_T, pvEFF_P=pvEFF_P))
 
-
-        # for panel_name, panel in config.items():
-        #     if panel_name=='config':
-        #         continue
-        #     normal = np.array([float(x) for x in panel['normal'].split()])
-        #     eff = panel['efficiency']
-        #     print(f'''Adding panel {panel_name} with normal {normal} and efficiency {eff}''')
-        #     self.add_panel(Panel(self.sun, panel_name, normal, self.env, eff, pvEFF_T, pvEFF_P))
-                        
-    
-    
-    ###
+    ### ---
     def get_panel(self, name):
         for p in self.panels:
             if p.name==name: return p
         return None
-    ###
+    ### ---
     def panels_info(self):
         info = f'''Number of panels: {len(self.panels)}\n'''
         for p in self.panels:
@@ -88,11 +72,3 @@ class Controller:
 
         self.power = power
 
-    ### Static method to read the panel exposure profile
-    @staticmethod
-    def read_profile(filename):
-        try:
-            with open(filename, 'rb') as f: Controller.profile = np.load(f)
-            if Controller.verbose: print(f'''Loaded data from file "{filename}", number of points: {Controller.profile.size}''')
-        except:
-            if Controller.verbose: print(f'''ERROR using file {filename} as the data source for the power profile''')
