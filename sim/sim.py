@@ -171,8 +171,8 @@ class Simulator:
 
     # --
     def generate_schedule(self, myT):
-        ## all of this is purely placeholder now
-        ## don't take it too seriously
+        """ All of this is purely placeholder now
+            don't take it too seriously."""
 
         sched = {}
         day = self.sun.alt[myT] > 0
@@ -207,7 +207,7 @@ class Simulator:
         self.last_day_state = day
         return sched
 
-
+     # ---
     def PFPS_custom(self, pwr):
         Pq = float(pwr[0])
         fact = float(pwr[1])
@@ -237,16 +237,19 @@ class Simulator:
         if verbose: print (f'   Total power: {pwr:4.1f} W\n')
         return pwr
     
+    # ---
     def power_info(self):
         for mode in self.modes:
             self.set_mode(mode)
             self.power_out(verbose=True)
 
-
+    # ---
     def power_in(self):
         return self.controller.power[self.myT]
     
+     # ---
     def data_rate(self):
+        """ Calculate the total data rate, traversing over the device collection. """
         dr = 0.0
         for dk in self.devices.keys():
             if dk=='UT' and self.comm_tx:
@@ -255,6 +258,7 @@ class Simulator:
                 dr+=self.devices[dk].data_rate()
         return dr
 
+    # ---
     def set_mode (self,mode):
         self.current_mode = mode
         self.set_state(self.modes[mode])
@@ -268,8 +272,9 @@ class Simulator:
             for dk in self.devices.keys(): print(self.devices[dk].info())
             print('*** Total power:', self.power_out(),'W')
 
-
+    # ---
     def info(self):
+        """ General info on the input files with brief bits of content for sanity check. """
         print(f'''Orbitals file: {self.orbitals_f}''')
 
         print('------------------')
@@ -301,6 +306,9 @@ class Simulator:
     ############################## Simulation code #############################
     # ---
     def simulate(self, create_command_table = False):
+        """ Steeting of the SimPy simulation process, relying on
+            the 'run' method previous set in the SimPy environment"""
+        
         self.create_command_table = create_command_table
         if create_command_table:
             myT     = int(self.env.now)

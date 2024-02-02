@@ -1,16 +1,12 @@
 import numpy as np
-import simpy # placeholder for now, FIXME
-
 from   scipy.spatial.transform import Rotation as R
 
 ##################### PANELS ###########################
-
 class Panel: # base, "abstract"
 
-    name            ='Base Panel Class.' # will be overwritten in the derived classes
+    name            ='Base Panel Class' # will be overwritten in the derived classes
     verbose         = True
     solarConstant   = 1361   # W/m^2 at Moon 
-
 
     ###
     def __init__(self, sun, name = '', lander=(0.0 , 0.0, 0.0), normal=(None, None, None), env=None, area=1.0, pvEFF_T=None, pvEFF_P=None):
@@ -39,27 +35,29 @@ class Panel: # base, "abstract"
         self.choice_list = [self.dot_sun, self.dot_sun, 0, 0]
         self.temperature = sun.temperature
     
-    ###
+    ### ---
     def dot(self, sun_xyz):
         buffer = self.area*np.dot(sun_xyz, self.normal_rot)
         buffer[buffer<0] = 0.0
         return buffer
-    ###
+    
+    ### ---
     def set_condition(self, condition_list):
         self.condition_list = condition_list
-    ###
+
+    ### ---
     def exposure(self):
         pwr = np.select(self.condition_list, self.choice_list)
         return pwr
     
-    ###
+    ### ---
     def power(self):
         eff = 0.3 # default to 1.o if the temperature curve is not set for the sun
         if self.sun.temperature is not None: eff = self.pvEfficiency(self.sun.temperature)
         power =  Panel.solarConstant*eff*np.select(self.condition_list, self.choice_list)
         return power 
     
-    ###
+    ### ---
     def info(self):
         return f'''Panel {self.name}'''
     

@@ -2,7 +2,6 @@ import numpy as np
 
 import lusee
 from lusee import Observation as O
-from lusee import Satellite, ObservedSatellite
 
 ### Keep these simple defaults for now:
 horizon = 0.0
@@ -112,7 +111,7 @@ class Sun:
                 return 6.0*(1.0-(mjd - self.mjd_crossings[0])/estimate)
 
 
-        # Main use case -- we have sunrise/sunset point on either side of the point of interest
+        # Main use case -- we have sunrise/sunset points on either side of the point of interest
         indices = list(range(len(self.mjd_crossings)))
         _ = indices.reverse()
     
@@ -194,7 +193,8 @@ class Sun:
     ###
     def set_temperature(self):
         """ Simple interpolation of the tabulated data. Used mainly as a placeholder for a better calculation
-            to be implemented later. It is based on the numerical data incorporated in this class.
+            to be implemented later, since it can be panel-specific.
+            It is based on the numerical data incorporated in this class.
         """
         self.temperature = np.interp(self.mjd, self.temperature_data[0] + self.sunrise, self.temperature_data[1]) -273.
 

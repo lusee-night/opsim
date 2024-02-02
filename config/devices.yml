@@ -23,17 +23,19 @@ solar_panels:
       area:       0.313
 # ---
 battery:
-  initial: 3000
-  capacity: 6840
-  fiducial_voltage: 28 
-  charge_efficiency: 0.95
+  initial:        3000
+  capacity:       6840
+  fiducial_voltage:     28 
+  charge_efficiency:    0.95
   discharge_efficiency: 0.95
 
+# ---
 ssd:
   initial: 0 
   capacity: 32e6
 
-# consumption in Watts
+# ---
+# Power consumption in Watts
 power_consumers:
   preamp: 
     'ON':       0.9
@@ -56,7 +58,7 @@ power_consumers:
     # third item, multiplies by second item and adds the first item 
     'ON':       CUSTOM, 1.0, 0.45, preamp+spectrometer+DCB
   
-# consumption in kB/s
+# Data consumption (bandwidth) in kB/s
 ssd_consumers:
   spectrometer:
     'ON':       0.0
