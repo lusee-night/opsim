@@ -23,19 +23,12 @@ solar_panels:
       area:       0.313
 # ---
 battery:
-  initial: 120.0 #in Ah
-  capacity: 240.99 #in Ah
-  capacity_fade: 0.0063  # capacity faed applied to capacity
-  R_internal: 2 # in Ohms, gives ~5% in power loss for a 20W load at 29V
-  self_discharge: 0.03 # defined as fractional loss over 28 days
-  VOC_table: ../hardware_data/battery/battery_VOC.dat
-  # meaning of columns in the look-up table.
-  # SOC = State of charge
-  # C@T = charge voltage at temperature T
-  # D@T = discharge voltage at temperature T
-  VOC_table_cols: SOC C@0 D@0 C@20 D@20 C@40 D@40
+  initial: 3000
+  capacity: 6840
+  fiducial_voltage: 28 
+  charge_efficiency: 0.95
+  discharge_efficiency: 0.95
 
- 
 ssd:
   initial: 0 
   capacity: 32e6
