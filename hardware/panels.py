@@ -10,6 +10,7 @@ class Panel: # base, "abstract"
 
     ###
     def __init__(self, sun, name = '', lander=(0.0 , 0.0, 0.0), normal=(None, None, None), env=None, area=1.0, pvEFF_T=None, pvEFF_P=None):
+
         lander_pitch, lander_roll, lander_yaw = lander
 
         r1 = R.from_euler('x', lander_pitch,    degrees=True) # + is nose down,     - is nose up
@@ -52,7 +53,7 @@ class Panel: # base, "abstract"
     
     ### ---
     def power(self):
-        eff = 0.3 # default to 1.o if the temperature curve is not set for the sun
+        eff = 0.3 # default, if the temperature curve is not set for the sun
         if self.sun.temperature is not None: eff = self.pvEfficiency(self.sun.temperature)
         power =  Panel.solarConstant*eff*np.select(self.condition_list, self.choice_list)
         return power 
@@ -70,14 +71,3 @@ class Panel: # base, "abstract"
         return p(T)
 
 # ------------------------------------------------------------
-class EPanel(Panel):
-    def __init__(self, sun, name):
-        Panel.__init__(self, sun,  name, (1., 0., 0.))
-
-class WPanel(Panel):
-    def __init__(self, sun, name):
-        Panel.__init__(self, sun, name, (-1., 0., 0.))
-
-class TPanel(Panel):
-    def __init__(self, sun, name):
-        Panel.__init__(self, sun, name, (0., 0., 1.))

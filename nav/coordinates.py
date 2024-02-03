@@ -36,7 +36,11 @@ class Sun:
     ### ---
     def __init__(self, mjd=None, alt=None, az=None):
         """ Without valid arguments in the contructor, it constructor only creates a stub, and the object will
-            be finalized later based on how the data are obtained.
+            be completed later based on how the data are obtained (e.g. calculated, read from file etc).
+
+            An object that's missing data can't be finalized.
+
+            If the data (mjd, alt, az) is supplied in the constructor, it will be finalized.
 
             Keyword arguments:
             alt -- altitude (array)
@@ -50,6 +54,8 @@ class Sun:
         self.temperature= None
         self.crossings  = None
         self.day        = None
+        self.clocks     = None
+    
         if mjd is not None and alt is not None and az is not None: self.finalize()
 
     ### ---
@@ -74,10 +80,12 @@ class Sun:
             self.condition =  [self.alt>horizon+self.radius, self.alt>horizon, self.alt>horizon-self.radius, self.alt<=horizon-self.radius]
 
             # Sunrise calculations -- FIXME -- working on multiple sinrises
-            self.iMidnight  = np.argmin(self.alt)
-            self.iSunrise   = np.argmin(np.abs(self.alt[self.iMidnight:])) + self.iMidnight            
-            self.hrsFromSunrise = (self.mjd - self.mjd[self.iSunrise])*24
-            self.sunrise    = self.mjd[self.iSunrise]
+            # Work in progress, may choose to remove since progress with the lunar clock
+            # 
+            # self.iMidnight  = np.argmin(self.alt)
+            # self.iSunrise   = np.argmin(np.abs(self.alt[self.iMidnight:])) + self.iMidnight            
+            # self.hrsFromSunrise = (self.mjd - self.mjd[self.iSunrise])*24
+            # self.sunrise    = self.mjd[self.iSunrise]
 
             detect          = np.signbit(self.alt)
             self.crossings  = np.where(np.diff(detect))[0]
@@ -86,7 +94,7 @@ class Sun:
 
         self.mjd_crossings = np.fromiter(self.precise_crossings(), float)
         self.set_temperature()
-
+        self.clocks = np.array([self.clock(x) for x in self.mjd])
 
     ### ---
     def clock(self, mjd):
@@ -196,7 +204,9 @@ class Sun:
             to be implemented later, since it can be panel-specific.
             It is based on the numerical data incorporated in this class.
         """
-        self.temperature = np.interp(self.mjd, self.temperature_data[0] + self.sunrise, self.temperature_data[1]) -273.
+
+        temps = np.empty(self.N)
+        #self.temperature = np.interp(self.mjd, self.temperature_data[0] + self.sunrise, self.temperature_data[1]) -273.
 
 
 # ---
@@ -257,11 +267,3 @@ def hrsFromSunrise(alt, mjd):
 ###
 def sun_condition(alt):
     return [alt>horizon+sun_rad, alt>horizon, alt>horizon-sun_rad, alt<=horizon-sun_rad]
-
-
-### ATTIC
-# def hrsFromSunrise(self):
-#     iMidnight = np.argmin(self.alt)
-#     iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight
-#     return (self.mjd - self.mjd[iSunrise])*24
-###
