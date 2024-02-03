@@ -213,8 +213,7 @@ class Sun:
             It is based on the numerical data incorporated in this class.
         """
 
-        self.temperature = np.interp(self.clocks, self.temperature_data[0], self.temperature_data[1]) -273.
-
+        self.temperature = np.interp(self.clocks, self.temperature_data[0], self.temperature_data[1], period=24.) -273.
 
 # ---
 class Sat:
