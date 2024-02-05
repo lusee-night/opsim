@@ -34,7 +34,7 @@ class Panel: # base, "abstract"
         self.dot_sun    = self.dot(sun.xyz)
 
         self.choice_list = [self.dot_sun, self.dot_sun, 0, 0]
-        self.temperature = sun.temperature
+        self.temperature = sun.regolith_temperature
     
     ### ---
     def dot(self, sun_xyz):
@@ -54,7 +54,7 @@ class Panel: # base, "abstract"
     ### ---
     def power(self):
         eff = 0.3 # default, if the temperature curve is not set for the sun
-        if self.sun.temperature is not None: eff = self.pvEfficiency(self.sun.temperature)
+        if self.sun.regolith_temperature is not None: eff = self.pvEfficiency(self.sun.regolith_temperature)
         power =  Panel.solarConstant*eff*np.select(self.condition_list, self.choice_list)
         return power 
     

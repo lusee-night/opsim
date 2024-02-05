@@ -17,7 +17,9 @@ class Sun:
     # Class variables defined here:
     radius = 0.265*to_rad
 
-    temperature_data = np.array([
+    # consistent with data/thermal/Landing_Site_Temperatures_from_Diviner.txt
+    # The surface here refers to the surface of the Moon, not sun.
+    regolith_temperature_data = np.array([
         [
             0.5014003646378833, 0.761531479110904, 1.009156290003491,  1.177991388339346, 1.718263703014081,
             2.6187175608053064, 2.911365064587454, 3.603588967764459,  3.800563249156289, 4.17200046549517,
@@ -59,7 +61,7 @@ class Sun:
         self.az         = az
         self.N          = 0
         self.verbose    = False
-        self.temperature= None
+        self.regolith_temperature= None
         self.crossings  = None
         self.day        = None
         self.clocks     = None
@@ -102,7 +104,7 @@ class Sun:
 
         self.mjd_crossings = np.fromiter(self.precise_crossings(), float)
         self.clocks = np.array([self.clock(x) for x in self.mjd])
-        self.set_temperature()
+        self.set_regolith_temperature()
 
     ### ---
     def clock(self, mjd):
@@ -195,25 +197,25 @@ class Sun:
             self.N = 0
 
     ###
-    def read_temperature(self, filename):
+    def read_regolith_temperature(self, filename):
         # FIXME: transforms of the temp curve are hacky, will need to revisit.
         try:
             temp_data = np.loadtxt(filename, delimiter=',')
             if self.verbose: print(f'''Loaded data from file "{filename}", number of points: {temp_data.size}''')
             x = temp_data[7:35,0]-5+self.sunrise # 60726.14583333333
             y = temp_data[7:35,1]
-            self.temperature = np.interp(self.mjd, x, y) -273.
+            self.regolith_temperature = np.interp(self.mjd, x, y) -273.
         except:
             if self.verbose: print(f'''ERROR using file {filename} as the data source for the power profile''')
 
     ###
-    def set_temperature(self):
+    def set_regolith_temperature(self):
         """ Simple interpolation of the tabulated data. Used mainly as a placeholder for a better calculation
             to be implemented later, since it can be panel-specific.
             It is based on the numerical data incorporated in this class.
         """
 
-        self.temperature = np.interp(self.clocks, self.temperature_data[0], self.temperature_data[1], period=24.) -273.
+        self.regolith_temperature = np.interp(self.clocks, self.regolith_temperature_data[0], self.regolith_temperature_data[1], period=24.) -273.
 
 # ---
 class Sat:

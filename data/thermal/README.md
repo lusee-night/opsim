@@ -6,3 +6,6 @@ based on the Lander position:
 
 * `Landing_Site_Temperatures_from_Diviner.txt` : _updated_
 * `lunarTemperature30degDiviner.txt` : _original_
+
+Note that the copy of this data is *hardcoded* as the Lunar surface temperature in Sun object in coordinates.py.
+
