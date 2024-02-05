@@ -1,7 +1,7 @@
 solar_panels:  
   config:    
     lander: 0.0 0.0 0.0 # roll, pitch, yaw
-    surface_temperature_table: reference/lunarTemperature30degDiviner.txt ## currently ignored!!
+    panel_temperature_table: reference/lunarTemperature30degDiviner.txt ## currently ignored!!
     PV_efficiency:
       temp: -173.15 20.0  126.85
       power: 0.356414 0.304828 0.257931
