@@ -12,8 +12,10 @@ from    nav import *  # Astro/observation wrapper classes
 class Monitor():
     def __init__(self, size=0):
         # Time series --
+        self.power    = np.zeros(size, dtype=float) # Total power drawn by the electronics
+        self.battery_SOC    = np.zeros(size, dtype=float) # Battery charge
+        self.battery_V      = np.zeros(size, dtype=float) # Battery voltage
         self.power      = np.zeros(size, dtype=float) # Total power drawn by the electronics
-        self.battery    = np.zeros(size, dtype=float) # Battery charge
         self.data_rate  = np.zeros(size, dtype=float) # data rate in/out of the system
         self.ssd        = np.zeros(size, dtype=float) # Storage
 # ---
@@ -194,7 +196,7 @@ class Simulator:
             comm_opportunity = self.lpf.alt[myT] > 0.1
             need_comm = ( (mjd_now-self.last_comm)>4  # we haven't talked for a while
                             or (self.battery.level <0.2*self.battery.capacity)  # we are low on battery so might as well use this opportunity
-                            or ((self.battery.level<0.8*self.battery.capacity) and (mjd_now-self.last_sunrise_mjd)>12)) # we have two days to fully charge
+                            or ((self.battery.level<0.99*self.battery.capacity) and (mjd_now-self.last_sunrise_mjd)>6)) # we have two days to fully charge
             calib_opportunity = self.bge.alt[myT] > -0.1
             if calib_opportunity:
                 sched['mode'] = 'science'
@@ -220,8 +222,11 @@ class Simulator:
         pwr = 0.0
         if verbose: print ("Mode: ", self.current_mode)
         for dk in self.devices.keys():
+            # handle special cases first:
+            # #1 If UT is transmitting....
             if dk=='UT' and self.comm_tx:
-                pwr += self.devices[dk].power_tx()
+                cpower = self.devices[dk].power_tx()
+            # #2 If PFPS is under load and has custom mode
             elif dk=='PFPS':
                 pwr_str = self.devices[dk].power()
                 if type(pwr_str)==float:
@@ -230,9 +235,10 @@ class Simulator:
                     pwr_str = pwr_str.split(',')
                     assert(pwr_str[0].strip()=='CUSTOM')
                     cpower = self.PFPS_custom(pwr_str[1:])
-            else:
+            # the actual default case 
+            else: 
                 cpower = self.devices[dk].power()
-            if verbose: print (f'     Device: {dk:12} : {cpower:4.1f} W')
+            if verbose: print (f'     Device: {dk:12} : {cpower:4.2f} W')
             pwr += cpower
         if verbose: print (f'   Total power: {pwr:4.1f} W\n')
         return pwr
@@ -353,12 +359,19 @@ class Simulator:
 
             # Electrical section:
             self.monitor.power[myT] = self.power_out()
-            # put charge into battery if PCDU is enabled
+
+            # put charge into battery if BMS is enabled
             if (self.modes[mode]['PCDU'] == 'ON'): # See if the battery is charging:
-                self.battery.charge(self.power_in(), self.deltaT)
+                power_in = self.power_in()
+            else:
+                power_in = 0.0
             # Draw charge from battery
-            self.battery.discharge(self.power_out(), self.deltaT)
-            self.monitor.battery[myT]   = self.battery.level/self.battery.capacity
+            power_out = self.power_out()
+            self.battery.set_temperature(20) ## fix once we have thermal
+            self.battery.apply_power(power_in - power_out, self.deltaT)
+            self.battery.age(self.deltaT)
+            self.monitor.battery_SOC[myT]   = self.battery.level/self.battery.capacity
+            self.monitor.battery_V[myT]     = self.battery.Voltage()
 
             # Data section
             ## first are we communicating:
