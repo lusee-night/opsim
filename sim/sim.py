@@ -4,20 +4,27 @@ import  yaml
 import  h5py
 
 # local packages
-from    hardware import *
-from    utils.timeconv import *
-from    nav import *  # Astro/observation wrapper classes
+from    hardware        import *
+from    utils.timeconv  import *
+from    nav             import *  # Astro/observation wrapper classes
 
 #################################################################################
 class Monitor():
+    ''' The Monitor class is used to record the time series of the parameters of choice,
+        as the simulation is progressing through time steps.
+    '''
+
     def __init__(self, size=0):
-        # Time series --
-        self.power    = np.zeros(size, dtype=float) # Total power drawn by the electronics
-        self.battery_SOC    = np.zeros(size, dtype=float) # Battery charge
-        self.battery_V      = np.zeros(size, dtype=float) # Battery voltage
+        ''' Initialize arrays for time series type of data
+        '''
+
+        self.power      = np.zeros(size, dtype=float) # Total power drawn by the electronics
+        self.battery_SOC= np.zeros(size, dtype=float) # Battery charge
+        self.battery_V  = np.zeros(size, dtype=float) # Battery voltage
         self.power      = np.zeros(size, dtype=float) # Total power drawn by the electronics
         self.data_rate  = np.zeros(size, dtype=float) # data rate in/out of the system
-        self.ssd        = np.zeros(size, dtype=float) # Storage
+        self.ssd        = np.zeros(size, dtype=float) # Amount of data in the storage device
+
 # ---
 class Simulator:
     def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None, verbose=False):
@@ -173,8 +180,8 @@ class Simulator:
 
     # --
     def generate_schedule(self, myT):
-        ## all of this is purely placeholder now
-        ## don't take it too seriously
+        """ All of this is purely placeholder now
+            don't take it too seriously."""
 
         sched = {}
         day = self.sun.alt[myT] > 0
@@ -209,7 +216,7 @@ class Simulator:
         self.last_day_state = day
         return sched
 
-
+     # ---
     def PFPS_custom(self, pwr):
         Pq = float(pwr[0])
         fact = float(pwr[1])
@@ -243,16 +250,40 @@ class Simulator:
         if verbose: print (f'   Total power: {pwr:4.1f} W\n')
         return pwr
     
+    # ---
     def power_info(self):
         for mode in self.modes:
             self.set_mode(mode)
             self.power_out(verbose=True)
 
+    # ---
+    def power_for_mode(self, mode):
+        self.set_mode(mode)
+        power = {}
+        for dk in self.devices.keys():
+            if dk=='UT' and self.comm_tx:
+                pwr += self.devices[dk].power_tx()
+            elif dk=='PFPS':
+                pwr_str = self.devices[dk].power()
+                if type(pwr_str)==float:
+                    cpower = pwr_str
+                else:
+                    pwr_str = pwr_str.split(',')
+                    assert(pwr_str[0].strip()=='CUSTOM')
+                    cpower = self.PFPS_custom(pwr_str[1:])
+            else:
+                cpower = self.devices[dk].power()
+            power[dk] = cpower
+        return power
 
+
+    # ---
     def power_in(self):
         return self.controller.power[self.myT]
     
+     # ---
     def data_rate(self):
+        """ Calculate the total data rate, traversing over the device collection. """
         dr = 0.0
         for dk in self.devices.keys():
             if dk=='UT' and self.comm_tx:
@@ -261,6 +292,7 @@ class Simulator:
                 dr+=self.devices[dk].data_rate()
         return dr
 
+    # ---
     def set_mode (self,mode):
         self.current_mode = mode
         self.set_state(self.modes[mode])
@@ -274,8 +306,9 @@ class Simulator:
             for dk in self.devices.keys(): print(self.devices[dk].info())
             print('*** Total power:', self.power_out(),'W')
 
-
+    # ---
     def info(self):
+        """ General info on the input files with brief bits of content for sanity check. """
         print(f'''Orbitals file: {self.orbitals_f}''')
 
         print('------------------')
@@ -307,6 +340,9 @@ class Simulator:
     ############################## Simulation code #############################
     # ---
     def simulate(self, create_command_table = False):
+        """ Steeting of the SimPy simulation process, relying on
+            the 'run' method previous set in the SimPy environment"""
+        
         self.create_command_table = create_command_table
         if create_command_table:
             myT     = int(self.env.now)

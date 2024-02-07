@@ -1,7 +1,7 @@
 solar_panels:  
   config:    
     lander: 0.0 0.0 0.0 # roll, pitch, yaw
-    surface_temperature_table: reference/lunarTemperature30degDiviner.txt
+    panel_temperature_table: reference/lunarTemperature30degDiviner.txt ## currently ignored!!
     PV_efficiency:
       temp: -173.15 20.0  126.85
       power: 0.356414 0.304828 0.257931
@@ -35,11 +35,13 @@ battery:
   VOC_table_cols: SOC VOC@0 R@0 VOC@20 R@20 VOC@40 R@40
 
 
+# ---
 ssd:
   initial: 0 
   capacity: 32e6
 
-# consumption in Watts
+# ---
+# Power consumption in Watts
 power_consumers:
   preamp: 
     'ON':       0.9
@@ -62,7 +64,7 @@ power_consumers:
     # third item, multiplies by second item and adds the first item 
     'ON':       CUSTOM, 1.0, 0.45, preamp+spectrometer+DCB
   
-# consumption in kB/s
+# Data consumption (bandwidth) in kB/s
 ssd_consumers:
   spectrometer:
     'ON':       0.0

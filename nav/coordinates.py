@@ -2,7 +2,6 @@ import numpy as np
 
 import lusee
 from lusee import Observation as O
-from lusee import Satellite, ObservedSatellite
 
 ### Keep these simple defaults for now:
 horizon = 0.0
@@ -18,26 +17,40 @@ class Sun:
     # Class variables defined here:
     radius = 0.265*to_rad
 
-    temperature_data = np.array([
+    # consistent with data/thermal/Landing_Site_Temperatures_from_Diviner.txt
+    # The surface here refers to the surface of the Moon, not sun.
+    regolith_temperature_data = np.array([
         [
-        0.97142587, 1.25497185, 1.49126017, 1.57396107, 1.71573406,  1.96383679,
-        2.35371251, 2.92080447, 3.29295856, 3.77853105, 4.3030911,   5.05626011,
-        5.99649069, 6.92589139, 7.85754246, 8.68792711, 9.32590556,  10.04489714,
-        10.925915,  11.39174053,11.60440001,12.02971898,12.3487082,  12.50229561,
-        12.73858392,13.07529477,13.58922185,14.0347941],
+            0.5014003646378833, 0.761531479110904, 1.009156290003491,  1.177991388339346, 1.718263703014081,
+            2.6187175608053064, 2.911365064587454, 3.603588967764459,  3.800563249156289, 4.17200046549517,
+            4.86985220528337,   5.455147212847667, 5.972908181077622,  6.468157802862795, 6.558203188641918,
+            7.9342092400791335, 8.10023042010939,  8.76431514023042,   8.854360526009543, 9.912393808914231,
+            10.126251600139646, 10.46392179681136, 11.46567671360409, 12.073483067613171, 13.964436168974746,
+            15.180048876992903, 16.17054812056325, 16.73333178168276, 17.723831025253112, 19.018233445828,
+            19.259426443450646, 19.71608518561619, 20.38016990573722, 20.914814383800767, 21.10053299197021,
+            21.52824857442104,  22.18107762131967, 22.98023042010939, 23.858172931455837
+        ],
+
         [
-        127.7813564,  159.18763879, 188.01454941, 202.60166081, 224.71386936,
-        251.48469189, 269.86445226, 298.62190044, 311.88922557, 329.55583827,
-        341.68861029, 356.46095485, 367.52349083, 372.14788814, 368.93111584,
-        360.06638601, 351.03626943, 335.19773162, 310.1725111,  297.92727609,
-        287.92468542, 254.72164138, 225.35060835, 206.19055329, 187.24274457,
-        154.12266955, 133.7180792,  117.42748427]])
+            97.46353373349797,  96.7148466393648,  95.94648831312088, 96.20850912483542,   95.07119716912325,
+            93.91830559757949,  93.98062406090611, 93.36522923555503, 91.79947784447188,   92.07991092944201,
+            92.07991092944201,  91.30093013785836, 93.11855198488689,186.85590723878695, 206.84974755610082,
+            304.43007471514693,307.64986198702604,327.6437023043399, 341.30183218344,    359.5507555276065,
+            365.65998826035377,371.5559623556129, 378.4851819683666, 381.65303718747344, 368.3064996250068,
+            342.28854118611264,309.83100820346027,288.4364862342322, 208.39732272871368, 113.19737202491899,
+            110.35257464059009,109.09001876020517,105.01099206973072,104.93309399057233, 104.15411319898868,
+            102.86100508495986,101.68734069230715, 99.4023303703284,  98.82365892515196
+        ]])
     
 
     ### ---
     def __init__(self, mjd=None, alt=None, az=None):
         """ Without valid arguments in the contructor, it constructor only creates a stub, and the object will
-            be finalized later based on how the data are obtained.
+            be completed later based on how the data are obtained (e.g. calculated, read from file etc).
+
+            An object that's missing data can't be finalized.
+
+            If the data (mjd, alt, az) is supplied in the constructor, it will be finalized.
 
             Keyword arguments:
             alt -- altitude (array)
@@ -48,9 +61,11 @@ class Sun:
         self.az         = az
         self.N          = 0
         self.verbose    = False
-        self.temperature= None
+        self.regolith_temperature= None
         self.crossings  = None
         self.day        = None
+        self.clocks     = None
+    
         if mjd is not None and alt is not None and az is not None: self.finalize()
 
     ### ---
@@ -75,10 +90,12 @@ class Sun:
             self.condition =  [self.alt>horizon+self.radius, self.alt>horizon, self.alt>horizon-self.radius, self.alt<=horizon-self.radius]
 
             # Sunrise calculations -- FIXME -- working on multiple sinrises
-            self.iMidnight  = np.argmin(self.alt)
-            self.iSunrise   = np.argmin(np.abs(self.alt[self.iMidnight:])) + self.iMidnight            
-            self.hrsFromSunrise = (self.mjd - self.mjd[self.iSunrise])*24
-            self.sunrise    = self.mjd[self.iSunrise]
+            # Work in progress, may choose to remove since progress with the lunar clock
+            # 
+            # self.iMidnight  = np.argmin(self.alt)
+            # self.iSunrise   = np.argmin(np.abs(self.alt[self.iMidnight:])) + self.iMidnight            
+            # self.hrsFromSunrise = (self.mjd - self.mjd[self.iSunrise])*24
+            # self.sunrise    = self.mjd[self.iSunrise]
 
             detect          = np.signbit(self.alt)
             self.crossings  = np.where(np.diff(detect))[0]
@@ -86,8 +103,8 @@ class Sun:
 
 
         self.mjd_crossings = np.fromiter(self.precise_crossings(), float)
-        self.set_temperature()
-
+        self.clocks = np.array([self.clock(x) for x in self.mjd])
+        self.set_regolith_temperature()
 
     ### ---
     def clock(self, mjd):
@@ -112,7 +129,7 @@ class Sun:
                 return 6.0*(1.0-(mjd - self.mjd_crossings[0])/estimate)
 
 
-        # Main use case -- we have sunrise/sunset point on either side of the point of interest
+        # Main use case -- we have sunrise/sunset points on either side of the point of interest
         indices = list(range(len(self.mjd_crossings)))
         _ = indices.reverse()
     
@@ -180,24 +197,25 @@ class Sun:
             self.N = 0
 
     ###
-    def read_temperature(self, filename):
+    def read_regolith_temperature(self, filename):
         # FIXME: transforms of the temp curve are hacky, will need to revisit.
         try:
             temp_data = np.loadtxt(filename, delimiter=',')
             if self.verbose: print(f'''Loaded data from file "{filename}", number of points: {temp_data.size}''')
             x = temp_data[7:35,0]-5+self.sunrise # 60726.14583333333
             y = temp_data[7:35,1]
-            self.temperature = np.interp(self.mjd, x, y) -273.
+            self.regolith_temperature = np.interp(self.mjd, x, y) -273.
         except:
             if self.verbose: print(f'''ERROR using file {filename} as the data source for the power profile''')
 
     ###
-    def set_temperature(self):
+    def set_regolith_temperature(self):
         """ Simple interpolation of the tabulated data. Used mainly as a placeholder for a better calculation
-            to be implemented later. It is based on the numerical data incorporated in this class.
+            to be implemented later, since it can be panel-specific.
+            It is based on the numerical data incorporated in this class.
         """
-        self.temperature = np.interp(self.mjd, self.temperature_data[0] + self.sunrise, self.temperature_data[1]) -273.
 
+        self.regolith_temperature = np.interp(self.clocks, self.regolith_temperature_data[0], self.regolith_temperature_data[1], period=24.) -273.
 
 # ---
 class Sat:
@@ -257,11 +275,3 @@ def hrsFromSunrise(alt, mjd):
 ###
 def sun_condition(alt):
     return [alt>horizon+sun_rad, alt>horizon, alt>horizon-sun_rad, alt<=horizon-sun_rad]
-
-
-### ATTIC
-# def hrsFromSunrise(self):
-#     iMidnight = np.argmin(self.alt)
-#     iSunrise = np.argmin(np.abs(self.alt[iMidnight:])) + iMidnight
-#     return (self.mjd - self.mjd[iSunrise])*24
-###
