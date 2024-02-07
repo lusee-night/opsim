@@ -5,8 +5,8 @@ import sys
 
 
 class Battery:
-    def __init__(self, env, config):
-        self.verbose = True
+    def __init__(self, env, config, verbose = False):
+        self.verbose = verbose
         self.temperature = None 
         self.level = float(config['initial'])*3600 # to As
         self.capacity = float(config['capacity'])*(1-float(config['capacity_fade']))*3600
@@ -60,9 +60,14 @@ class Battery:
     def Voltage(self):
         SOC = self.level/self.capacity
         return self.VOC((SOC,self.temperature))
+    
+    def SOC(self):
+        return self.level/self.capacity
 
     def set_temperature(self, temperature):
         self.temperature = temperature
+
+
 
     def apply_power (self, power, deltaT):
         # Applies power to the battery for deltaT seconds
@@ -88,7 +93,7 @@ class Battery:
             self.level -= I*deltaT
             self.level = max(self.level, 0)
     
-    def age (self, deltaT):
+    def apply_age (self, deltaT):
         loss = np.exp(-deltaT/self.discharge_tau)
         self.capacity *= loss
         self.level *= loss

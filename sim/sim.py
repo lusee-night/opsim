@@ -398,7 +398,7 @@ class Simulator:
             power_out = self.power_out()
             self.battery.set_temperature(20) ## fix once we have thermal
             self.battery.apply_power(power_in - power_out, self.deltaT)
-            self.battery.age(self.deltaT)
+            self.battery.apply_age(self.deltaT)
             self.monitor.battery_SOC[myT]   = self.battery.level/self.battery.capacity
             self.monitor.battery_V[myT]     = self.battery.Voltage()
 
