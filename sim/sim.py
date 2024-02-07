@@ -4,20 +4,27 @@ import  yaml
 import  h5py
 
 # local packages
-from    hardware import *
-from    utils.timeconv import *
-from    nav import *  # Astro/observation wrapper classes
+from    hardware        import *
+from    utils.timeconv  import *
+from    nav             import *  # Astro/observation wrapper classes
 
 #################################################################################
 class Monitor():
+    ''' The Monitor class is used to record the time series of the parameters of choice,
+        as the simulation is progressing through time steps.
+    '''
+
     def __init__(self, size=0):
-        # Time series --
-        self.power    = np.zeros(size, dtype=float) # Total power drawn by the electronics
-        self.battery_SOC    = np.zeros(size, dtype=float) # Battery charge
-        self.battery_V      = np.zeros(size, dtype=float) # Battery voltage
+        ''' Initialize arrays for time series type of data
+        '''
+
+        self.power      = np.zeros(size, dtype=float) # Total power drawn by the electronics
+        self.battery_SOC= np.zeros(size, dtype=float) # Battery charge
+        self.battery_V  = np.zeros(size, dtype=float) # Battery voltage
         self.power      = np.zeros(size, dtype=float) # Total power drawn by the electronics
         self.data_rate  = np.zeros(size, dtype=float) # data rate in/out of the system
-        self.ssd        = np.zeros(size, dtype=float) # Storage
+        self.ssd        = np.zeros(size, dtype=float) # Amount of data in the storage device
+
 # ---
 class Simulator:
     def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None, verbose=False):
