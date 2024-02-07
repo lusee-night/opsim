@@ -1,6 +1,7 @@
 
 from scipy.interpolate import RegularGridInterpolator
 import numpy as np
+import sys
 
 
 class Battery:
@@ -9,7 +10,6 @@ class Battery:
         self.temperature = None 
         self.level = float(config['initial'])*3600 # to As
         self.capacity = float(config['capacity'])*(1-float(config['capacity_fade']))*3600
-        self.R_internal = float(config['R_internal'])
         self_discharge = float(config['self_discharge'])
         self.discharge_tau = -28*24*3600/np.log(1-self_discharge)
         table_fn = config['VOC_table']
@@ -19,11 +19,11 @@ class Battery:
 
     def read_VOC_table(self, table_fn, VOC_table_cols):
         if self.verbose: print ('Reading VOC table from %s' % table_fn)
-        VOC_table = np.genfromtxt(table_fn, delimiter=' ', comments='#')
-        charge_cols = []
-        discharge_cols = []
-        charge_temps = []
-        discharge_temps = []
+        table = np.genfromtxt(table_fn, delimiter=' ', comments='#')
+        VOC_cols = []
+        RI_cols = []
+        VOC_temps = []
+        RI_temps = []
         soc_col = None
         err = False
         for i, el in enumerate(VOC_table_cols.split()):
@@ -32,29 +32,34 @@ class Battery:
             else:
                 try:
                     C, T = el.split('@')
-                    if C == 'C':
-                        charge_cols.append(i)
-                        charge_temps.append(float(T))
-                    elif C == 'D':
-                        discharge_cols.append(i)
-                        discharge_temps.append(float(T))
+                    if C == 'VOC':
+                        VOC_cols.append(i)
+                        VOC_temps.append(float(T))
+                    elif C == 'R':
+                        RI_cols.append(i)
+                        RI_temps.append(float(T))
+                    else:
+                        raise NotImplementedError   
                 except:
-                    print('Cannot parse VOC table. Column %d has value %s' % (col, val))
+                    print('Cannot parse VOC table. Column %d has value %s' % (i, el))
                     sys.exit(1)
         if soc_col is None:
             print('Cannot parse VOC table. No SOC column')
             sys.exit(1)
-        SOC = VOC_table[:, soc_col]/100.0 # convert from percent to fraction
-        charge_table = VOC_table[:, charge_cols]
-        discharge_table = VOC_table[:, discharge_cols]
-        self.charge_VOC = RegularGridInterpolator((SOC, charge_temps), charge_table)
-        self.discharge_VOC = RegularGridInterpolator((SOC, discharge_temps), discharge_table)
+        SOC = table[:, soc_col]/100.0 # convert from percent to fraction
+        if self.verbose: 
+                print ('   SOC lookup:', SOC[0],'..' , SOC[-1])
+                print ('   Temperature lookup:', VOC_temps[0],'..' , VOC_temps[-1])
+        VOC_table = table[:, VOC_cols]
+        RI_table = table[:, RI_cols]
+        self.VOC = RegularGridInterpolator((SOC, VOC_temps), VOC_table)
+        self.R_internal = RegularGridInterpolator((SOC, RI_temps), RI_table)
 
 
 
     def Voltage(self):
         SOC = self.level/self.capacity
-        return self.discharge_VOC((SOC,self.temperature))
+        return self.VOC((SOC,self.temperature))
 
     def set_temperature(self, temperature):
         self.temperature = temperature
@@ -64,15 +69,22 @@ class Battery:
         # if power (in W) is positive, we charge the battery
         # if power (in W) is negative, we discharge the battery
         SOC = self.level/self.capacity
+
         if (power>0):
-            V = self.charge_VOC((SOC, self.temperature))
-            I = power/V
+            VOC = self.VOC((SOC, self.temperature))
+            R_internal = self.R_internal((SOC, self.temperature))
+            if R_internal == 0:
+                R_internal = 1e-10 ## avoid division by zero
+            I = (-VOC + np.sqrt(VOC**2 + 4*R_internal*power))/(2*R_internal) 
             self.level += I*deltaT
             self.level = min(self.level, self.capacity)
         else:
-            V = self.discharge_VOC((SOC, self.temperature))
+            VOC = self.VOC((SOC, self.temperature))
+            R_internal = self.R_internal((SOC, self.temperature))
+            if R_internal == 0:
+                R_internal = 1e-10 ## avoid division by zero
             power = np.abs(power)
-            I = (V - np.sqrt(V**2 - 4*self.R_internal*power))/(2*self.R_internal)
+            I = (VOC - np.sqrt(VOC**2 - 4*R_internal*power))/(2*R_internal)
             self.level -= I*deltaT
             self.level = max(self.level, 0)
     
