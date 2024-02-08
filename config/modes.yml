@@ -24,7 +24,7 @@ modes:
 
   maint:
     preamp:       'ON'
-    spectrometer: 'OFF'
+    spectrometer: 'ON'
     UT:           'ON'
     PDU:          'ON'
     PCDU:         'ON'

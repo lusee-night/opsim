@@ -299,11 +299,11 @@ class Simulator:
         return self.controller.power[self.myT]
     
      # ---
-    def data_rate(self):
+    def data_rate(self, conditions = []):
         """ Calculate the total data rate, traversing over the device collection. """
         dr = 0.0
         for dk in self.devices.keys():
-            if dk=='UT' and self.comm_tx:
+            if dk=='UT' and 'TX' in conditions:
                 dr+=self.devices[dk].data_rate_tx()
             else:
                 dr+=self.devices[dk].data_rate()
@@ -358,6 +358,7 @@ class Simulator:
     # --
     def get_conditions(self, myT):
         conditions = []
+        mode = self.current_mode
         if (self.lpf.alt[myT]>0.1) and (self.modes[mode]['UT'] == 'ON'):
             conditions.append('TX')
         return conditions
@@ -432,7 +433,7 @@ class Simulator:
 
             # Data section
             ## first are we communicating:
-            data_rate = self.data_rate()    
+            data_rate = self.data_rate(conditions=conditions)    
             self.monitor.data_rate[myT] = data_rate
             self.ssd.change(data_rate*self.deltaT)
             self.monitor.ssd[myT]       = self.ssd.level/self.ssd.capacity
