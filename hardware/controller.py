@@ -41,10 +41,10 @@ class Controller:
         for panel_name in panels:
             panel = panels[panel_name]
             normal = np.array([float(x) for x in panel['normal'].split()])
-            eff = panel['efficiency']
+            eff = panel['efficiency']*pcf['efficiency_all']
             if self.verbose: print(f'''Adding panel {panel_name} with normal {normal}, \tefficiency {eff}, and surface area {panel['area']}''')
 
-            self.add_panel(Panel(self.sun, name=panel_name, lander=lander, normal=normal, env=self.env, area=panel['area'], pvEFF_T=pvEFF_T, pvEFF_P=pvEFF_P))
+            self.add_panel(Panel(self.sun, name=panel_name, lander=lander, normal=normal, env=self.env, area=panel['area'], pvEFF_T=pvEFF_T, pvEFF_P=pvEFF_P, efficiency_mult=eff))
 
     ### ---
     def get_panel(self, name):
