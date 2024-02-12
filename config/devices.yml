@@ -10,74 +10,80 @@ thermal:
 
 solar_panels:  
   config:    
-    lander_pitch: 0.0
-    lander_roll: 0.0
-    lander_yaw: 0.0    
-    surface_temperature_table: reference/lunarTemperature30degDiviner.txt
+    lander: 0.0 0.0 0.0 # roll, pitch, yaw
+    panel_temperature_table: reference/lunarTemperature30degDiviner.txt ## currently ignored!!
+    efficiency_all: 0.9  # applied to any final power
     PV_efficiency:
       temp: -173.15 20.0  126.85
       power: 0.356414 0.304828 0.257931
-    
-    
-  EPanel:
-    normal: 1 0 0 
-    efficiency: 1.0
-    area: 0.1565
   
-  WPanel:
-    normal: -1 0 0 
-    efficiency: 1.0
-    area: 0.1565
+  panels:
+    EPanel:
+      normal:     1 0 0 
+      efficiency: 1.0
+      area:       0.1565
   
-  TPanel:
-    normal: 0 0 1
-    efficiency: 1.0
-    area: .313
-
+    WPanel:
+      normal:     -1 0 0 
+      efficiency: 1.0
+      area:       0.1565
+  
+    TPanel:
+      normal:     0 0 1
+      efficiency: 1.0
+      area:       0.313
+# ---
 battery:
-  initial: 3000
-  capacity: 6840
-  fiducial_voltage: 28 
-  charge_efficiency: 0.95
-  discharge_efficiency: 0.95
- 
+  initial: 120.0 #in Ah
+  capacity: 240.99 #in Ah
+  capacity_fade: 0.0063  # capacity fade applied to capacity
+  self_discharge: 0.01 # defined as fractional loss over 28 days
+  VOC_table: ../data/hardware/battery/battery_VOC.dat
+  # meaning of columns in the look-up table.
+  # SOC = State of charge
+  # VOC@T = open circuit voltage at temperature T
+  # R@T = internal resistance at temperature T
+  VOC_table_cols: SOC VOC@0 R@0 VOC@20 R@20 VOC@40 R@40
+
+# ---
 ssd:
   initial: 0 
   capacity: 32e6
 
-
-# consumption in Watts
+# ---
+# Power consumption in Watts
 power_consumers:
+  preamp: 
+    'ON':       0.9
   spectrometer:
-    'OFF':      0.0
-    'ON':       10
-    'SCIENCE':  12
-  comms:
-    'OFF':      0.0
-    'ON':       0.1
-    'TX':       19
-  bms:
-    'OFF':      0.0
-    'ON':       1.0
-  pfps:
-    'OFF':      0.0
-    'ON':       6.1   # 6 + 0.1 PDU
-  dcb:
-    'OFF':      0.0
+    'ANALOG':   1.4
+    'ON':       8.0
+    'SCIENCE':  11.5
+  DCB:
     'ON':       2.0
-
-# consumption in kB/s
+  UT:
+    'ON':       5.3
+    'TX':       19
+  PDU: 
+    'ON':       0.9
+  PCDU:
+    'HIBER':    0.8
+    'ON':       1.5
+  PFPS:
+    # what the line below does is sum powers of devices in the
+    # third item, multiplies by second item and adds the first item 
+    'ON':       CUSTOM, 1.0, 0.45, preamp+spectrometer+DCB
+  HEATER:
+    'ON':       1.0
+  
+# Data consumption (bandwidth) in kB/s
 ssd_consumers:
   spectrometer:
-    'OFF':      0.0
-    'ON':       5.0
-
-  dcb:
-    'OFF':      0.0
+    'ON':       0.0
+    'SCIENCE':  5.0
+  DCB:
     'ON':       0.1
-  
-  comms:
-    'OFF':      0.0
+  UT:
     'ON':       0.0
     'TX':   -20.0   
 
