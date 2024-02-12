@@ -361,6 +361,13 @@ class Simulator:
         mode = self.current_mode
         if (self.lpf.alt[myT]>0.1) and (self.modes[mode]['UT'] == 'ON'):
             conditions.append('TX')
+
+        if (self.sun.alt[myT]>=0.0):
+            conditions.append('day')
+            if self.modes[mode]['PCDU'] == 'ON':
+                conditions.append('charging')
+        else:
+            conditions.append('night')
         return conditions
 
     ############################## Simulation code #############################
@@ -419,7 +426,7 @@ class Simulator:
             self.monitor.power[myT] = self.power_out(conditions=conditions)
 
             # put charge into battery if BMS is enabled
-            if (self.modes[mode]['PCDU'] == 'ON'): # See if the battery is charging:
+            if ('charging' in conditions): 
                 power_in = self.power_in()
             else:
                 power_in = 0.0
