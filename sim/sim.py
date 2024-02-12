@@ -135,9 +135,11 @@ class Simulator:
             raise NotImplementedError
 
         for device_name in device_names:
-            power_profile               = profiles['power_consumers'].get(device_name)
-            data_profile                = profiles['ssd_consumers'].get(device_name)
-            self.devices[device_name]   = Device(device_name, power_profile, data_profile)
+            power_profile               = profiles['power_consumers'].get(device_name, None)
+            outside_heat_profile        = profiles['outside_heat'].get(device_name, None)
+            data_profile                = profiles['ssd_consumers'].get(device_name, None)
+            self.devices[device_name]   = Device(device_name, power_profile = power_profile, outside_heat_profile = outside_heat_profile,
+                                                 data_profile = data_profile)
      
         # Component data, read from the "devices" file
         self.battery_config = profiles['battery']
@@ -250,7 +252,7 @@ class Simulator:
     
     
     # ---
-    def power_out(self, verbose = False, conditions = [], mode = None, return_dict = False):
+    def power_out(self, verbose = False, conditions = [], mode = None, return_dict = False, get_heat = False):
         pwr = 0.0
         dct = {}
         mode_save = self.current_mode
@@ -262,11 +264,8 @@ class Simulator:
         if verbose: print ("Mode: ", self.current_mode)
         for dk in self.devices.keys():
             # handle special cases first:
-            # #1 If UT is transmitting....
-            if dk=='UT' and 'TX' in conditions:
-                cpower = self.devices[dk].power_tx()
-            # #2 If PFPS is under load and has custom mode
-            elif dk=='PFPS':
+            # #1 If PFPS is under load and has custom mode
+            if dk=='PFPS':
                 pwr_str = self.devices[dk].power()
                 if type(pwr_str)==float:
                     cpower = pwr_str
@@ -274,9 +273,12 @@ class Simulator:
                     pwr_str = pwr_str.split(',')
                     assert(pwr_str[0].strip()=='CUSTOM')
                     cpower = self.PFPS_custom(pwr_str[1:])
+            # #2 If UT is transmitting....
+            elif (dk=='UT') and ('TX' in conditions):
+                cpower = self.devices[dk].power_tx(get_heat = get_heat)
             # the actual default case 
             else: 
-                cpower = self.devices[dk].power()
+                cpower = self.devices[dk].power(get_heat = get_heat)
             if verbose: print (f'     Device: {dk:12} : {cpower:4.2f} W')
             if return_dict:
                 dct[dk] = cpower
@@ -288,10 +290,10 @@ class Simulator:
         return dct if return_dict else pwr
     
     # ---
-    def power_info(self, conditions = []):
+    def power_info(self, conditions = [], get_heat = False):
         for mode in self.modes:
             self.set_mode(mode)
-            self.power_out(verbose=True, conditions = conditions)
+            self.power_out(verbose=True, conditions = conditions, get_heat = get_heat)
 
 
     # ---

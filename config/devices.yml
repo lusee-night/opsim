@@ -1,11 +1,11 @@
 thermal:
   day: 
-    power: 0 10 20
-    Teq: 280 300 320
+    power: 0 10 20 40
+    Teq: 10 20 30 50
     tau: 5000
   night:
-    power: 0 10 20
-    Teq: 260 275 290
+    power: 0 10 20 30
+    Teq: -10 5 10  15
     tau: 5000
 
 solar_panels:  
@@ -75,6 +75,17 @@ power_consumers:
     'ON':       CUSTOM, 1.0, 0.45, preamp+spectrometer+DCB
   HEATER:
     'ON':       1.0
+  
+# ---
+# this defines how much heat is dissipated outside, so
+# that we can subtracting when measuring heat contributions inside
+# heat not accounted here is assumed to be dissipated inside
+
+outside_heat:
+  preamp:
+    'ON':       0.9
+  UT:
+    'TX':       4
   
 # Data consumption (bandwidth) in kB/s
 ssd_consumers:
