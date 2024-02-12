@@ -9,9 +9,10 @@ class Panel: # base, "abstract"
     solarConstant   = 1361   # W/m^2 at Moon 
 
     ###
-    def __init__(self, sun, name = '', lander=(0.0 , 0.0, 0.0), normal=(None, None, None), env=None, area=1.0, pvEFF_T=None, pvEFF_P=None):
+    def __init__(self, sun, name = '', lander=(0.0 , 0.0, 0.0), normal=(None, None, None), env=None, area=1.0, pvEFF_T=None, pvEFF_P=None, efficiency_mult=1.0):
 
         lander_pitch, lander_roll, lander_yaw = lander
+        
 
         r1 = R.from_euler('x', lander_pitch,    degrees=True) # + is nose down,     - is nose up
         r2 = R.from_euler('y', lander_roll,     degrees=True) # + is top left,      - is top right
@@ -22,6 +23,7 @@ class Panel: # base, "abstract"
         self.name       = name
         self.area       = area
         self.env        = env
+        self.efficiency_mult = efficiency_mult
 
         if pvEFF_T is not None: 
             self.pvEfficiency = Panel.pvEfficiency
@@ -55,8 +57,8 @@ class Panel: # base, "abstract"
     def power(self):
         eff = 0.3 # default, if the temperature curve is not set for the sun
         if self.sun.regolith_temperature is not None: eff = self.pvEfficiency(self.sun.regolith_temperature)
-        power =  Panel.solarConstant*eff*np.select(self.condition_list, self.choice_list)
-        return power 
+        power =  Panel.solarConstant*eff*np.select(self.condition_list, self.choice_list) * self.efficiency_mult
+        return power
     
     ### ---
     def info(self):

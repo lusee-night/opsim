@@ -70,7 +70,6 @@ class Simulator:
         self.populate()
 
         self.create_command_table = False
-        self.comm_tx = False
 
         self.env.process(self.run()) # Set the callback to this class, for simpy
 
@@ -112,7 +111,9 @@ class Simulator:
     # ---
     def read_modes(self):
         f = open(self.modes_f, 'r')
-        self.modes = yaml.safe_load(f)
+        modes = yaml.safe_load(f)
+        self.modes = modes['modes']
+        self.comgen = modes['command_generation']
 
     # ---
     def read_devices(self):
@@ -179,41 +180,65 @@ class Simulator:
         self.last_comm = self.sun.mjd[myT]
 
     # --
+    
+
+    # --        
     def generate_schedule(self, myT):
         """ All of this is purely placeholder now
             don't take it too seriously."""
 
+        cfg = self.comgen
+        # first check some sanity
+        assert (cfg['algorithm'] == 'simple')
+        day_modes = cfg['day']['modes'].split()
+        day_duty = np.array([float(x) for x in cfg['day']['duty'].split()])
+        day_cycle = cfg['day']['cycle_hours']
+        assert(len(day_modes)==len(day_duty))
+        assert(day_duty.sum()==1.0)
+        assert(day_cycle>0)
+
+        night_modes = cfg['night']['modes'].split()
+        night_duty = np.array([float(x) for x in cfg['night']['duty'].split()])
+        night_cycle = cfg['night']['cycle_hours']
+        assert(len(night_modes)==len(night_duty))
+        assert(night_duty.sum()==1.0)
+        assert(night_cycle>0)
+        
         sched = {}
         day = self.sun.alt[myT] > 0
         mjd_now = self.sun.mjd[myT]
+        if 'last_state_day' not in self.__dict__:
+            self.last_state_day = not day # let's force it to switch
         if not day:
-            if self.last_day_state:
+            if self.last_state_day:
                 # day to night transition
                 self.last_sunset_mjd = self.sun.mjd[myT]
             # let's switch between science and powersave every 12 hours
-            tick = (mjd_now - self.last_sunset_mjd) / 0.5
-            if int(tick)%3==0:
-                sched['mode'] = 'science'
-            else:
-                sched['mode'] = 'powersave'
+            tick = (mjd_now - self.last_sunset_mjd) / (night_cycle/24)
+            assert(tick>=0)
+            tick -= int(tick)
+            cp = 0
+            for p, m in zip (night_duty,night_modes):
+                cp+=p
+                if cp>tick:
+                    sched['mode'] = m
+                    break
         else:
-            if not self.last_day_state:
+            if not self.last_state_day:
                 # night to day transition
                 self.last_sunrise_mjd = self.sun.mjd[myT]
-            comm_opportunity = self.lpf.alt[myT] > 0.1
-            need_comm = ( (mjd_now-self.last_comm)>4  # we haven't talked for a while
-                            or (self.battery.level <0.2*self.battery.capacity)  # we are low on battery so might as well use this opportunity
-                            or ((self.battery.level<0.99*self.battery.capacity) and (mjd_now-self.last_sunrise_mjd)>6)) # we have two days to fully charge
-            calib_opportunity = self.bge.alt[myT] > -0.1
-            if calib_opportunity:
-                sched['mode'] = 'science'
-            else:
-                if comm_opportunity and need_comm:
-                    sched['mode'] = 'maint'
-                    self.last_comm = self.sun.mjd[myT]
-                else:
-                    sched['mode'] = 'science'
-        self.last_day_state = day
+            # let's switch between science and powersave every 12 hours
+            tick = (mjd_now - self.last_sunrise_mjd) / (day_cycle/24)
+            assert(tick>=0)
+            tick -= int(tick)
+            cp = 0
+            for p, m in zip (day_duty,day_modes):
+                cp+=p
+                if cp>=tick:
+                    sched['mode'] = m
+                    break
+        assert('mode' in sched)
+        self.last_state_day = day
         return sched
 
      # ---
@@ -225,13 +250,20 @@ class Simulator:
     
     
     # ---
-    def power_out(self, verbose = False):
+    def power_out(self, verbose = False, conditions = [], mode = None, return_dict = False):
         pwr = 0.0
+        dct = {}
+        mode_save = self.current_mode
+
+        if mode is not None:
+            # temporarily change mode
+            self.set_mode(mode)
+
         if verbose: print ("Mode: ", self.current_mode)
         for dk in self.devices.keys():
             # handle special cases first:
             # #1 If UT is transmitting....
-            if dk=='UT' and self.comm_tx:
+            if dk=='UT' and 'TX' in conditions:
                 cpower = self.devices[dk].power_tx()
             # #2 If PFPS is under load and has custom mode
             elif dk=='PFPS':
@@ -246,35 +278,20 @@ class Simulator:
             else: 
                 cpower = self.devices[dk].power()
             if verbose: print (f'     Device: {dk:12} : {cpower:4.2f} W')
-            pwr += cpower
+            if return_dict:
+                dct[dk] = cpower
+            else:
+                pwr += cpower
         if verbose: print (f'   Total power: {pwr:4.1f} W\n')
-        return pwr
+        
+        self.set_mode(mode_save)
+        return dct if return_dict else pwr
     
     # ---
-    def power_info(self):
+    def power_info(self, conditions = []):
         for mode in self.modes:
             self.set_mode(mode)
-            self.power_out(verbose=True)
-
-    # ---
-    def power_for_mode(self, mode):
-        self.set_mode(mode)
-        power = {}
-        for dk in self.devices.keys():
-            if dk=='UT' and self.comm_tx:
-                pwr += self.devices[dk].power_tx()
-            elif dk=='PFPS':
-                pwr_str = self.devices[dk].power()
-                if type(pwr_str)==float:
-                    cpower = pwr_str
-                else:
-                    pwr_str = pwr_str.split(',')
-                    assert(pwr_str[0].strip()=='CUSTOM')
-                    cpower = self.PFPS_custom(pwr_str[1:])
-            else:
-                cpower = self.devices[dk].power()
-            power[dk] = cpower
-        return power
+            self.power_out(verbose=True, conditions = conditions)
 
 
     # ---
@@ -282,11 +299,11 @@ class Simulator:
         return self.controller.power[self.myT]
     
      # ---
-    def data_rate(self):
+    def data_rate(self, conditions = []):
         """ Calculate the total data rate, traversing over the device collection. """
         dr = 0.0
         for dk in self.devices.keys():
-            if dk=='UT' and self.comm_tx:
+            if dk=='UT' and 'TX' in conditions:
                 dr+=self.devices[dk].data_rate_tx()
             else:
                 dr+=self.devices[dk].data_rate()
@@ -337,6 +354,22 @@ class Simulator:
         with open(filename, 'w') as file:
             yaml.dump(self.record, file)
 
+
+    # --
+    def get_conditions(self, myT):
+        conditions = []
+        mode = self.current_mode
+        if (self.lpf.alt[myT]>0.1) and (self.modes[mode]['UT'] == 'ON'):
+            conditions.append('TX')
+
+        if (self.sun.alt[myT]>=0.0):
+            conditions.append('day')
+            if self.modes[mode]['PCDU'] == 'ON':
+                conditions.append('charging')
+        else:
+            conditions.append('night')
+        return conditions
+
     ############################## Simulation code #############################
     # ---
     def simulate(self, create_command_table = False):
@@ -386,18 +419,14 @@ class Simulator:
                                     'mode': mode,
                                     'battery_expected_fill': battery_fill,
                                     'ssd_expected_fill': ssd_fill}
-                
-            if (self.lpf.alt[myT]>0.1) and (self.modes[mode]['UT'] == 'ON'):
-                self.comm_tx = True
-            else:
-                self.comm_tx = False
 
+            conditions = self.get_conditions(myT)                
 
             # Electrical section:
-            self.monitor.power[myT] = self.power_out()
+            self.monitor.power[myT] = self.power_out(conditions=conditions)
 
             # put charge into battery if BMS is enabled
-            if (self.modes[mode]['PCDU'] == 'ON'): # See if the battery is charging:
+            if ('charging' in conditions): 
                 power_in = self.power_in()
             else:
                 power_in = 0.0
@@ -411,7 +440,7 @@ class Simulator:
 
             # Data section
             ## first are we communicating:
-            data_rate = self.data_rate()    
+            data_rate = self.data_rate(conditions=conditions)    
             self.monitor.data_rate[myT] = data_rate
             self.ssd.change(data_rate*self.deltaT)
             self.monitor.ssd[myT]       = self.ssd.level/self.ssd.capacity

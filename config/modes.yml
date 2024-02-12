@@ -1,28 +1,44 @@
 # Map of the available LuSEE modes to the states of its hardware components
-science:
-  preamp:       'ON'
-  spectrometer: 'SCIENCE'
-  UT:           'OFF'
-  PDU:          'ON'
-  PCDU:         'HIBER'
-  PFPS:         'ON'
-  DCB:          'ON'
+command_generation:
+  algorithm: simple
+  day:
+    modes: science maint
+    duty: 0.45 0.55
+    cycle_hours: 24
+  night:
+    modes: science powersave
+    duty: 0.4 0.6
+    cycle_hours: 24
+  
 
-maint:
-  preamp:       'ON'
-  spectrometer: 'OFF'
-  UT:           'ON'
-  PDU:          'ON'
-  PCDU:         'ON'
-  PFPS:         'ON'
-  DCB:          'ON'
+modes:
+  science:
+    preamp:       'ON'
+    spectrometer: 'SCIENCE'
+    UT:           'OFF'
+    PDU:          'ON'
+    PCDU:         'HIBER'
+    PFPS:         'ON'
+    DCB:          'ON'
+    HEATER:       'OFF'
 
-powersave:
-  preamp:       'ON'
-  spectrometer: 'OFF'
-  UT:           'OFF'
-  PDU:          'ON'
-  PCDU:         'HIBER'
-  PFPS:         'ON'
-  DCB:          'ON'
+  maint:
+    preamp:       'ON'
+    spectrometer: 'ON'
+    UT:           'ON'
+    PDU:          'ON'
+    PCDU:         'ON'
+    PFPS:         'ON'
+    DCB:          'ON'
+    HEATER:       'OFF'
+
+  powersave:
+    preamp:       'ON'
+    spectrometer: 'OFF'
+    UT:           'OFF'
+    PDU:          'ON'
+    PCDU:         'HIBER'
+    PFPS:         'ON'
+    DCB:          'ON'
+    HEATER:       'ON'
   
