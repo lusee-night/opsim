@@ -24,6 +24,7 @@ class Monitor():
         self.power      = np.zeros(size, dtype=float) # Total power drawn by the electronics
         self.data_rate  = np.zeros(size, dtype=float) # data rate in/out of the system
         self.ssd        = np.zeros(size, dtype=float) # Amount of data in the storage device
+        self.boxtemp    = np.zeros(size, dtype=float) # temperature from thermal 
 
 # ---
 class Simulator:
@@ -81,6 +82,8 @@ class Simulator:
         if self.verbose: print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
         self.ssd        = SSD(self.env, self.ssd_config)
         if self.verbose: print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
+        self.thermal    = Thermal (self.env, self.thermal_config)
+
 
         self.controller = Controller(self.env, self.sun, self.verbose)
         self.controller.add_panels_from_config(self.panel_config)
@@ -144,6 +147,7 @@ class Simulator:
         # Component data, read from the "devices" file
         self.battery_config = profiles['battery']
         self.ssd_config = profiles['ssd']
+        self.thermal_config = profiles['thermal']
         self.panel_config = profiles['solar_panels']
     
     # ---
@@ -446,6 +450,11 @@ class Simulator:
             self.monitor.data_rate[myT] = data_rate
             self.ssd.change(data_rate*self.deltaT)
             self.monitor.ssd[myT]       = self.ssd.level/self.ssd.capacity
+
+            # Thermal section
+            heat = self.power_out(get_heat=True)
+            self.thermal.evolve (heat, self.sun.alt[myT]/np.pi*180.0, self.deltaT)
+            self.monitor.boxtemp[myT]   = self.thermal.temperature
 
             yield self.env.timeout(1)
 

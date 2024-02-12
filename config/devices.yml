@@ -1,12 +1,13 @@
 thermal:
-  day: 
-    power: 0 10 20 40
-    Teq: 10 20 30 50
-    tau: 5000
-  night:
-    power: 0 10 20 30
-    Teq: -10 5 10  15
-    tau: 5000
+  altitude:   0 10 30 70
+  power: 0 10 20 30 40
+  ## this array should have N_alt rows of N_power values in C
+  temperature: [ -10 2  5 10 20,
+                  0  10 20 30 40,
+                  10 20 30 40 50,
+                  20 30 40 60 70]
+  tau: 18000 # time constant in seconds
+  Tstart: 10
 
 solar_panels:  
   config:    
