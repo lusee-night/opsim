@@ -5,3 +5,4 @@ from .controller    import *
 from .battery       import *
 from .ssd           import *
 from .device        import *
+from .thermal       import *

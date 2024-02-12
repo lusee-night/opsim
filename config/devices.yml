@@ -1,3 +1,14 @@
+thermal:
+  altitude:   0 10 30 70
+  power: 0 10 20 30 40
+  ## this array should have N_alt rows of N_power values in C
+  temperature: [ -10 2  5 10 20,
+                  0  10 20 30 40,
+                  10 20 30 40 50,
+                  20 30 40 60 70]
+  tau: 18000 # time constant in seconds
+  Tstart: 10
+
 solar_panels:  
   config:    
     lander: 0.0 0.0 0.0 # roll, pitch, yaw
@@ -65,6 +76,17 @@ power_consumers:
     'ON':       CUSTOM, 1.0, 0.45, preamp+spectrometer+DCB
   HEATER:
     'ON':       1.0
+  
+# ---
+# this defines how much heat is dissipated outside, so
+# that we can subtracting when measuring heat contributions inside
+# heat not accounted here is assumed to be dissipated inside
+
+outside_heat:
+  preamp:
+    'ON':       0.9
+  UT:
+    'TX':       4
   
 # Data consumption (bandwidth) in kB/s
 ssd_consumers:
