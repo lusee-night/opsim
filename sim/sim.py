@@ -30,6 +30,13 @@ class Monitor():
 class Simulator:
     def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None, verbose=False):
     
+
+        # Will be read from the "devices" file later:
+        self.battery_config = None
+        self.ssd_config     = None
+        self.thermal_config = None
+        self.panel_config   = None
+
         self.verbose    = verbose
         self.record     = {} # stub for the record of state transitions
 
@@ -78,7 +85,7 @@ class Simulator:
     def populate(self): # Add hardware and the monitor to keep track of the sim
         self.monitor    = Monitor(self.sun.N) # to define the discrete time axis
 
-        self.battery    = Battery(self.env, self.battery_config)
+        self.battery    = Battery(self.battery_config)
         if self.verbose: print(f'''Created a Battery with initial charge: {self.battery.level}, capacity: {self.battery.capacity}''')
         self.ssd        = SSD(self.env, self.ssd_config)
         if self.verbose: print(f'''Created a SSD with initial fill: {self.ssd.level}, capacity: {self.ssd.capacity}''')
@@ -146,9 +153,9 @@ class Simulator:
      
         # Component data, read from the "devices" file
         self.battery_config = profiles['battery']
-        self.ssd_config = profiles['ssd']
+        self.ssd_config     = profiles['ssd']
         self.thermal_config = profiles['thermal']
-        self.panel_config = profiles['solar_panels']
+        self.panel_config   = profiles['solar_panels']
     
     # ---
     def read_comtable(self):

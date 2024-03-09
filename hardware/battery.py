@@ -5,7 +5,7 @@ import sys
 
 
 class Battery:
-    def __init__(self, env, config, verbose = False):
+    def __init__(self, config, verbose = False):
         self.verbose = verbose
         self.temperature = None 
         self.level = float(config['initial'])*3600 # to As
