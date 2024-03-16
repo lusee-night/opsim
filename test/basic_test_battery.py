@@ -23,4 +23,4 @@ print("Testing the battery", profile_yaml)
 
 battery_config = yaml.safe_load(profile_yaml)
 print(battery_config)
-Battery(None, battery_config)
+Battery(battery_config)
