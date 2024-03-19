@@ -66,17 +66,3 @@ if verbose:
 
 smltr.verbose = False # True
 smltr.simulate()
-
-# battery_config = yaml.safe_load(profile_yaml)
-
-# if vocfile!='':
-#     battery_config["VOC_table"]=vocfile
-
-# if verbose:
-#     print("Testing the battery", profile_yaml)
-#     print(f'''Battery VOC data read from the file: "{battery_config["VOC_table"]}"''')
-
-# # print(battery_config)
-# battery = Battery(battery_config)
-
-# if verbose: print(f'''Created a Battery with initial charge: {battery.level}, capacity: {battery.capacity}''')
