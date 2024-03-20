@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #######################################################################
-# The script for basic unit test of the battery
+# The script for the unit test of the simulator
 #######################################################################
 
 import yaml
@@ -41,16 +41,12 @@ comtable    = "../config/comtable-20260110-20270115.yml"
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-v", "--verbose", action='store_true', help="Verbose mode")
-parser.add_argument("-V", "--vocfile", type=str,            help="Location of the battery VOC data file", default='')
 args    = parser.parse_args()
 
 verbose = args.verbose
-vocfile = args.vocfile
 
-
-initial_time=2
-until=4600
-#2780
+initial_time    = 2
+until           = 4600 #2780
 
 smltr = Simulator(orbitals, modes, devices, comtable, initial_time=initial_time, until=until, verbose=verbose)
 
