@@ -62,3 +62,14 @@ if verbose:
 
 smltr.verbose = False # True
 smltr.simulate()
+
+pwr = smltr.controller.power
+N = pwr.shape[0]
+
+# Checkpoints
+
+step = int(N/10)
+
+for i in range(10):
+    n = i*step
+    print(pwr[n])
