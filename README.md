@@ -6,8 +6,20 @@ generation and management, data taking (science), comms etc.
 
 __Glossary__
 
-* _modes_: reference to the modes of the LuSEE-Night apparatus' operations, such as "science"; this choice is in order to conform with the convention in the "ConOps" document.
+* _modes_: reference to the modes of the LuSEE-Night apparatus' operations, this choice is in order to conform with the convention in the "ConOps" document
+  * science
+  * main
+  * powersave
 * _states_: states of the devices as stipulated by the specific LuSEE _mode_.
+* _fade_: an accounting factor, reflecting the loss of the battery capacity _prior_ to launch. This is a constant that does not change during the actual operation.
+
+__Devices Included in the simulation__
+
+* _UT_ -- Comm module
+* _PDU_ -- Power distribution
+* _PCDU_ -- The battery management circuit
+* _PFPS_ -- PFPS picket fance power supply
+* _DCB_ -- Flight computer
 
 
 ## Folders in this repository
@@ -34,6 +46,14 @@ in the simulation. The important one is `prep-all`
 various coordinate calculations
 3. _hardware_: classes describing various elements of the LuSEE hardware
 4. _sim_: the main simulator class
+
+### Unit test and CI
+
+* the _test_ folder contains scripts specifically designed for testing and CI, as opposed to the end user or production scenarios
+
+### Docker
+
+Work in progress -- this folder will keep the material necessary for the creation of the Docker images with _OpSim_ on top of the base _luseepy_.
 
 
 ### Archival/reference folders

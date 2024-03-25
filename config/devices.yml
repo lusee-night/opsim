@@ -35,8 +35,11 @@ solar_panels:
       area:       0.313
 # ---
 battery:
-  initial: 120.0 #in Ah
-  capacity: 240.99 #in Ah
+  # Units are defined here as well and are required
+  initial:        120.0
+  capacity:       240.99
+  charge_unit:    Ah
+
   capacity_fade: 0.0063  # capacity fade applied to capacity
   self_discharge: 0.01 # defined as fractional loss over 28 days
   VOC_table: ../data/hardware/battery/battery_VOC.dat
