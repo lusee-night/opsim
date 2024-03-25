@@ -7,17 +7,29 @@ class Battery:
     # ---
     def __init__(self, config, verbose = False):
 
-        self.verbose = verbose
-        self.temperature = None 
+        self.OK         = False # Set to true when final
+        self.verbose    = verbose
+        self.temperature= None 
     
-        self.level      = float(config['initial'])*3600 # to As
-        self.capacity   = float(config['capacity'])*(1-float(config['capacity_fade']))*3600
+        self.errors     = []
+        charge_unit     = config['charge_unit']
+        if charge_unit not in ('As', 'Ah'):
+            self.errors.append('Charge unit undefined')
+        
+        self.level      = float(config['initial'])
+        self.capacity   = float(config['capacity'])*(1-float(config['capacity_fade']))
+
+        if charge_unit == 'Ah':
+            self.level      *= 3600
+            self.capacity   *= 3600
 
         self_discharge  = float(config['self_discharge'])
         self.discharge_tau = -28*24*3600/np.log(1-self_discharge)
-        table_fn = config['VOC_table']
-        VOC_table_cols = config['VOC_table_cols']
+        table_fn        = config['VOC_table']
+        VOC_table_cols  = config['VOC_table_cols']
         self.read_VOC_table(table_fn, VOC_table_cols)
+
+        self.OK         = (len(self.errors) == 0)
         
     # ---
     def read_VOC_table(self, table_fn, VOC_table_cols):
