@@ -1,11 +1,18 @@
 from scipy.interpolate import RegularGridInterpolator
 import numpy as np
-import sys
+import os, sys
 
 #####################
 class Battery:
     # ---
     def __init__(self, config, verbose = False):
+
+
+        try:
+            self.luseeopsim_path=os.environ['LUSEEOPSIM_PATH']
+        except:
+            self.luseeopsim_path='../'
+
 
         self.OK         = False # Set to true when final
         self.verbose    = verbose
@@ -19,7 +26,7 @@ class Battery:
         self.level      = float(config['initial'])
         self.capacity   = float(config['capacity'])*(1-float(config['capacity_fade']))
 
-        if charge_unit == 'Ah':
+        if charge_unit == 'Ah': # the internal unit is As, thus the 3600 factor is applied here
             self.level      *= 3600
             self.capacity   *= 3600
 
@@ -33,6 +40,7 @@ class Battery:
         
     # ---
     def read_VOC_table(self, table_fn, VOC_table_cols):
+        table_fn = self.luseeopsim_path+'/'+table_fn
         if self.verbose: print ('Reading VOC table from %s' % table_fn)
         table = np.genfromtxt(table_fn, delimiter=' ', comments='#')
         VOC_cols = []

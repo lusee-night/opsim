@@ -64,8 +64,13 @@ calculation notebook (heavily modified and not to be used for anything practical
 and some requisite inputs. Kept for continuity with the power calculation notebook.
 
 
-## Misc
+## Configuration details
 
+### The paths
+
+The variable `LUSEEOPSIM_PATH` contains the path to this (OpSim) package, in order to have an unambiguous reference
+when running it on top of `luseepy` and in other similar situations. If not set, the software will depend on the `PYTHONPATH`.
+`LUSEEPY_PATH` works similarly.
 
 ### Dependencies
 
