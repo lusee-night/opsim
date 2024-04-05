@@ -1,23 +1,46 @@
-
 from scipy.interpolate import RegularGridInterpolator
 import numpy as np
-import sys
+import os, sys
 
-
+#####################
 class Battery:
-    def __init__(self, env, config, verbose = False):
-        self.verbose = verbose
-        self.temperature = None 
-        self.level = float(config['initial'])*3600 # to As
-        self.capacity = float(config['capacity'])*(1-float(config['capacity_fade']))*3600
-        self_discharge = float(config['self_discharge'])
-        self.discharge_tau = -28*24*3600/np.log(1-self_discharge)
-        table_fn = config['VOC_table']
-        VOC_table_cols = config['VOC_table_cols']
-        self.read_VOC_table(table_fn, VOC_table_cols)
-        
+    # ---
+    def __init__(self, config, verbose = False):
 
+
+        try:
+            self.luseeopsim_path=os.environ['LUSEEOPSIM_PATH']
+        except:
+            self.luseeopsim_path='../'
+
+
+        self.OK         = False # Set to true when final
+        self.verbose    = verbose
+        self.temperature= None 
+    
+        self.errors     = []
+        charge_unit     = config['charge_unit']
+        if charge_unit not in ('As', 'Ah'):
+            self.errors.append('Charge unit undefined')
+        
+        self.level      = float(config['initial'])
+        self.capacity   = float(config['capacity'])*(1-float(config['capacity_fade']))
+
+        if charge_unit == 'Ah': # the internal unit is As, thus the 3600 factor is applied here
+            self.level      *= 3600
+            self.capacity   *= 3600
+
+        self_discharge  = float(config['self_discharge'])
+        self.discharge_tau = -28*24*3600/np.log(1-self_discharge)
+        table_fn        = config['VOC_table']
+        VOC_table_cols  = config['VOC_table_cols']
+        self.read_VOC_table(table_fn, VOC_table_cols)
+
+        self.OK         = (len(self.errors) == 0)
+        
+    # ---
     def read_VOC_table(self, table_fn, VOC_table_cols):
+        table_fn = self.luseeopsim_path+'/'+table_fn
         if self.verbose: print ('Reading VOC table from %s' % table_fn)
         table = np.genfromtxt(table_fn, delimiter=' ', comments='#')
         VOC_cols = []
@@ -56,23 +79,26 @@ class Battery:
         self.R_internal = RegularGridInterpolator((SOC, RI_temps), RI_table)
 
 
-
+    # ---
     def Voltage(self):
         SOC = self.level/self.capacity
         return self.VOC((SOC,self.temperature))
     
+    # ---
     def SOC(self):
         return self.level/self.capacity
-
+    # ---
     def set_temperature(self, temperature):
         self.temperature = temperature
 
-
-
+    # ---
     def apply_power (self, power, deltaT):
-        # Applies power to the battery for deltaT seconds
-        # if power (in W) is positive, we charge the battery
-        # if power (in W) is negative, we discharge the battery
+        '''
+        Applies power to the battery for deltaT seconds
+        if power (in W) is positive, we charge the battery
+        if power (in W) is negative, we discharge the battery
+        '''
+
         SOC = self.level/self.capacity
 
         if (power>0):
@@ -93,9 +119,10 @@ class Battery:
             self.level -= I*deltaT
             self.level = max(self.level, 0)
     
+    # ---
     def apply_age (self, deltaT):
-        loss = np.exp(-deltaT/self.discharge_tau)
-        self.capacity *= loss
-        self.level *= loss
+        loss            = np.exp(-deltaT/self.discharge_tau)
+        self.capacity   *= loss
+        self.level      *= loss
         
 
