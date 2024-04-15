@@ -25,11 +25,13 @@ jobs:
           echo pythonpath: $PYTHONPATH
           export LUSEEPY_PATH=/user/luseepy
           export LUSEEOPSIM_PATH=`pwd`
-          echo 'Scanning env for LUSEE items:'
+          echo '*** Scanning env for LUSEE items:'
           env | grep LUS
-          echo end scan proceed to list /user
+          echo *** End scan, proceed to list /user
           ls -l /user
-          
+          echo '**************************'
+          ./test/battery_discharge_test.py -v
+
 
 
 
