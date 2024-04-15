@@ -2,9 +2,9 @@ name: opsim-test
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ maxim-ci ]
   pull_request:
-    branches: [ main ]
+    branches: [ maxim-ci ]
 
   # Enable manual activation, too
   workflow_dispatch:
