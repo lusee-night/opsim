@@ -18,15 +18,18 @@ jobs:
     container: lusee/lusee-night-unity-luseepy:1.2
     steps:
       - uses: actions/checkout@v4
-      - run: echo '*** opsim CI ***'
-      - run: pwd
-      - run: ls -l
-      - run: echo $PYTHONPATH
-      - run: echo 'Scanning env for LUSEE items:'
-      - run: env | grep LUS
-      - run: echo end scan proceed to list /user
-      - run: ls -l /user
-      
+      - run: |
+        echo '*** opsim CI ***'
+        pwd
+        ls -l
+        echo pythonpath: $PYTHONPATH
+        export LUSEEPY_PATH=/user/luseepy
+        export LUSEEOPSIM_PATH=`pwd`
+        echo 'Scanning env for LUSEE items:'
+        env | grep LUS
+        echo end scan proceed to list /user
+        ls -l /user
+
 
 
 
