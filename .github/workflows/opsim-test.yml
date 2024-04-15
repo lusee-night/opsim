@@ -33,7 +33,7 @@ jobs:
           python -c 'import sys; print(sys.path)'
           pip install simpy
           python -c 'from hardware import *'
-# ./test/battery_discharge_test.py -v
+          ./test/battery_discharge_test.py -v
 
 
 
