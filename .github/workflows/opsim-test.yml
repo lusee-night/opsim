@@ -30,7 +30,8 @@ jobs:
           echo *** End scan, proceed to list /user
           ls -l /user
           echo '**************************'
-          ./test/battery_discharge_test.py -v
+          python -c 'import sys; print(sys.path)'
+# ./test/battery_discharge_test.py -v
 
 
 

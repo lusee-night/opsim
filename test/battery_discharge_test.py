@@ -61,6 +61,8 @@ except:
     sys.path.append(luseeopsim_path)  # Add parent to path, to enable running locally (also for data)
 
 
+if verbose: print(sys.path)
+
 try:
     from hardware import *
 except:
