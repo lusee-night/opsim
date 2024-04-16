@@ -1,3 +1,6 @@
+# luseepy
+![workflow](https://github.com/lusee-night/opsim/actions/workflows/opsim-test.yml/badge.svg)
+
 # OpSim: Simulation of the LuSEE-Night Operations Logic
 
 ## About
