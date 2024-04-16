@@ -71,9 +71,12 @@ and some requisite inputs. Kept for continuity with the power calculation notebo
 
 ### The paths
 
-The variable `LUSEEOPSIM_PATH` contains the path to this (OpSim) package, in order to have an unambiguous reference
+* The variable `LUSEEPY_PATH` contains the path to this _luseepy_ package. If set, its content will be prepended to _sys.path_.
+If not set, the software will depend on the `PYTHONPATH`.
+* The variable `LUSEEOPSIM_PATH` contains the path to this (OpSim) package, in order to have an unambiguous reference
 when running it on top of `luseepy` and in other similar situations. If not set, the software will depend on the `PYTHONPATH`.
-`LUSEEPY_PATH` works similarly.
+In addition to location the Python modules, this variable is used to locate the data and configuration folders. If not set,
+the default will be '..', effectively corresponding to the case when the test scripts are run explicitely from their folder.
 
 ### Dependencies
 
