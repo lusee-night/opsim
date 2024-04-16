@@ -1,6 +1,6 @@
 name: opsim-test
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
+  # Triggers the workflow on push or pull request events
   push:
     branches: [ maxim-ci ]
   pull_request:
@@ -19,22 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          echo '*** opsim CI ***'
-          pwd
-          ls -l
-          echo pythonpath: $PYTHONPATH
           export LUSEEPY_PATH=/user/luseepy
           export LUSEEOPSIM_PATH=`pwd`
-          echo '*** Scanning env for LUSEE items:'
-          env | grep LUS
-          echo *** End scan, proceed to list /user
-          ls -l /user
-          echo '**************************'
-          python -c 'import sys; print(sys.path)'
           pip install simpy
-          python -c 'from hardware import *'
           ./test/battery_discharge_test.py -v
-
-
-
-
+      - run: |
+          export LUSEEPY_PATH=/user/luseepy
+          export LUSEEOPSIM_PATH=`pwd`
+          pip install simpy
+          ./test/sim_test.py -v
+          

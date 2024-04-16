@@ -66,7 +66,7 @@ if verbose: print(sys.path)
 try:
     from hardware import *
 except:
-    if verbose: print("Couldn't locate the 'hardware' package, please check the environment")
+    if verbose: print("Couldn't load the 'hardware' package, please check the path or the Python environment -- maybe simpy is missing")
     exit(-2)
 
 
