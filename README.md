@@ -1,3 +1,6 @@
+# luseepy
+![workflow](https://github.com/lusee-night/opsim/actions/workflows/opsim-test.yml/badge.svg)
+
 # OpSim: Simulation of the LuSEE-Night Operations Logic
 
 ## About
@@ -36,7 +39,8 @@ of configuration relate to each other.
 
 1. _scripts_: an assembly of scripts, such as used in preparation of the
 "prefabricated" data on the position of celestial objects, to be later used
-in the simulation. The important one is `prep-all`
+in the simulation. The important one is `prep-all`. The main data format used
+for this purpose is _hdf5_.
 
 
 ### Core software
@@ -49,7 +53,7 @@ various coordinate calculations
 
 ### Unit test and CI
 
-* the _test_ folder contains scripts specifically designed for testing and CI, as opposed to the end user or production scenarios
+* the __test__ folder contains scripts specifically designed for testing and CI, as opposed to the end user or production scenarios.
 
 ### Docker
 
@@ -68,9 +72,12 @@ and some requisite inputs. Kept for continuity with the power calculation notebo
 
 ### The paths
 
-The variable `LUSEEOPSIM_PATH` contains the path to this (OpSim) package, in order to have an unambiguous reference
+* The variable `LUSEEPY_PATH` contains the path to the _luseepy_ package. If set, its content will be prepended to _sys.path_.
+If not set, the software will depend on the `PYTHONPATH`.
+* The variable `LUSEEOPSIM_PATH` contains the path to this (OpSim) package, in order to have an unambiguous reference
 when running it on top of `luseepy` and in other similar situations. If not set, the software will depend on the `PYTHONPATH`.
-`LUSEEPY_PATH` works similarly.
+In addition to location the Python modules, this variable is used to locate the data and configuration folders. If not set,
+the default will be '..', effectively corresponding to the case when the test scripts are run explicitely from their folder.
 
 ### Dependencies
 

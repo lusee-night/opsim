@@ -1,10 +1,10 @@
 name: opsim-test
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
+  # Triggers the workflow on push or pull request events
   push:
-    branches: [ main ]
+    branches: [ main, maxim-ci ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, maxim-ci ]
 
   # Enable manual activation, too
   workflow_dispatch:
@@ -17,6 +17,15 @@ jobs:
        LUSEE_OUTPUT_DIR: ./output
     container: lusee/lusee-night-unity-luseepy:1.2
     steps:
-      - uses: actions/checkout@v2
-      - run: echo 'opsim CI'
-
+      - uses: actions/checkout@v4
+      - run: |
+          export LUSEEPY_PATH=/user/luseepy
+          export LUSEEOPSIM_PATH=`pwd`
+          pip install simpy
+          ./test/battery_discharge_test.py -v
+      - run: |
+          export LUSEEPY_PATH=/user/luseepy
+          export LUSEEOPSIM_PATH=`pwd`
+          pip install simpy
+          ./test/sim_test.py -v
+          
