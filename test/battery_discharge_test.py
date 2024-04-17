@@ -49,14 +49,14 @@ try:
     if verbose: print(f'''The LUSEEPY_PATH is defined in the environment: {luseepy_path}, will be added to sys.path''')
     sys.path.append(luseepy_path)
 except:
-    if verbose: print('The varieble LUSEEPY_PATH is undefined, will rely on PYTHONPATH')
+    if verbose: print('The variable LUSEEPY_PATH is undefined, will rely on PYTHONPATH')
 
 try:
     luseeopsim_path=os.environ['LUSEEOPSIM_PATH']
     if verbose: print(f'''The LUSEEOPSIM_PATH is defined in the environment: {luseeopsim_path}, will be added to sys.path''')
     sys.path.append(luseeopsim_path)
 except:
-    if verbose: print('The variable LUSEEOPSIM_PATH is undefined, will rely on PYTHONPATH')
+    if verbose: print('The variable LUSEEOPSIM_PATH is undefined, will rely on PYTHONPATH. Root folder for the data location will be ..')
     luseeopsim_path = '../'
     sys.path.append(luseeopsim_path)  # Add parent to path, to enable running locally (also for data)
 
