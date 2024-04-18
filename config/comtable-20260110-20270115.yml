@@ -1,6 +1,6 @@
 1:
   start:  61050.8 # 3 - first full day, start
-  mode:   charge
+  mode:   maint
 
 2:
   start:  61065.7 # 1429 - sunset
@@ -8,7 +8,7 @@
 
 3:
   start:  61080.5 # 2847 - day
-  mode:   charge
+  mode:   maint
 
 4:
   start:  61095.2 # 4267 - sunset
@@ -16,7 +16,7 @@
 
 5:
   start:  61110.1 # 5690 - day
-  mode:   charge
+  mode:   maint
 
 6:
   start:  61124.8 # 7102 - sunset
@@ -24,7 +24,7 @@
 
 7:
   start:  61139.7 # 8528  - day
-  mode:   comms
+  mode:   maint
 
 8:
   start:  61154.3 # 9934 - sunset
@@ -32,7 +32,7 @@
 
 9:
   start:  61169.2 # 11362 - day
-  mode:   charge
+  mode:   maint
 
 10:
   start:  61183.7 # 12764 - sunset

@@ -1,0 +1,31 @@
+name: opsim-test
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+    branches: [ main, maxim-ci ]
+  pull_request:
+    branches: [ main, maxim-ci ]
+
+  # Enable manual activation, too
+  workflow_dispatch:
+jobs:
+  luseepy-test:
+    runs-on: ubuntu-latest
+    env:
+       PYTHONPATH: .:..
+       LUSEE_DRIVE_DIR: Drive
+       LUSEE_OUTPUT_DIR: ./output
+    container: lusee/lusee-night-unity-luseepy:1.2
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          export LUSEEPY_PATH=/user/luseepy
+          export LUSEEOPSIM_PATH=`pwd`
+          pip install simpy
+          ./test/battery_discharge_test.py -v
+      - run: |
+          export LUSEEPY_PATH=/user/luseepy
+          export LUSEEOPSIM_PATH=`pwd`
+          pip install simpy
+          ./test/sim_test.py -v
+          
