@@ -13,7 +13,8 @@ solar_panels:
   config:    
     lander: 0.0 0.0 0.0 # roll, pitch, yaw
     panel_temperature_table: reference/lunarTemperature30degDiviner.txt ## currently ignored!!
-    efficiency_all: 0.9  # applied to any final power
+    efficiency_all: 1.0  # applied to any final power
+    apply_cosine_correction: True # Whether to apply correction to cosine-law for PV power as function of solar angle. Correction based on measured PV power.
     PV_efficiency:
       temp: -173.15 20.0  126.85
       power: 0.356414 0.304828 0.257931

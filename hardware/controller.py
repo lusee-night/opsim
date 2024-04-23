@@ -38,13 +38,15 @@ class Controller:
         pvEFF_T = np.array([float(x) for x in pcf['PV_efficiency']['temp'].split()])
         pvEFF_P = np.array([float(x) for x in pcf['PV_efficiency']['power'].split()])
 
+        cos_corr = pcf['apply_cosine_correction'] # Whether to apply correction to cosine-law for PV power as function of solar angle. Correction based on measured PV power. 
+
         for panel_name in panels:
             panel = panels[panel_name]
             normal = np.array([float(x) for x in panel['normal'].split()])
             eff = panel['efficiency']*pcf['efficiency_all']
             if self.verbose: print(f'''Adding panel {panel_name} with normal {normal}, \tefficiency {eff}, and surface area {panel['area']}''')
 
-            self.add_panel(Panel(self.sun, name=panel_name, lander=lander, normal=normal, env=self.env, area=panel['area'], pvEFF_T=pvEFF_T, pvEFF_P=pvEFF_P, efficiency_mult=eff))
+            self.add_panel(Panel(self.sun, name=panel_name, lander=lander, normal=normal, env=self.env, area=panel['area'], pvEFF_T=pvEFF_T, pvEFF_P=pvEFF_P, efficiency_mult=eff, apply_cosine_correction=cos_corr))
 
     ### ---
     def get_panel(self, name):
