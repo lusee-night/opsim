@@ -8,34 +8,42 @@ import yaml
 import csv
 import h5py
 
+from datetime import datetime
+
 # lusee/opsim
 from    nav.coordinates import *
 from    lunarsky.time   import Time
+
+parse_time_string = '%d %b %Y %H:%M:%S.%f'
 # ----------------------------------------------------------------------------------
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-v", "--verbose",      action='store_true', help="Verbose mode")
+parser.add_argument("-I", "--inspect",      action='store_true', help="Inspect CSV and exit")
+parser.add_argument("-c", "--conffile",     type=str,            help="The input - a YAML file containing configuration", default='')
 parser.add_argument("-o", "--outputfile",   type=str,            help="The output", default='')
-parser.add_argument("-i", "--inspectfile",  type=str,            help="File to inspect (overrides other options)", default='')
+parser.add_argument("-i", "--inputfile",    type=str,            help="The CSV file to read", default='')
 # ----------------------------------------------------------------------------------
 args        = parser.parse_args()
 
 verb        = args.verbose
+inspect     = args.inspect
+conffile    = args.conffile
 outputfile  = args.outputfile
-inspectfile = args.inspectfile
+inputfile   = args.inputfile
 
 # ---
 if verb:
     print("*** Verbose mode ***")
-    if inspectfile == '':
-        print(f'''*** Output file (HDF5): "{outputfile}" ***''')
+    if not inspect:
+        print(f'''*** Input file: {inputfile}, output file (HDF5): "{outputfile}" ***''')
     else:
-        print(f'''*** File to inspect (will exit on completion): "{inspectfile}" ***''')
+        print(f'''*** Inspect mode. File to inspect (will exit on completion): "{inputfile}" ***''')
 
 # ----------------------------------------------------------------------------------
 # -- INSPECT EXISTING DATA
-if inspectfile != '': # inspect and exit
-    csv_file = open(inspectfile, "r")
+if inspect : # inspect and exit
+    csv_file = open(inputfile, "r")
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
@@ -55,10 +63,47 @@ if inspectfile != '': # inspect and exit
             line_count += 1
 
     print(f'Processed {line_count} CSV lines total (including the header).')
-    print(f'Time range of the data: "{start_time}" to "{current_time}"')
 
+    t_start =   Time(datetime.strptime(start_time,   parse_time_string))
+    t_end   =   Time(datetime.strptime(current_time, parse_time_string))
+    print(f'Time range of the data (string format ** MJD): "{start_time} ** {t_start.mjd}" to "{current_time} ** {t_end.mjd}"')
 
     exit(0)
+
+
+try:
+    conf_f = open(conffile, 'r')
+    conf = yaml.safe_load(conf_f)  # ingest the configuration data
+    if verb: print('Loaded data from the configuration file:', conffile)
+except:
+    if verb: print('Error opening and reading the configuration file:', conffile)
+    exit(-2)
+
+
+# Lander location
+loc = conf['location']
+lat = loc['latitude']
+lon = loc['longitude']
+hgt = loc['height']
+
+print(f'''Latitude: {lat}, longitude: {lon}''')
+# Initialize the Observation obejct with the data gleaned from the configuraiton file
+
+t_start =   datetime.strptime('2 Dec 2025 08:04:33.785', '%d %b %Y %H:%M:%S.%f')
+t_end   =   datetime.strptime('31 Jan 2026 01:25:02.000', '%d %b %Y %H:%M:%S.%f')
+
+x = Time(t_start)
+y = Time(t_end)
+
+print(x.mjd, y.mjd)
+
+#deltaT  = 900
+#observation = O((t_start, t_end), lat, lon, hgt, deltaT)
+#(times, alt, az) = track_from_observation(observation) # Sun
+#N = times.size
+#mjd = [t.mjd for t in times]
+
+exit(0)
 
 # ----------------------------------------------------------------------------------
 # -- READ AND PARSE THE CONFIGURATION DATA
