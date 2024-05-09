@@ -22,9 +22,11 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("-v", "--verbose",      action='store_true', help="Verbose mode")
 parser.add_argument("-I", "--inspect",      action='store_true', help="Inspect CSV and exit")
-parser.add_argument("-c", "--conffile",     type=str,            help="The input - a YAML file containing configuration", default='')
+parser.add_argument("-c", "--conffile",     type=str,            help="Optional - a YAML file containing configuration", default='')
 parser.add_argument("-o", "--outputfile",   type=str,            help="The output", default='')
 parser.add_argument("-i", "--inputfile",    type=str,            help="The CSV file to read", default='')
+parser.add_argument("-f", "--fields",       type=str,            help="Column numbers to process, comma-separated, default ALL, zero is always included", default='')
+parser.add_argument("-N", "--N",            type=int,            help="Optional: max lines to process", default=0)
 # ----------------------------------------------------------------------------------
 args        = parser.parse_args()
 
@@ -33,6 +35,8 @@ inspect     = args.inspect
 conffile    = args.conffile
 outputfile  = args.outputfile
 inputfile   = args.inputfile
+fields      = args.fields
+N           = args.N
 
 # ---
 if verb:
@@ -60,8 +64,8 @@ except:
     if verb: print(f'Problem creating a CSV reader for the file {inputfile}, exiting...')
     exit(-3)
 
-# -- INSPECT EXISTING DATA
-if inspect : # inspect and exit
+# -- INSPECT EXISTING DATA AND EXIT
+if inspect : 
     for row in csv_reader:
         if line_count == 0:
             print(f'{len(row)} columns detected. Column names are:')
@@ -84,34 +88,63 @@ if inspect : # inspect and exit
     print(f'Time range of the data (string format ** MJD): "{start_time} ** {t_start.mjd}" to "{current_time} ** {t_end.mjd}"')
     exit(0)
 
+index_list = []
+if len(fields)>0:
+    try:
+        indices = fields.split(',')
+        if 0 not in index_list: index_list.append(0)
+        for index in indices: index_list.append(int(index))
+        if verb and len(index_list)>0: print('*** Will select columns: ', index_list, '***')
+    except:
+        if verb: print('Error parsing fields, exiting...')
+        exit(-4)
+else:
+    if verb: print('*** All columns in the file fill be processed ***')
+
+
+# -- PROCESS
 for row in csv_reader:
     if line_count == 0:
         line_count += 1
-        header = ','.join(row)
-        continue # the header if not a part of the data we are converting
+        if len(index_list)>0:
+            row = [row[i] for i in index_list]
+        header = ','.join(row) # preserve, to add to the metadata in HDF5; then skip to the data
+        continue
 
-    if (len(row) == 0): break # protect against the trailing empty string
+    if N>0 and line_count>N: break
+
+    if (len(row) == 0): break # protect against the trailing empty string(s)
     my_time =  Time(datetime.strptime(row[0], '%d %b %Y %H:%M:%S.%f'))
     row[0] = my_time.mjd
-    buffer.append(row)
-    line_count += 1 # for testing only // if line_count == 10: break
+
+    if len(index_list)>0:
+        row = [float(row[i]) for i in index_list]
+    else:
+        row = [float(x) for x in row]
+
+    buffer.append(row) # print(row)
+    line_count += 1
 
 result = np.array(buffer, dtype=np.float64)
 
 if verb:
-    print(f'Finished calculations, formed the data package, size: {result.shape}...')
-    print(f'Header: {header}')
+    print(f'*** Finished calculations, formed the data package, size: {result.shape}... ***')
+    print(f'*** Header: {header} ***')
 
 if outputfile == '': # print useful info and exit
     if verb:
-        print(f'''No output file name detected, will exit now. Shape of the orbitals data: {result.shape}''')
-
-    for i in range(10):
-        print(result[i])
+        print(f'''*** No output file name detected, will exit now. Shape of the orbitals data: {result.shape} ***''')
+        print('*** First 10 rows ***')
+        for i in range(10):
+            try:
+                print(result[i])
+            except:
+                pass
     exit(0)
 
 
 # HDF5 output -- there will be two groups, (a) meta and (b) the payload data
+if verb: print(f'*** Writing to HDF file {outputfile} ***')
 f = h5py.File(outputfile, 'w')
 
 grp_meta = f.create_group('meta')
@@ -119,10 +152,12 @@ dt = h5py.string_dtype(encoding='utf-8')
 ds_meta = grp_meta.create_dataset('header', (1,), dtype=dt)
 ds_meta[0,] = header
 
+
+if verb: print(f'*** Writing the trajectory data ***')
 grp_data = f.create_group('data')
 ds_data = grp_data.create_dataset("trajectory", data=result, compression="gzip")
 
 f.close()
-
+if verb: print(f'*** All done ***')
 exit(0)
 
