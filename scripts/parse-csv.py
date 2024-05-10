@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 #######################################################################
 # The script to convert the CSV-formatted data about the satellite
-# trajectory,
+# trajectory, to HDF5 for compactness and efficiency, also converting
+# time to MJD to conform with the usual convention.
 #######################################################################
 
 import argparse
