@@ -1,10 +1,11 @@
 #! /usr/bin/env python
 #######################################################################
-# The script to prepare ALL of the "orbitals" data e.g. Sun, satellites
+# The script to convert the CSV-formatted data about the satellite
+# trajectory,
 #######################################################################
 
 import argparse
-import yaml
+
 import csv
 import h5py
 
@@ -22,7 +23,6 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("-v", "--verbose",      action='store_true', help="Verbose mode")
 parser.add_argument("-I", "--inspect",      action='store_true', help="Inspect CSV and exit")
-parser.add_argument("-c", "--conffile",     type=str,            help="Optional - a YAML file containing configuration", default='')
 parser.add_argument("-o", "--outputfile",   type=str,            help="The output", default='')
 parser.add_argument("-i", "--inputfile",    type=str,            help="The CSV file to read", default='')
 parser.add_argument("-f", "--fields",       type=str,            help="Column numbers to process, comma-separated, default ALL, zero is always included", default='')
@@ -32,7 +32,6 @@ args        = parser.parse_args()
 
 verb        = args.verbose
 inspect     = args.inspect
-conffile    = args.conffile
 outputfile  = args.outputfile
 inputfile   = args.inputfile
 fields      = args.fields
