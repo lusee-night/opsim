@@ -2,7 +2,7 @@
 
 ## HDF5
 
-Contains metadata, and the data payload, written together in teh HDF5 format. The _groups_
+Contains metadata, and the data payload, written together in the HDF5 format. The _groups_
 in the HDF5 files are names correspondingly:
 * __meta__: contains the _configuration_ dataset
 * __data__: contains the _orbitals_ dataset
