@@ -28,6 +28,10 @@ parser.add_argument("-o", "--outputfile",   type=str,            help="The outpu
 parser.add_argument("-i", "--inputfile",    type=str,            help="The CSV file to read", default='')
 parser.add_argument("-f", "--fields",       type=str,            help="Column numbers to process, comma-separated, default ALL, zero is always included", default='')
 parser.add_argument("-N", "--N",            type=int,            help="Optional: max lines to process", default=0)
+
+
+parser.add_argument("-s", "--startmjd",     type=float,            help="Optional start of parsing window (MJD)",   default=None)
+parser.add_argument("-e", "--endmjd",       type=float,            help="Optional end of parsing window (MJD)",     default=None)
 # ----------------------------------------------------------------------------------
 args        = parser.parse_args()
 
@@ -37,6 +41,9 @@ outputfile  = args.outputfile
 inputfile   = args.inputfile
 fields      = args.fields
 N           = args.N
+
+startmjd    = args.startmjd
+endmjd      = args.endmjd
 
 # ---
 if verb:
@@ -113,8 +120,18 @@ for row in csv_reader:
 
     if N>0 and line_count>N: break
 
+
     if (len(row) == 0): break # protect against the trailing empty string(s)
     my_time =  Time(datetime.strptime(row[0], '%d %b %Y %H:%M:%S.%f'))
+
+    # If the optional time window is defined, select rows based on it
+    if startmjd:
+        if my_time.mjd<startmjd: continue
+    
+    if endmjd:
+        if my_time.mjd>endmjd: break
+  
+
     row[0] = my_time.mjd
 
     if len(index_list)>0:
