@@ -91,6 +91,15 @@ outside_heat:
     'ON':       0.9
   UT:
     'TX':       4
+
+# Comm variable rate configuration -- MR added
+comm: 
+   adaptable_rate: True
+   if_adaptable:
+       max_rate_kbps: 1024
+       link_margin_dB: 3
+   if_fixed:
+       fixed_rate: -20.0
   
 # Data consumption (bandwidth) in kB/s
 ssd_consumers:
