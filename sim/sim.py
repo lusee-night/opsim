@@ -337,24 +337,16 @@ class Simulator:
                 if not self.comm.adaptable_rate: 
                     dr += self.comm.fixed_rate
                     print('The constant data rate is calculated as',dr)
-                else:
-                    #distance_km = 3000 
-                    #alt_deg = 60  # 
-                    #print(self.comm.R)
-                    #d_ang = 2
-                    #d_dist = 50
-                    #ang_l = np.arange(30,91,d_ang)
-                    #dist_l = np.arange(1000,9500,d_dist)
-                                       
+                else:                     
                     zero_ext_gain = False
-
                     for a in self.comm.ant_angle:
                         for d in self.comm.R:
                             adapt_rate, demo,pw = self.comm.get_rate(d,a,max_rate_kbps= self.comm.max_rate_kbps, demod_marg= 
                                                                    self.comm.link_margin_dB, zero_ext_gain=False)
 
+                            print(a,d,dr)
                             dr += adapt_rate 
-                            print('The adaptable data rate is calculated as',dr)## MR -- another debug line
+                    #print('The adaptable data rate is calculated as',dr)## MR -- another debug line
             else:
                 dr+=self.devices[dk].data_rate()
         
