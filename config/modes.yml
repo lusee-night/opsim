@@ -3,7 +3,7 @@ command_generation:
   algorithm: simple
   day:
     modes: science maint
-    duty: 0.45 0.55 #0.45 0.55
+    duty: 0.45 0.55
     cycle_hours: 24
   night:
     modes: science powersave

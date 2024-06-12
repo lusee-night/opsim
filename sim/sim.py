@@ -134,16 +134,15 @@ class Simulator:
 
 
 
-        if 'comm' not in profiles: ## MR -- addition begin
-            print('Comm not found in configuration profile') ## MR-- debug statement
+        if 'comm' not in profiles: 
+            print('Comm not found in configuration profile')
             raise NotImplementedError
         
         comm_config = profiles['comm'] 
         print("Comm configuration keys:", comm_config.keys())  
-        self.comm = Comm(adaptable_rate=comm_config['adaptable_rate'],
-                         max_rate_kbps=comm_config.get('if_adaptable', {}).get('max_rate_kbps'),
+        self.comm = Comm(max_rate_kbps=comm_config.get('if_adaptable', {}).get('max_rate_kbps'),
                          link_margin_dB=comm_config.get('if_adaptable', {}).get('link_margin_dB'),
-                         fixed_rate=comm_config.get('if_fixed', {}).get('fixed_rate'))  # MR -- addition end
+                         fixed_rate=comm_config.get('if_fixed', {}).get('fixed_rate'))  
 
             
         power_consumer_devices  = profiles['power_consumers'].keys()
@@ -334,18 +333,28 @@ class Simulator:
         dr = 0.0
         for dk in self.devices.keys():
             if dk=='UT' and 'TX' in conditions:
-                #dr+=self.devices[dk].data_rate_tx() ## MR -- not sure we need this rn? maybe? idk?
-                if not self.comm.adaptable_rate: ## -- MR addition begin
+                #dr+=self.devices[dk].data_rate_tx() # not sure we need this?
+                if not self.comm.adaptable_rate: 
                     dr += self.comm.fixed_rate
-                    print('The constant data rate is calculated as',dr) ## -- MR debug line
+                    print('The constant data rate is calculated as',dr)
                 else:
-                    distance_km = 3000  # MR -- should this be hardcoded here?
-                    alt_deg = 60  # MR -- should this be hardcoded here?
-                    #demod_marg = 3  #  MR-- hardcoded min
+                    #distance_km = 3000 
+                    #alt_deg = 60  # 
+                    #print(self.comm.R)
+                    #d_ang = 2
+                    #d_dist = 50
+                    #ang_l = np.arange(30,91,d_ang)
+                    #dist_l = np.arange(1000,9500,d_dist)
+                                       
                     zero_ext_gain = False
-                    adapt_rate,demod, pwr = self.comm.get_rate(distance_km, alt_deg, demod_marg= self.comm.link_margin_dB, zero_ext_gain=False)
-                    dr += adapt_rate 
-                    print('The adaptable data rate is calculated as',dr)## MR -- another debug line
+
+                    for a in self.comm.ant_angle:
+                        for d in self.comm.R:
+                            adapt_rate, demo,pw = self.comm.get_rate(d,a,max_rate_kbps= self.comm.max_rate_kbps, demod_marg= 
+                                                                   self.comm.link_margin_dB, zero_ext_gain=False)
+
+                            dr += adapt_rate 
+                            print('The adaptable data rate is calculated as',dr)## MR -- another debug line
             else:
                 dr+=self.devices[dk].data_rate()
         
