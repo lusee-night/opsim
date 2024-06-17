@@ -7,7 +7,7 @@ import  h5py
 from    hardware        import *
 from    utils.timeconv  import *
 from    nav             import *  # Astro/observation wrapper classes
-from hardware import comm
+#from hardware import comm
 
 #################################################################################
 class Monitor():
@@ -115,8 +115,12 @@ class Simulator:
 
         # Inflate objects based on this array data:
         self.sun = Sun(da[:,0], da[:,1] , da[:,2])
-        self.lpf = Sat(da[:,0], da[:,3] , da[:,4])
-        self.bge = Sat(da[:,0], da[:,5] , da[:,6])
+        #self.lpf = Sat(da[:,0], da[:,3] , da[:,4])
+        #self.bge = Sat(da[:,0], da[:,5] , da[:,6])
+
+        print('dimensions', self.lpf)
+        self.lpf = Sat(da[:,0], da[:,3] , da[:,4],da[:,5])
+        self.bge = Sat(da[:,0], da[:,6] , da[:,7],da[:,8])
 
     # ---
     def read_modes(self):
@@ -328,9 +332,10 @@ class Simulator:
         return self.controller.power[self.myT]
     
      # ---
-    def data_rate(self, conditions = []):
+    def data_rate(self,conditions=[]):
         """ Calculate the total data rate, traversing over the device collection. """
         dr = 0.0
+        cond = self.myT
         for dk in self.devices.keys():
             if dk=='UT' and 'TX' in conditions:
                 #dr+=self.devices[dk].data_rate_tx() # not sure we need this?
@@ -339,13 +344,12 @@ class Simulator:
                     print('The constant data rate is calculated as',dr)
                 else:                     
                     zero_ext_gain = False
-                    for a in self.comm.ant_angle:
-                        for d in self.comm.R:
-                            adapt_rate, demo,pw = self.comm.get_rate(d,a,max_rate_kbps= self.comm.max_rate_kbps, demod_marg= 
+                    #print(self.lpf.dist[cond])
+                    print(self.lpf.alt[cond])
+                    adapt_rate, demo,pw = self.comm.get_rate(self.lpf.dist[cond],self.lpf.alt[cond],max_rate_kbps= self.comm.max_rate_kbps, demod_marg= 
                                                                    self.comm.link_margin_dB, zero_ext_gain=False)
 
-                            print(a,d,dr)
-                            dr += adapt_rate 
+                    dr += adapt_rate 
                     #print('The adaptable data rate is calculated as',dr)## MR -- another debug line
             else:
                 dr+=self.devices[dk].data_rate()

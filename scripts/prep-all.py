@@ -2,12 +2,22 @@
 #######################################################################
 # The script to prepare ALL of the "orbitals" data e.g. Sun, satellites
 #######################################################################
+#%reload_ext autoreload
+#%autoreload 2
+
+# Standard imports and utility ---
+import  os, sys
+from sys import exit
+import  matplotlib.pyplot as plt
+
 
 import argparse
 import yaml
 import h5py
 
 # lusee/opsim
+import nav
+from nav import *
 from    nav.coordinates import *
 from    lunarsky.time   import Time
 # ----------------------------------------------------------------------------------
@@ -55,6 +65,8 @@ if inspectfile != '': # inspect and exit
 # ----------------------------------------------------------------------------------
 # -- READ AND PARSE THE CONFIGURATION DATA
 #
+
+
 if conffile=='':
     print('Missing configuration, exiting...')
     exit(-2)
@@ -92,6 +104,7 @@ print(f'''Latitude: {lat}, longitude: {lon}''')
 # Initialize the Observation obejct with the data gleaned from the configuraiton file
 observation = O((t_start, t_end), lat, lon, hgt, deltaT)
 (times, alt, az) = track_from_observation(observation) # Sun
+
 N = times.size
 mjd = [t.mjd for t in times]
 
@@ -108,6 +121,8 @@ aposelene_ref_time          = Time(lpf['aposelene_ref_time'])
 
 lpfSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
 obsLpfSat   = ObservedSatellite(observation, lpfSat)
+#obsLpfSat.dist 
+
 
 N = len(obsLpfSat.mjd)
 if verb: print(f'''LPF (ESA) Satellite: generated {N} data points''')
@@ -125,12 +140,19 @@ aposelene_ref_time          = Time(bge['aposelene_ref_time'])
 bgeSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
 obsBgeSat   = ObservedSatellite(observation, bgeSat)
 
+
+#lpf_dist = obsLpfSat.dist_km()
+#bge_dist = obsBgeSat.dist_km()
+
+
 N = len(obsBgeSat.mjd)
 if verb: print(f'''BGE (ELytra) Satellite: generated {N} data points''')
 
-# Combine all data in an array suitable for output
-result = np.column_stack((mjd, alt, az, obsLpfSat.alt, obsLpfSat.az, obsBgeSat.alt, obsBgeSat.az))
 
+# Combine all data in an array suitable for output
+result = np.column_stack((mjd, alt, az, obsLpfSat.alt, obsLpfSat.az,obsLpfSat.dist_km(),obsBgeSat.alt, obsBgeSat.az,obsBgeSat.dist_km()))
+
+#print('result is',result)
 
 if verb: print('Finished calculations, formed the data package...')
 
