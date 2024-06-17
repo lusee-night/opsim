@@ -341,15 +341,16 @@ class Simulator:
                 #dr+=self.devices[dk].data_rate_tx() # not sure we need this?
                 if not self.comm.adaptable_rate: 
                     dr += self.comm.fixed_rate
-                    print('The constant data rate is calculated as',dr)
+                    #print('The constant data rate is calculated as',dr)
                 else:                     
                     zero_ext_gain = False
-                    #print(self.lpf.dist[cond])
-                    print(self.lpf.alt[cond])
-                    adapt_rate, demo,pw = self.comm.get_rate(self.lpf.dist[cond],self.lpf.alt[cond],max_rate_kbps= self.comm.max_rate_kbps, demod_marg= 
-                                                                   self.comm.link_margin_dB, zero_ext_gain=False)
+                   # print(self.lpf.alt[cond])
+                    adapt_rate, demo,pw = self.comm.get_rate(self.lpf.dist[cond],(180/np.pi)*self.lpf.alt[cond],max_rate_kbps= 
+                                                             self.comm.max_rate_kbps, demod_marg= self.comm.link_margin_dB, 
+                                                             zero_ext_gain=False)
 
                     dr += adapt_rate 
+                    #print(self.lpf.dist[cond], (180/np.pi)*self.lpf.alt[cond],dr)
                     #print('The adaptable data rate is calculated as',dr)## MR -- another debug line
             else:
                 dr+=self.devices[dk].data_rate()

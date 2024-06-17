@@ -15,11 +15,37 @@ import argparse
 import yaml
 import h5py
 
+
+
+try:
+    luseepy_path=os.environ['LUSEEPY_PATH']
+    print(f'''The LUSEEPY_PATH is defined in the environment: {luseepy_path}, will be added to sys.path''')
+    sys.path.append(luseepy_path)
+except:
+    print('The variable LUSEEPY_PATH is undefined, will rely on PYTHONPATH')
+
+try:
+    luseeopsim_path=os.environ['LUSEEOPSIM_PATH']
+    print(f'''The LUSEEOPSIM_PATH is defined in the environment: {luseeopsim_path}, will be added to sys.path''')
+    sys.path.append(luseeopsim_path)
+except:
+    print('The variable LUSEEOPSIM_PATH is undefined, will rely on PYTHONPATH')
+    sys.path.append('../')  # Add parent dir to path, to ensure at least basic functionality in the notebook
+
+for path_part in sys.path:
+    if path_part!='': print(f'''{path_part}''')
+
 # lusee/opsim
+import lusee
+from lusee import Observation
+from lusee import Satellite
+from lusee import ObservedSatellite
 import nav
 from nav import *
 from    nav.coordinates import *
 from    lunarsky.time   import Time
+
+
 # ----------------------------------------------------------------------------------
 parser = argparse.ArgumentParser()
 

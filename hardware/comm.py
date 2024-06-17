@@ -26,6 +26,14 @@ class Comm():
         self.popt, self.pcov = curve_fit(self._ext_gain_func, self.ant_angle, self.ant_gain) # do we use the cov matrix at all?
         self.ext_gain = lambda angle: self._ext_gain_func(angle, *self.popt)
         
+        self.Freq_MHz = 2250.0
+        self.R_interp = np.linspace(430,10000,1000) # finer steps of R
+        self.Pt_error_intp = interp1d(self.R,self.Pt_error)  # interp function
+    
+        self.Off_pt_angle = 0 #
+        
+        self.Antenna_gain_intp = np.linspace(0,10,1000) 
+        self.SANT_intp = interp1d(self.Antenna_gain,self.SANT,fill_value="extrapolate")
 
     def _ext_gain_func(self, x, a, b, c):
         '''
@@ -43,27 +51,29 @@ class Comm():
         
         '''
         
-        Srange_max = 8887.0   #Slant Range # LOS b/w sat and receiver 
-        Srange_min = 2162.0
-        Srange_mean = 6297.0
+        #Srange_max = 8887.0   #Slant Range # LOS b/w sat and receiver 
+        #Srange_min = 2162.0
+        #Srange_mean = 6297.0
     
-        Freq_MHz = 2250.0  # comm sat, fixed
+        #Freq_MHz = 2250.0  # comm sat, fixed
+        
         Asset_EIRP = 13.0 + extra_ant_gain#dBW # strength of signal assuming radially symmetric
     
         Srange = dis_range
      
-        free_space_path_loss = -20*np.log10(4*np.pi*Freq_MHz*1000000*Srange*1000/300000000) # E loss in free space prop to srange and freq
+        free_space_path_loss = -20*np.log10(4*np.pi*self.Freq_MHz*1000000*Srange*1000/300000000) # E loss in free space prop to srange and freq
     
-        R_interp = np.linspace(430,10000,1000) # finer steps of R
-        Pt_error_intp = interp1d(self.R,self.Pt_error)  # interp function
+        #R_interp = np.linspace(430,10000,1000) #  moved to init
+        #Pt_error_intp = interp1d(self.R,self.Pt_error)  #  moved to init
+        #Off_pt_angle = 0 #  moved to init
+        
+        Pt_error_main = self.Pt_error_intp(Srange)
     
-        Off_pt_angle = 0 # ideal case of directly overhead? Variation in position angle
-        Pt_error_main = Pt_error_intp(Srange)
-    
-        Antenna_gain_intp = np.linspace(0,10,1000) 
-        SANT_intp = interp1d(self.Antenna_gain,self.SANT,fill_value="extrapolate")
+        #Antenna_gain_intp = np.linspace(0,10,1000)  #  moved to init
+        #SANT_intp = interp1d(self.Antenna_gain,self.SANT,fill_value="extrapolate") #  moved to init
         #print(Off_pt_angle + Pt_error_main)
-        SANT_main = SANT_intp(Off_pt_angle+Pt_error_main)
+        #SANT_main = SANT_intp(Off_pt_angle+Pt_error_main)
+        SANT_main = self.SANT_intp(self.Off_pt_angle+Pt_error_main)
         Antenna_return_loss = 15 # E loss due to refections
         Mismatch_loss = 10*np.log10(1-(10**(-Antenna_return_loss/20))**2) # impedance mismatch? 
         SC_noise_temp = 26.8
