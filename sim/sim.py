@@ -7,7 +7,6 @@ import  h5py
 from    hardware        import *
 from    utils.timeconv  import *
 from    nav             import *  # Astro/observation wrapper classes
-#from hardware import comm
 
 #################################################################################
 class Monitor():
@@ -332,10 +331,9 @@ class Simulator:
         return self.controller.power[self.myT]
     
      # ---
-    def data_rate(self,conditions=[]):
+    def data_rate(self,time_index,conditions=[]):
         """ Calculate the total data rate, traversing over the device collection. """
         dr = 0.0
-        cond = self.myT
         for dk in self.devices.keys():
             if dk=='UT' and 'TX' in conditions:
                 #dr+=self.devices[dk].data_rate_tx() # not sure we need this?
@@ -344,14 +342,14 @@ class Simulator:
                     #print('The constant data rate is calculated as',dr)
                 else:                     
                     zero_ext_gain = False
-                   # print(self.lpf.alt[cond])
-                    adapt_rate, demo,pw = self.comm.get_rate(self.lpf.dist[cond],(180/np.pi)*self.lpf.alt[cond],max_rate_kbps= 
+                    print(self.lpf.dist[time_index],time_index)
+                    adapt_rate, demo,pw = self.comm.get_rate(self.lpf.dist[time_index],(180/np.pi)*self.lpf.alt[time_index],max_rate_kbps= 
                                                              self.comm.max_rate_kbps, demod_marg= self.comm.link_margin_dB, 
                                                              zero_ext_gain=False)
 
                     dr += adapt_rate 
                     #print(self.lpf.dist[cond], (180/np.pi)*self.lpf.alt[cond],dr)
-                    #print('The adaptable data rate is calculated as',dr)## MR -- another debug line
+                    print('The adaptable data rate is calculated as',dr)## MR -- another debug line
             else:
                 dr+=self.devices[dk].data_rate()
         
@@ -488,7 +486,7 @@ class Simulator:
 
             # Data section
             ## first are we communicating:
-            data_rate = self.data_rate(conditions=conditions)    
+            data_rate = self.data_rate(conditions=conditions, time_index=myT)    
             self.monitor.data_rate[myT] = data_rate
             self.ssd.change(data_rate*self.deltaT)
             self.monitor.ssd[myT]       = self.ssd.level/self.ssd.capacity

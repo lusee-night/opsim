@@ -167,10 +167,6 @@ bgeSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, 
 obsBgeSat   = ObservedSatellite(observation, bgeSat)
 
 
-#lpf_dist = obsLpfSat.dist_km()
-#bge_dist = obsBgeSat.dist_km()
-
-
 N = len(obsBgeSat.mjd)
 if verb: print(f'''BGE (ELytra) Satellite: generated {N} data points''')
 

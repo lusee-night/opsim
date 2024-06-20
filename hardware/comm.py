@@ -23,7 +23,7 @@ class Comm():
         self.SANT = np.array([21.8, 21.8, 21.6, 21.2, 20.6, 19.9, 18.9, 17.7, 16.4, 14.6, 12.6])
         self.ant_gain = [6.5, 4.5, 0]
         self.ant_angle = [90, 60, 30]
-        self.popt, self.pcov = curve_fit(self._ext_gain_func, self.ant_angle, self.ant_gain) # do we use the cov matrix at all?
+        self.popt, self.pcov = curve_fit(self._ext_gain_func, self.ant_angle, self.ant_gain) 
         self.ext_gain = lambda angle: self._ext_gain_func(angle, *self.popt)
         
         self.Freq_MHz = 2250.0
@@ -51,28 +51,14 @@ class Comm():
         
         '''
         
-        #Srange_max = 8887.0   #Slant Range # LOS b/w sat and receiver 
-        #Srange_min = 2162.0
-        #Srange_mean = 6297.0
-    
-        #Freq_MHz = 2250.0  # comm sat, fixed
-        
         Asset_EIRP = 13.0 + extra_ant_gain#dBW # strength of signal assuming radially symmetric
     
         Srange = dis_range
      
         free_space_path_loss = -20*np.log10(4*np.pi*self.Freq_MHz*1000000*Srange*1000/300000000) # E loss in free space prop to srange and freq
     
-        #R_interp = np.linspace(430,10000,1000) #  moved to init
-        #Pt_error_intp = interp1d(self.R,self.Pt_error)  #  moved to init
-        #Off_pt_angle = 0 #  moved to init
         
         Pt_error_main = self.Pt_error_intp(Srange)
-    
-        #Antenna_gain_intp = np.linspace(0,10,1000)  #  moved to init
-        #SANT_intp = interp1d(self.Antenna_gain,self.SANT,fill_value="extrapolate") #  moved to init
-        #print(Off_pt_angle + Pt_error_main)
-        #SANT_main = SANT_intp(Off_pt_angle+Pt_error_main)
         SANT_main = self.SANT_intp(self.Off_pt_angle+Pt_error_main)
         Antenna_return_loss = 15 # E loss due to refections
         Mismatch_loss = 10*np.log10(1-(10**(-Antenna_return_loss/20))**2) # impedance mismatch? 
@@ -110,7 +96,7 @@ class Comm():
         demods and rates. Converges when maximum pw2 reached (12) or minimum demod_marg (3) is acheived.
         
         input: distance (array), alt_deg (array), demod_marg (integer), zero_ext_gain (boolean)
-        output: rate (in what units?), demod, bit rate?
+        output: rate (kbps), demod
         
         '''
         extra_gain = self.ext_gain(alt_deg) if not zero_ext_gain else 0
@@ -120,7 +106,7 @@ class Comm():
         #print('Demod margin is',demod_marg)
         while True:
             try_demod, try_rate = self.demodulation(distance_km, pw2, extra_gain)
-            if (try_demod < demod_marg) or (pw2 == int(np.log10(max_rate_kbps)/np.log10(2))-1): # a minus 1?
+            if (try_demod < demod_marg) or (pw2 == int(np.log10(max_rate_kbps)/np.log10(2))-1):
                 break
             pw2 += 1
             rate = try_rate
