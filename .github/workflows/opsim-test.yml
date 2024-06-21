@@ -32,5 +32,6 @@ jobs:
           export LUSEEPY_PATH=/user/luseepy
           export LUSEEOPSIM_PATH=`pwd`
           pip install simpy
+          chmod +x ./test/var_rate_test.py
           ./test/var_rate_test.py -v
           
