@@ -69,7 +69,7 @@ config      = config_all['comm']
 orbitals    = luseeopsim_path + "/data/orbitals/20260110-20270116.hdf5" ## changed last digit to 6 as of 6/18/24
 modes       = luseeopsim_path + "/config/modes.yml"
 devices     = luseeopsim_path + "/config/devices.yml"
-comtable    = luseeopsim_path + "/config/comtable-20260110-20270116.yml"
+
 
 initial_time    = 2
 until           = 4600 #2780
