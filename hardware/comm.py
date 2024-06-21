@@ -103,7 +103,6 @@ class Comm():
         pw2 = 5
         max_rate_kbps = self.max_rate_kbps
         demod_marg = self.link_margin_dB
-        #print('Demod margin is',demod_marg)
         while True:
             try_demod, try_rate = self.demodulation(distance_km, pw2, extra_gain)
             if (try_demod < demod_marg) or (pw2 == int(np.log10(max_rate_kbps)/np.log10(2))-1):

@@ -147,7 +147,7 @@ aposelene_ref_time          = Time(lpf['aposelene_ref_time'])
 
 lpfSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
 obsLpfSat   = ObservedSatellite(observation, lpfSat)
-#obsLpfSat.dist 
+
 
 
 N = len(obsLpfSat.mjd)
