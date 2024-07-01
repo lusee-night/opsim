@@ -28,4 +28,10 @@ jobs:
           export LUSEEOPSIM_PATH=`pwd`
           pip install simpy
           ./test/sim_test.py -v
+      - run: |
+          export LUSEEPY_PATH=/user/luseepy
+          export LUSEEOPSIM_PATH=`pwd`
+          pip install simpy
+          chmod +x ./test/var_rate_test.py
+          ./test/var_rate_test.py -v
           

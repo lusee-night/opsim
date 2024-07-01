@@ -3,7 +3,9 @@
 # The script for the unit test of the simulator
 #######################################################################
 
-import os, sys
+import os
+import sys
+from sys import exit
 import argparse
 
 
@@ -77,7 +79,7 @@ from    sim import Simulator
 
 # -------------------------------------------------------------
 # Define paths in one place, can overwrite later
-orbitals    = luseeopsim_path + "/data/orbitals/20260110-20270115.hdf5"
+orbitals    = luseeopsim_path + "/data/orbitals/20260110-20270116.hdf5"
 modes       = luseeopsim_path + "/config/modes.yml"
 devices     = luseeopsim_path + "/config/devices.yml"
 comtable    = luseeopsim_path + "/config/comtable-20260110-20270115.yml"

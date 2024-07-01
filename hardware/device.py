@@ -36,11 +36,6 @@ class Device():
         if self.data_rates is None:
             return 0.0
         return self.data_rates[self.state]
-    
-    def data_rate_tx(self):
-        if self.data_rates is None:
-            return 0.0
-        return self.data_rates['TX']
 
     def info(self):
         name = self.name + ','

@@ -2,14 +2,50 @@
 #######################################################################
 # The script to prepare ALL of the "orbitals" data e.g. Sun, satellites
 #######################################################################
+#%reload_ext autoreload
+#%autoreload 2
+
+# Standard imports and utility ---
+import  os, sys
+from sys import exit
+import  matplotlib.pyplot as plt
+
 
 import argparse
 import yaml
 import h5py
 
+
+
+try:
+    luseepy_path=os.environ['LUSEEPY_PATH']
+    print(f'''The LUSEEPY_PATH is defined in the environment: {luseepy_path}, will be added to sys.path''')
+    sys.path.append(luseepy_path)
+except:
+    print('The variable LUSEEPY_PATH is undefined, will rely on PYTHONPATH')
+
+try:
+    luseeopsim_path=os.environ['LUSEEOPSIM_PATH']
+    print(f'''The LUSEEOPSIM_PATH is defined in the environment: {luseeopsim_path}, will be added to sys.path''')
+    sys.path.append(luseeopsim_path)
+except:
+    print('The variable LUSEEOPSIM_PATH is undefined, will rely on PYTHONPATH')
+    sys.path.append('../')  # Add parent dir to path, to ensure at least basic functionality in the notebook
+
+for path_part in sys.path:
+    if path_part!='': print(f'''{path_part}''')
+
 # lusee/opsim
+import lusee
+from lusee import Observation
+from lusee import Satellite
+from lusee import ObservedSatellite
+import nav
+from nav import *
 from    nav.coordinates import *
 from    lunarsky.time   import Time
+
+
 # ----------------------------------------------------------------------------------
 parser = argparse.ArgumentParser()
 
@@ -55,6 +91,8 @@ if inspectfile != '': # inspect and exit
 # ----------------------------------------------------------------------------------
 # -- READ AND PARSE THE CONFIGURATION DATA
 #
+
+
 if conffile=='':
     print('Missing configuration, exiting...')
     exit(-2)
@@ -92,6 +130,7 @@ print(f'''Latitude: {lat}, longitude: {lon}''')
 # Initialize the Observation obejct with the data gleaned from the configuraiton file
 observation = O((t_start, t_end), lat, lon, hgt, deltaT)
 (times, alt, az) = track_from_observation(observation) # Sun
+
 N = times.size
 mjd = [t.mjd for t in times]
 
@@ -109,6 +148,8 @@ aposelene_ref_time          = Time(lpf['aposelene_ref_time'])
 lpfSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
 obsLpfSat   = ObservedSatellite(observation, lpfSat)
 
+
+
 N = len(obsLpfSat.mjd)
 if verb: print(f'''LPF (ESA) Satellite: generated {N} data points''')
 
@@ -125,12 +166,15 @@ aposelene_ref_time          = Time(bge['aposelene_ref_time'])
 bgeSat      = Satellite(semi_major_km, eccentricity, inclination_deg, raan_deg, argument_of_pericenter_deg, aposelene_ref_time)
 obsBgeSat   = ObservedSatellite(observation, bgeSat)
 
+
 N = len(obsBgeSat.mjd)
 if verb: print(f'''BGE (ELytra) Satellite: generated {N} data points''')
 
-# Combine all data in an array suitable for output
-result = np.column_stack((mjd, alt, az, obsLpfSat.alt, obsLpfSat.az, obsBgeSat.alt, obsBgeSat.az))
 
+# Combine all data in an array suitable for output
+result = np.column_stack((mjd, alt, az, obsLpfSat.alt, obsLpfSat.az,obsLpfSat.dist_km(),obsBgeSat.alt, obsBgeSat.az,obsBgeSat.dist_km()))
+
+#print('result is',result)
 
 if verb: print('Finished calculations, formed the data package...')
 

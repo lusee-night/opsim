@@ -222,10 +222,11 @@ class Sat:
     """ A simple container for the "orbitals" type of data for satellites.
         Adds the crossings and "up" condition calculation, quntized to the deltaT time step.
     """
-    def __init__(self, mjd=None, alt=None, az=None):
+    def __init__(self, mjd=None, alt=None, az=None, dist=None):
         self.mjd        = mjd
         self.alt        = alt
         self.az         = az
+        self.dist       = dist ## in km
         self.N          = self.az.size
 
         detect          = np.signbit(self.alt)
