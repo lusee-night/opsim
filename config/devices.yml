@@ -89,10 +89,8 @@ power_consumers:
 outside_heat:
   preamp:
     'ON':       0.9
-  UT:
-    'TX':       4
-
-# Comm variable rate configuration -- MR added
+    
+# Comm variable rate configuration
 comm: 
    adaptable_rate: True
    if_adaptable:

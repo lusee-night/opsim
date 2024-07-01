@@ -332,7 +332,6 @@ class Simulator:
         dr = 0.0
         for dk in self.devices.keys():
             if dk=='UT' and 'TX' in conditions:
-                #dr+=self.devices[dk].data_rate_tx() # not sure we need this?
                 if not self.comm.adaptable_rate: 
                     dr += self.comm.fixed_rate
                 else:                     
