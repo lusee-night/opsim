@@ -98,6 +98,11 @@ comm:
        link_margin_dB: 3
    if_fixed:
        fixed_rate: -20.0
+
+# change to maint mode when sat is overhead
+scheduling:
+    alt_overhead: 0.34
+    time_overhead: 0.08
   
 # Data consumption (bandwidth) in kB/s
 ssd_consumers:

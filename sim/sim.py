@@ -142,8 +142,8 @@ class Simulator:
         self.comm = Comm(max_rate_kbps=comm_config.get('if_adaptable', {}).get('max_rate_kbps'),
                          link_margin_dB=comm_config.get('if_adaptable', {}).get('link_margin_dB'),
                          fixed_rate=comm_config.get('if_fixed', {}).get('fixed_rate'))  
-
-            
+        
+        self.scheduling = profiles.get('scheduling', {})
         power_consumer_devices  = profiles['power_consumers'].keys()
         ssd_consumer_devices    = profiles['ssd_consumers'].keys()
         device_names            = power_consumer_devices | ssd_consumer_devices
@@ -171,6 +171,7 @@ class Simulator:
         self.ssd_config     = profiles['ssd']
         self.thermal_config = profiles['thermal']
         self.panel_config   = profiles['solar_panels']
+
     
     # ---
     def read_comtable(self):
@@ -216,16 +217,20 @@ class Simulator:
             don't take it too seriously."""
 
         cfg = self.comgen
+        tick_overhead = 0
+        alt_overhead = self.scheduling['alt_overhead']
+        time_overhead = self.scheduling['time_overhead']
+        
         # first check some sanity
-        assert (cfg['algorithm'] == 'simple')
-        day_modes = cfg['day']['modes'].split()
-        day_duty = np.array([float(x) for x in cfg['day']['duty'].split()])
-        day_cycle = cfg['day']['cycle_hours']
-        assert(len(day_modes)==len(day_duty))
-        assert(day_duty.sum()==1.0)
+        assert (cfg['algorithm'] == 'simple') ## if not simple than raises assertion error
+        day_modes = cfg['day']['modes'].split() ## splits the science and main into sep lists
+        day_duty = np.array([float(x) for x in cfg['day']['duty'].split()]) ## splits same as above for duty cycle
+        day_cycle = cfg['day']['cycle_hours'] ## sets the day cycle length
+        assert(len(day_modes)==len(day_duty)) 
+        assert(day_duty.sum()==1.0) ## sets so that percent of cycle toward a given mode is 100%
         assert(day_cycle>0)
 
-        night_modes = cfg['night']['modes'].split()
+        night_modes = cfg['night']['modes'].split() ## does the same thing as above but for night
         night_duty = np.array([float(x) for x in cfg['night']['duty'].split()])
         night_cycle = cfg['night']['cycle_hours']
         assert(len(night_modes)==len(night_duty))
@@ -233,22 +238,23 @@ class Simulator:
         assert(night_cycle>0)
         
         sched = {}
-        day = self.sun.alt[myT] > 0
-        mjd_now = self.sun.mjd[myT]
+        day = self.sun.alt[myT] > 0 ## day is when alt at time t is >0
+        mjd_now = self.sun.mjd[myT]  ## gets current mjd 
         if 'last_state_day' not in self.__dict__:
-            self.last_state_day = not day # let's force it to switch
-        if not day:
+            self.last_state_day = not day # let's force it to switch ## already not in so this statement is always true?
+        if not day: ## which again is always true?
             if self.last_state_day:
                 # day to night transition
-                self.last_sunset_mjd = self.sun.mjd[myT]
+                self.last_sunset_mjd = self.sun.mjd[myT] ## set mjd for sunset/beginning of night
+                
             # let's switch between science and powersave every 12 hours
-            tick = (mjd_now - self.last_sunset_mjd) / (night_cycle/24)
-            assert(tick>=0)
-            tick -= int(tick)
+            tick = (mjd_now - self.last_sunset_mjd) / (night_cycle/24) ## time steps fraction of a day
+            assert(tick>=0) ## beginning of night
+            tick -= int(tick) ## subtracts integer number of cycles
             cp = 0
             for p, m in zip (night_duty,night_modes):
-                cp+=p
-                if cp>tick:
+                cp+=p 
+                if cp>tick: ## guarantees mode is spending the appropriate fractional time in a specific spot
                     sched['mode'] = m
                     break
         else:
@@ -259,12 +265,40 @@ class Simulator:
             tick = (mjd_now - self.last_sunrise_mjd) / (day_cycle/24)
             assert(tick>=0)
             tick -= int(tick)
-            cp = 0
-            for p, m in zip (day_duty,day_modes):
-                cp+=p
-                if cp>=tick:
-                    sched['mode'] = m
-                    break
+        
+            if self.sun.alt[myT] > alt_overhead:
+                if 'init_tick_overhead' not in self.__dict__:
+                    self.init_tick_overhead = tick
+                    tick_overhead = 0
+                
+                if tick_overhead == 0: ## forcing the initial tick to be 
+                   tick_overhead = np.abs(tick - self.init_tick_overhead)
+                   print('****Current time tick:', tick,'first time tick where alt condition is met:',self.init_tick_overhead, 'tick overhead recentered (tick-init_tick): ', tick_overhead)
+                    
+                tick_overhead += np.abs(tick - self.init_tick_overhead)
+                #print('Time elapsed at this alt ', tick_overhead)
+                    
+
+                if tick_overhead <= time_overhead:
+                    print('-------------')
+                    print('It is day and alt is greater than 20, and current elapsed time is met and is', tick_overhead,'while regular time is',tick)
+                    sched['mode'] = day_modes[1]
+                    print('Current mode is ', day_modes[1])
+                    
+                else:
+                    print('-------------')
+                    print('It is day and alt is greater than 20, but elapsed time overhead condition NOT met')
+                    sched['mode'] = day_modes[0]
+                    print('Current mode is',day_modes[0]) 
+                    tick_overhead = 0
+                    
+            else:
+                cp = 0
+                for p, m in zip(day_duty, day_modes):
+                    cp += p
+                    if cp >= tick:
+                        sched['mode'] = m
+                        break
         assert('mode' in sched)
         self.last_state_day = day
         return sched
