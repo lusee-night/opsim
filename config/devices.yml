@@ -102,7 +102,7 @@ comm:
 # change to maint mode when sat is overhead
 scheduling:
     alt_overhead: 0.34
-    time_overhead: 0.08
+    time_overhead: 0.1
   
 # Data consumption (bandwidth) in kB/s
 ssd_consumers:

@@ -217,9 +217,9 @@ class Simulator:
             don't take it too seriously."""
 
         cfg = self.comgen
-        tick_overhead = 0
+        elap_time_overhead = 0
         alt_overhead = self.scheduling['alt_overhead']
-        time_overhead = self.scheduling['time_overhead']
+        time_overhead_cond = self.scheduling['time_overhead']
         
         # first check some sanity
         assert (cfg['algorithm'] == 'simple') ## if not simple than raises assertion error
@@ -248,13 +248,13 @@ class Simulator:
                 self.last_sunset_mjd = self.sun.mjd[myT] ## set mjd for sunset/beginning of night
                 
             # let's switch between science and powersave every 12 hours
-            tick = (mjd_now - self.last_sunset_mjd) / (night_cycle/24) ## time steps fraction of a day
-            assert(tick>=0) ## beginning of night
-            tick -= int(tick) ## subtracts integer number of cycles
+            cycle_frac = (mjd_now - self.last_sunset_mjd) / (night_cycle/24) ## time steps fraction of a day
+            assert(cycle_frac>=0) ## beginning of night
+            cycle_frac -= int(cycle_frac) ## subtracts integer number of cycles
             cp = 0
             for p, m in zip (night_duty,night_modes):
                 cp+=p 
-                if cp>tick: ## guarantees mode is spending the appropriate fractional time in a specific spot
+                if cp>cycle_frac: ## guarantees mode is spending the appropriate fractional time in a specific spot
                     sched['mode'] = m
                     break
         else:
@@ -262,41 +262,48 @@ class Simulator:
                 # night to day transition
                 self.last_sunrise_mjd = self.sun.mjd[myT]
             # let's switch between science and powersave every 12 hours
-            tick = (mjd_now - self.last_sunrise_mjd) / (day_cycle/24)
-            assert(tick>=0)
-            tick -= int(tick)
+            cycle_frac = (mjd_now - self.last_sunrise_mjd) / (day_cycle/24)
+            assert(cycle_frac>=0)
+            cycle_frac -= int(cycle_frac)
+
         
-            if self.sun.alt[myT] > alt_overhead:
-                if 'init_tick_overhead' not in self.__dict__:
-                    self.init_tick_overhead = tick
-                    tick_overhead = 0
-                
-                if tick_overhead == 0: ## forcing the initial tick to be 
-                   tick_overhead = np.abs(tick - self.init_tick_overhead)
-                   print('****Current time tick:', tick,'first time tick where alt condition is met:',self.init_tick_overhead, 'tick overhead recentered (tick-init_tick): ', tick_overhead)
+            if self.lpf.alt[myT] > alt_overhead:  ## opportunisticall change to maint when sat is overhead
+                if 'init_cycle_frac_overhead' not in self.__dict__ or self.init_cycle_frac_overhead == 0: ##initialization
+                    self.init_cycle_frac_overhead = cycle_frac
+                    elap_time_overhead = 0
+                    print(f"Initializing overhead time tracking. Initial cycle_frac where tracking begins: {cycle_frac:.4f}")
+                else:
+                    elap_time_overhead = cycle_frac - self.init_cycle_frac_overhead
+                               
                     
-                tick_overhead += np.abs(tick - self.init_tick_overhead)
-                #print('Time elapsed at this alt ', tick_overhead)
+                elap_time_overhead += cycle_frac - self.init_cycle_frac_overhead
+                print(f"Current altitude: {self.lpf.alt[myT]:.2f}, where min altitude is: {alt_overhead:.2f}")
+                print(f"Current cycle_frac (outside of alt loop): {cycle_frac:.4f}, Initial cycle_frac: {self.init_cycle_frac_overhead:.4f}")
+                print(f"Elapsed time overhead: {elap_time_overhead:.4f}, Elapsed time condition: {time_overhead_cond:.4f}")
+            
                     
 
-                if tick_overhead <= time_overhead:
+                if elap_time_overhead >= time_overhead_cond:
                     print('-------------')
-                    print('It is day and alt is greater than 20, and current elapsed time is met and is', tick_overhead,'while regular time is',tick)
+                    print(f"Elapsed time condition met: Daytime, altitude > {alt_overhead:.2f}, elapsed time {elap_time_overhead:.4f} >= {time_overhead_cond:.4f}")
                     sched['mode'] = day_modes[1]
-                    print('Current mode is ', day_modes[1])
-                    
-                else:
+                    print(f"Switching to mode: {day_modes[1]}")
                     print('-------------')
-                    print('It is day and alt is greater than 20, but elapsed time overhead condition NOT met')
+                        
+                else:
+                    print('xxxxxxxx')
+                    print(f"Condition not met: Daytime, altitude > {alt_overhead:.2f}, but elapsed time {elap_time_overhead:.4f} < {time_overhead_cond:.4f}")
                     sched['mode'] = day_modes[0]
-                    print('Current mode is',day_modes[0]) 
-                    tick_overhead = 0
-                    
+                    print(f"Maintaining mode: {day_modes[0]}")
+                    print('xxxxxxxx')
+
+            
             else:
+                self.init_cycle_frac_overhead = 0
                 cp = 0
                 for p, m in zip(day_duty, day_modes):
                     cp += p
-                    if cp >= tick:
+                    if cp >= cycle_frac:
                         sched['mode'] = m
                         break
         assert('mode' in sched)
