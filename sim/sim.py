@@ -267,39 +267,40 @@ class Simulator:
             cycle_frac -= int(cycle_frac)
 
         
-            if self.lpf.alt[myT] > alt_overhead:  ## opportunisticall change to maint when sat is overhead
-                if 'init_cycle_frac_overhead' not in self.__dict__ or self.init_cycle_frac_overhead == 0: ##initialization
-                    self.init_cycle_frac_overhead = cycle_frac
-                    elap_time_overhead = 0
-                    print(f"Initializing overhead time tracking. Initial cycle_frac where tracking begins: {cycle_frac:.4f}")
-                else:
-                    elap_time_overhead = cycle_frac - self.init_cycle_frac_overhead
-                               
-                    
-                elap_time_overhead += cycle_frac - self.init_cycle_frac_overhead
-                print(f"Current altitude: {self.lpf.alt[myT]:.2f}, where min altitude is: {alt_overhead:.2f}")
-                print(f"Current cycle_frac (outside of alt loop): {cycle_frac:.4f}, Initial cycle_frac: {self.init_cycle_frac_overhead:.4f}")
-                print(f"Elapsed time overhead: {elap_time_overhead:.4f}, Elapsed time condition: {time_overhead_cond:.4f}")
-            
-                    
+            if self.lpf.alt[myT] > alt_overhead:
+               initial_cycle_frac = cycle_frac
+               i = 1
+               bool_list = []
+               
+               while True:
+                   print('Beginning testing')
+                   current_cycle_frac = (self.sun.mjd[myT+i] - self.last_sunrise_mjd) / (day_cycle/24)
+                   current_cycle_frac -= int(current_cycle_frac)
+                   
+                   
 
-                if elap_time_overhead >= time_overhead_cond:
-                    print('-------------')
-                    print(f"Elapsed time condition met: Daytime, altitude > {alt_overhead:.2f}, elapsed time {elap_time_overhead:.4f} >= {time_overhead_cond:.4f}")
-                    sched['mode'] = day_modes[1]
-                    print(f"Switching to mode: {day_modes[1]}")
-                    print('-------------')
-                        
-                else:
-                    print('xxxxxxxx')
-                    print(f"Condition not met: Daytime, altitude > {alt_overhead:.2f}, but elapsed time {elap_time_overhead:.4f} < {time_overhead_cond:.4f}")
-                    sched['mode'] = day_modes[0]
-                    print(f"Maintaining mode: {day_modes[0]}")
-                    print('xxxxxxxx')
-
-            
+                   time_spent_nonmod = current_cycle_frac - initial_cycle_frac
+                   print(f"Current cycle fraction is {current_cycle_frac:4f} initial cycle frac of {initial_cycle_frac:4f} for a total time spent of {time_spent} and nonmod of {time_spent_nonmod}, at an altitude of {self.lpf.alt[myT+i]}")
+                   if time_spent >= time_overhead_cond:
+                       if self.lpf.alt[myT+i] <= alt_overhead:
+                           break
+                   
+                   if self.lpf.alt[myT+i] > alt_overhead:
+                       bool_list.append(True)
+                   else:
+                       bool_list.append(False)
+                   i += 1
+               
+               print(f"Checked {i} points, spanning {time_overhead_cond:.2f} of a day cycle")
+               
+               if all(bool_list):
+                   sched['mode'] = day_modes[1]
+                   print(f"Switching to mode: {day_modes[1]}")
+               else:
+                   sched['mode'] = day_modes[0]
+                   print(f"Maintaining mode: {day_modes[0]}")
+                             
             else:
-                self.init_cycle_frac_overhead = 0
                 cp = 0
                 for p, m in zip(day_duty, day_modes):
                     cp += p
