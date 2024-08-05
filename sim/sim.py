@@ -266,21 +266,19 @@ class Simulator:
             assert(cycle_frac>=0)
             cycle_frac -= int(cycle_frac)
 
-        
+            time_spent = 0
             if self.lpf.alt[myT] > alt_overhead:
                initial_cycle_frac = cycle_frac
                i = 1
                bool_list = []
-               
                while True:
-                   print('Beginning testing')
+                   #print('Looking ahead')
                    current_cycle_frac = (self.sun.mjd[myT+i] - self.last_sunrise_mjd) / (day_cycle/24)
                    current_cycle_frac -= int(current_cycle_frac)
-                   
-                   
-
-                   time_spent_nonmod = current_cycle_frac - initial_cycle_frac
-                   print(f"Current cycle fraction is {current_cycle_frac:4f} initial cycle frac of {initial_cycle_frac:4f} for a total time spent of {time_spent} and nonmod of {time_spent_nonmod}, at an altitude of {self.lpf.alt[myT+i]}")
+                   if current_cycle_frac < initial_cycle_frac:
+                       print("Dipped into night, breaking the loop")
+                       break ## because you've dipped into night now
+                   time_spent = current_cycle_frac - initial_cycle_frac
                    if time_spent >= time_overhead_cond:
                        if self.lpf.alt[myT+i] <= alt_overhead:
                            break
@@ -290,15 +288,17 @@ class Simulator:
                    else:
                        bool_list.append(False)
                    i += 1
+                   
+               #print(f"Checked {i} points, spanning {time_spent:.2f} of a day cycle")
+    
                
-               print(f"Checked {i} points, spanning {time_overhead_cond:.2f} of a day cycle")
-               
-               if all(bool_list):
+               if time_spent >= time_overhead_cond and all(bool_list):
                    sched['mode'] = day_modes[1]
                    print(f"Switching to mode: {day_modes[1]}")
                else:
                    sched['mode'] = day_modes[0]
                    print(f"Maintaining mode: {day_modes[0]}")
+               
                              
             else:
                 cp = 0
