@@ -77,6 +77,7 @@ class Panel: # base, "abstract"
         if self.sun.regolith_temperature is not None: eff = self.pvEfficiency(self.sun.regolith_temperature)
         if self.apply_cosine_correction==True:
             power =  Panel.solarConstant*eff*np.select(self.condition_list, self.choice_list)*self.dot_sun_corr * self.efficiency_mult
+            print(power)
         else:
             power =  Panel.solarConstant*eff*np.select(self.condition_list, self.choice_list) * self.efficiency_mult
         return power
