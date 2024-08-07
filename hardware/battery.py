@@ -101,6 +101,7 @@ class Battery:
 
         SOC = self.level/self.capacity
 
+
         if (power>0):
             VOC = self.VOC((SOC, self.temperature))
             R_internal = self.R_internal((SOC, self.temperature))
