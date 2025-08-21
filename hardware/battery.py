@@ -16,13 +16,13 @@ class Battery:
 
         self.OK         = False # Set to true when final
         self.verbose    = verbose
-        self.temperature= None 
-    
+        self.temperature= None
+
         self.errors     = []
         charge_unit     = config['charge_unit']
         if charge_unit not in ('As', 'Ah'):
             self.errors.append('Charge unit undefined')
-        
+
         self.level      = float(config['initial'])
         self.capacity   = float(config['capacity'])*(1-float(config['capacity_fade']))
 
@@ -37,7 +37,7 @@ class Battery:
         self.read_VOC_table(table_fn, VOC_table_cols)
 
         self.OK         = (len(self.errors) == 0)
-        
+
     # ---
     def read_VOC_table(self, table_fn, VOC_table_cols):
         table_fn = self.luseeopsim_path+'/'+table_fn
@@ -62,7 +62,7 @@ class Battery:
                         RI_cols.append(i)
                         RI_temps.append(float(T))
                     else:
-                        raise NotImplementedError   
+                        raise NotImplementedError
                 except:
                     print('Cannot parse VOC table. Column %d has value %s' % (i, el))
                     sys.exit(1)
@@ -70,7 +70,7 @@ class Battery:
             print('Cannot parse VOC table. No SOC column')
             sys.exit(1)
         SOC = table[:, soc_col]/100.0 # convert from percent to fraction
-        if self.verbose: 
+        if self.verbose:
                 print ('   SOC lookup:', SOC[0],'..' , SOC[-1])
                 print ('   Temperature lookup:', VOC_temps[0],'..' , VOC_temps[-1])
         VOC_table = table[:, VOC_cols]
@@ -83,7 +83,7 @@ class Battery:
     def Voltage(self):
         SOC = self.level/self.capacity
         return self.VOC((SOC,self.temperature))
-    
+
     # ---
     def SOC(self):
         return self.level/self.capacity
@@ -106,7 +106,7 @@ class Battery:
             R_internal = self.R_internal((SOC, self.temperature))
             if R_internal == 0:
                 R_internal = 1e-10 ## avoid division by zero
-            I = (-VOC + np.sqrt(VOC**2 + 4*R_internal*power))/(2*R_internal) 
+            I = (-VOC + np.sqrt(VOC**2 + 4*R_internal*power))/(2*R_internal)
             self.level += I*deltaT
             self.level = min(self.level, self.capacity)
         else:
@@ -118,11 +118,11 @@ class Battery:
             I = (VOC - np.sqrt(VOC**2 - 4*R_internal*power))/(2*R_internal)
             self.level -= I*deltaT
             self.level = max(self.level, 0)
-    
+
     # ---
     def apply_age (self, deltaT):
         loss            = np.exp(-deltaT/self.discharge_tau)
         self.capacity   *= loss
         self.level      *= loss
-        
+
 

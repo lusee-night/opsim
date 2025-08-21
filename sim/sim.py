@@ -23,12 +23,12 @@ class Monitor():
         self.battery_V  = np.zeros(size, dtype=float) # Battery voltage
         self.data_rate  = np.zeros(size, dtype=float) # data rate in/out of the system
         self.ssd        = np.zeros(size, dtype=float) # Amount of data in the storage device
-        self.boxtemp    = np.zeros(size, dtype=float) # temperature from thermal 
+        self.boxtemp    = np.zeros(size, dtype=float) # temperature from thermal
 
 # ---
 class Simulator:
     def __init__(self, orbitals_f=None, modes_f=None, devices_f=None, comtable_f=None, initial_time=None, until=None, verbose=False):
-    
+
         # Will be read from the "devices" file later, create placeholders:
         self.battery_config = None
         self.ssd_config     = None
@@ -48,7 +48,9 @@ class Simulator:
         self.sun        = None
         self.lpf        = None
         self.bge        = None
-        
+        self.jupiter    = None
+        self.saturn     = None
+
         # Stubs for other stuff
         self.modes      = None
         self.comtable   = None
@@ -100,7 +102,7 @@ class Simulator:
         """ Read previously calculated data on the coordinates of the Sun and the Satellites.
             The file name is expected to be provides in the attribute orbitals_f.
             The format is HDF5, and it contains two section, metadata and payload (orbitals).
-        """        
+        """
 
         f = h5py.File(self.orbitals_f, "r")
 
@@ -108,15 +110,33 @@ class Simulator:
         conf    = yaml.safe_load(ds_meta[0,])
         self.deltaT  = conf['period']['deltaT']
 
-        ds_data = f["/data/orbitals"]
-        da = np.array(ds_data[:]) # data array
-        if self.verbose: print(f'''Shape of the data payload: {da.shape}''')
+        mjd = np.array(f["/orbitals/mjd"])
 
-        # Inflate objects based on this array data:
-        self.sun = Sun(da[:,0], da[:,1] , da[:,2])
-        
-        self.lpf = Sat(da[:,0], da[:,3] , da[:,4],da[:,5])
-        self.bge = Sat(da[:,0], da[:,6] , da[:,7],da[:,8])
+        if self.verbose: print(f"Shape of the data payload: {mjd.shape}")
+
+        orb_group = f["/orbitals/"]
+
+        for objid in orb_group:
+            # set self.sun, self.jupiter, self.lpf, etc uniformly
+            if objid == "mjd":
+                continue
+            if objid in ["bge", "lpf"]:
+                dist_km = np.array(orb_group[f"{objid}/dist_km"])
+                alt = np.array(orb_group[f"{objid}/alt"])
+                az = np.array(orb_group[f"{objid}/az"])
+                attr_value = Sat(mjd=mjd, alt=alt, az=az, dist=dist_km)
+            elif objid in ["sun", "saturn", "mars", "jupiter", "venus", "mercury", "uranus", "neptune"]:
+                alt = np.array(orb_group[f"{objid}/alt"])
+                az = np.array(orb_group[f"{objid}/az"])
+                if objid == "sun":
+                    attr_value = Sun(mjd=mjd, alt=alt, az=az)
+                else:
+                    attr_value = Body(mjd=mjd, alt=alt, az=az, name=objid)
+            else:
+                raise RuntimeError(f"Unknown {objid=} in {self.orbitals_f}, cannot read")
+
+            setattr(self, objid, attr_value)
+
 
     # ---
     def read_modes(self):
@@ -134,16 +154,16 @@ class Simulator:
 
 
 
-        if 'comm' not in profiles: 
+        if 'comm' not in profiles:
             print('Comm not found in configuration profile')
             raise NotImplementedError
-        
-        comm_config = profiles['comm']  
+
+        comm_config = profiles['comm']
         self.comm = Comm(max_rate_kbps=comm_config.get('if_adaptable', {}).get('max_rate_kbps'),
                          link_margin_dB=comm_config.get('if_adaptable', {}).get('link_margin_dB'),
-                         fixed_rate=comm_config.get('if_fixed', {}).get('fixed_rate'))  
+                         fixed_rate=comm_config.get('if_fixed', {}).get('fixed_rate'))
 
-            
+
         power_consumer_devices  = profiles['power_consumers'].keys()
         ssd_consumer_devices    = profiles['ssd_consumers'].keys()
         device_names            = power_consumer_devices | ssd_consumer_devices
@@ -157,7 +177,7 @@ class Simulator:
         if 'UT' not in device_names:
             print('UT not found in the device list')
             raise NotImplementedError
-            
+
 
         for device_name in device_names:
             power_profile               = profiles['power_consumers'].get(device_name, None)
@@ -165,13 +185,13 @@ class Simulator:
             data_profile                = profiles['ssd_consumers'].get(device_name, None)
             self.devices[device_name]   = Device(device_name, power_profile = power_profile, outside_heat_profile = outside_heat_profile,
                                                  data_profile = data_profile)
-     
+
         # Component data, read from the "devices" file
         self.battery_config = profiles['battery']
         self.ssd_config     = profiles['ssd']
         self.thermal_config = profiles['thermal']
         self.panel_config   = profiles['solar_panels']
-    
+
     # ---
     def read_comtable(self):
         f = open(self.comtable_f, 'r')
@@ -182,7 +202,7 @@ class Simulator:
 
     # ---
     def find_schedule(self, clock):
-        l = len(self.times) - 1 
+        l = len(self.times) - 1
         tmax = self.times[l]
         if clock>=tmax:
             return self.comtable[self.schedule[tmax]]
@@ -194,7 +214,7 @@ class Simulator:
             else:
                 theTime = self.times[ndx-1]
                 return self.comtable[self.schedule[theTime]]
-   
+
         return None
 
     # ---
@@ -208,9 +228,9 @@ class Simulator:
         self.last_comm = self.sun.mjd[myT]
 
     # --
-    
 
-    # --        
+
+    # --
     def generate_schedule(self, myT):
         """ All of this is purely placeholder now
             don't take it too seriously."""
@@ -231,7 +251,7 @@ class Simulator:
         assert(len(night_modes)==len(night_duty))
         assert(night_duty.sum()==1.0)
         assert(night_cycle>0)
-        
+
         sched = {}
         day = self.sun.alt[myT] > 0
         mjd_now = self.sun.mjd[myT]
@@ -275,8 +295,8 @@ class Simulator:
         fact = float(pwr[1])
         pow = sum([self.devices[k].power() for k in pwr[2].strip().split('+')])
         return Pq + fact*pow
-    
-    
+
+
     # ---
     def power_out(self, verbose = False, conditions = [], mode = None, return_dict = False, get_heat = False):
         pwr = 0.0
@@ -302,8 +322,8 @@ class Simulator:
             # #2 If UT is transmitting....
             elif (dk=='UT') and ('TX' in conditions):
                 cpower = self.devices[dk].power_tx(get_heat = get_heat)
-            # the actual default case 
-            else: 
+            # the actual default case
+            else:
                 cpower = self.devices[dk].power(get_heat = get_heat)
             if verbose: print (f'     Device: {dk:12} : {cpower:4.2f} W')
             if return_dict:
@@ -311,10 +331,10 @@ class Simulator:
             else:
                 pwr += cpower
         if verbose: print (f'   Total power: {pwr:4.1f} W\n')
-        
+
         self.set_mode(mode_save)
         return dct if return_dict else pwr
-    
+
     # ---
     def power_info(self, conditions = [], get_heat = False):
         for mode in self.modes:
@@ -325,26 +345,26 @@ class Simulator:
     # ---
     def power_in(self):
         return self.controller.power[self.myT]
-    
+
      # ---
     def data_rate(self,time_index,conditions=[]):
         """ Calculate the total data rate, traversing over the device collection. """
         dr = 0.0
         for dk in self.devices.keys():
             if dk=='UT' and 'TX' in conditions:
-                if not self.comm.adaptable_rate: 
+                if not self.comm.adaptable_rate:
                     dr += self.comm.fixed_rate
-                else:                     
+                else:
                     zero_ext_gain = False
-                    
-                    adapt_rate, demo,pw = self.comm.get_rate(self.lpf.dist[time_index],(180/np.pi)*self.lpf.alt[time_index],max_rate_kbps= 
-                                                             self.comm.max_rate_kbps, demod_marg= self.comm.link_margin_dB, 
+
+                    adapt_rate, demo,pw = self.comm.get_rate(self.lpf.dist[time_index],(180/np.pi)*self.lpf.alt[time_index],max_rate_kbps=
+                                                             self.comm.max_rate_kbps, demod_marg= self.comm.link_margin_dB,
                                                              zero_ext_gain=False)
 
-                    dr += adapt_rate 
+                    dr += adapt_rate
             else:
                 dr+=self.devices[dk].data_rate()
-        
+
         return dr
 
     # ---
@@ -357,7 +377,7 @@ class Simulator:
             self.devices[dk].state = mode_info[dk]
 
     def device_report(self):
-        if self.verbose:        
+        if self.verbose:
             for dk in self.devices.keys(): print(self.devices[dk].info())
             print('*** Total power:', self.power_out(),'W')
 
@@ -413,7 +433,7 @@ class Simulator:
     def simulate(self, create_command_table = False):
         """ Steeting of the SimPy simulation process, relying on
             the 'run' method previous set in the SimPy environment"""
-        
+
         self.create_command_table = create_command_table
         if create_command_table:
             myT     = int(self.env.now)
@@ -437,7 +457,7 @@ class Simulator:
                 sched = self.generate_schedule(myT)
             else:
                 sched  = self.find_schedule(clock)
-            
+
             md = sched['mode']
 
             if md!=mode:
@@ -450,21 +470,21 @@ class Simulator:
                     self.device_report()
 
                 cnt+=1
-                
+
                 battery_fill = float(self.battery.level/self.battery.capacity)
                 ssd_fill = self.ssd.level/self.ssd.capacity
-                self.record[cnt] = {'start': float(clock), 
+                self.record[cnt] = {'start': float(clock),
                                     'mode': mode,
                                     'battery_expected_fill': battery_fill,
                                     'ssd_expected_fill': ssd_fill}
 
-            conditions = self.get_conditions(myT)                
+            conditions = self.get_conditions(myT)
 
             # Electrical section:
             self.monitor.power[myT] = self.power_out(conditions=conditions)
 
             # put charge into battery if BMS is enabled
-            if ('charging' in conditions): 
+            if ('charging' in conditions):
                 power_in = self.power_in()
             else:
                 power_in = 0.0
@@ -478,7 +498,7 @@ class Simulator:
 
             # Data section
             ## first are we communicating:
-            data_rate = self.data_rate(conditions=conditions, time_index=myT)    
+            data_rate = self.data_rate(conditions=conditions, time_index=myT)
             self.monitor.data_rate[myT] = data_rate
             self.ssd.change(data_rate*self.deltaT)
             self.monitor.ssd[myT]       = self.ssd.level/self.ssd.capacity

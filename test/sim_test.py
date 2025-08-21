@@ -64,61 +64,63 @@ except:
 
 if verbose: print(sys.path)
 
-from   hardware        import *
+if __name__ == "__main__":
+
+    from   hardware        import *
 
 
-# ---------------------------------------------------------
-import  lusee        # Core lusee software
-from    nav import * # Astro/observation wrapper classes
-from    utils.timeconv import *
+    # ---------------------------------------------------------
+    import  lusee        # Core lusee software
+    from    nav import * # Astro/observation wrapper classes
+    from    utils.timeconv import *
 
 
-import  sim # Main simulation module, which contains the Simulator class
-from    sim import Simulator
+    import  sim # Main simulation module, which contains the Simulator class
+    from    sim import Simulator
 
 
-# -------------------------------------------------------------
-# Define paths in one place, can overwrite later
-orbitals    = luseeopsim_path + "/data/orbitals/20260110-20270116.hdf5"
-modes       = luseeopsim_path + "/config/modes.yml"
-devices     = luseeopsim_path + "/config/devices.yml"
-comtable    = luseeopsim_path + "/config/comtable-20260110-20270115.yml"
+    # -------------------------------------------------------------
+    # Define paths in one place, can overwrite later
+    orbitals    = luseeopsim_path + "/data/orbitals/20260110-20270116.hdf5"
+    modes       = luseeopsim_path + "/config/modes.yml"
+    devices     = luseeopsim_path + "/config/devices.yml"
+    comtable    = luseeopsim_path + "/config/comtable-20260110-20270115.yml"
 
-initial_time    = 2
-until           = 4600 #2780
+    initial_time    = 2
+    until           = 4600 #2780
 
-smltr = Simulator(orbitals, modes, devices, comtable, initial_time=initial_time, until=until, verbose=verbose)
+    smltr = Simulator(orbitals, modes, devices, comtable, initial_time=initial_time, until=until, verbose=verbose)
 
-mjd_start   = smltr.sun.mjd[initial_time]
-mjd_end     = smltr.sun.mjd[until]
-
-
-if verbose:
-    print(f'''Initial time in ticks: {initial_time}, mjd: {mjd_start}, datetime: {mjd2dt(mjd_start)}, Sun Alt: {smltr.sun.alt[initial_time]}''')
-    print(f'''Until time in ticks: {until}, mjd: {mjd_end}, datetime: {mjd2dt(mjd_end)}''')
-    smltr.power_info()
+    mjd_start   = smltr.sun.mjd[initial_time]
+    mjd_end     = smltr.sun.mjd[until]
 
 
-smltr.verbose = False # True
-smltr.simulate()
+    if verbose:
+        print(f'''Initial time in ticks: {initial_time}, mjd: {mjd_start}, datetime: {mjd2dt(mjd_start)}, Sun Alt: {smltr.sun.alt[initial_time]}''')
+        print(f'''Until time in ticks: {until}, mjd: {mjd_end}, datetime: {mjd2dt(mjd_end)}''')
+        smltr.power_info()
 
-pwr = smltr.controller.power
-N = pwr.shape[0]
 
-# Checkpoints
+    smltr.verbose = False # True
+    smltr.simulate()
 
-step = int(N/10)
+    pwr = smltr.controller.power
+    N = pwr.shape[0]
 
-if verbose: print('The samples of the power curve are:')
+    # Checkpoints
 
-for i in range(10):
-    n = i*step
-    result = pwr[n]
-    if verbose: print(f'''{result:6.3f}''')
-    if (abs(result - reference_data[i])>0.00001):
-        if verbose: print('Mismatch between reference data and result')
-        exit(-3)
+    step = int(N/10)
 
-if verbose: print('Success!')
+    if verbose: print('The samples of the power curve are:')
 
-exit(0)
+    for i in range(10):
+        n = i*step
+        result = pwr[n]
+        if verbose: print(f'''{result:6.3f}''')
+        if (abs(result - reference_data[i])>0.00001):
+            if verbose: print('Mismatch between reference data and result')
+            exit(-3)
+
+    if verbose: print('Success!')
+
+    exit(0)

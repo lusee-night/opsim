@@ -233,6 +233,35 @@ class Sat:
         self.crossings  = np.where(np.diff(detect))[0]
         self.up         = ~detect
 
+class Body:
+    """Generic solar-system body with rise/set detection."""
+    def __init__(self, mjd=None, alt=None, az=None, name='', radius=0.0):
+        self.name = name
+        self.radius = radius
+        self.mjd = mjd
+        self.alt = alt
+        self.az = az
+        self.N = 0 if alt is None else alt.size
+        if self.N:
+            detect = np.signbit(self.alt)
+            self.crossings = np.where(np.diff(detect))[0]
+            self.up = ~detect
+            # precise crossings and rise/set split
+            mjds, rises, sets = [], [], []
+            for crs in self.crossings:
+                x1, x2 = self.mjd[crs], self.mjd[crs + 1]
+                y1, y2 = self.alt[crs], self.alt[crs + 1]
+                a = (y2 - y1) / (x2 - x1)
+                b = y2 - a * x2
+                t = (-b) / a
+                mjds.append(t)
+                if y1 < 0 and y2 > 0:
+                    rises.append(t)
+                else:
+                    sets.append(t)
+            self.mjd_crossings = np.array(mjds)
+            self.rises = np.array(rises)
+            self.sets = np.array(sets)
 
 ########################################################################################################################
 ########################################################################################################################
@@ -249,13 +278,11 @@ def track(interval):
     """
 
     o           = O(interval)
-    length      = len(o.times)
     (alt, az)   = o.get_track_solar('sun')
     return (o.times, alt, az)
 
-def track_from_observation(observation):
-    length      = len(observation.times)
-    (alt, az)   = observation.get_track_solar('sun')
+def track_from_observation(observation, objid):
+    (alt, az)   = observation.get_track_solar(objid)
     return (observation.times, alt, az)
 
 ###
@@ -276,3 +303,4 @@ def hrsFromSunrise(alt, mjd):
 ###
 def sun_condition(alt):
     return [alt>horizon+sun_rad, alt>horizon, alt>horizon-sun_rad, alt<=horizon-sun_rad]
+

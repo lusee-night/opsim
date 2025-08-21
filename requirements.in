@@ -1,0 +1,12 @@
+numpy
+scipy
+matplotlib
+astropy
+fitsio
+pyshtools
+healpy
+lunarsky
+simpy
+jupyterlab
+ipykernel
+h5py
